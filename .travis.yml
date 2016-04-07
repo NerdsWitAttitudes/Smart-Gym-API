@@ -1,0 +1,8 @@
+language: python
+python:
+        - "3.5"
+
+install: "pip install -e ."
+
+notifications:
+      slack: a-maze-team:KQAj1tr2neVDB38uGAQFcuA9
