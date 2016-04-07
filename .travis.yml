@@ -4,5 +4,7 @@ python:
 
 install: "pip install -e ."
 
+script: nosetest
+
 notifications:
       slack: a-maze-team:KQAj1tr2neVDB38uGAQFcuA9
