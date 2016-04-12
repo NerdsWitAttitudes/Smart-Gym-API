@@ -13,9 +13,13 @@ requires = [
     'pyramid_debugtoolbar',
     'pyramid_tm',
     'SQLAlchemy',
+    'sqlalchemy_utils',
+    'psycopg2',
     'transaction',
     'zope.sqlalchemy',
     'waitress',
+    'marshmallow',
+    'alembic'
     ]
 
 setup(name='smartgymapi',
