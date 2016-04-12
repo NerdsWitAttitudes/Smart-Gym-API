@@ -5,6 +5,8 @@ from smartgymapi.models.meta import Base, DBSession as session
 
 
 class User(Base):
+    __tablename__ = 'user'
+
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     first_name = Column(String(100))
     last_name = Column(String(100))
