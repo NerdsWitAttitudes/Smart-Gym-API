@@ -1,4 +1,5 @@
 from smartgymapi.lib.factories import BaseFactory
+from smartgymapi.models.user import list_users
 
 
 class UserFactory(BaseFactory):
@@ -7,3 +8,6 @@ class UserFactory(BaseFactory):
 
     def __getitem__(self, key):
         raise KeyError()
+
+    def get_users():
+        return list_users()
