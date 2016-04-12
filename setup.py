@@ -14,10 +14,12 @@ requires = [
     'pyramid_tm',
     'SQLAlchemy',
     'sqlalchemy_utils',
+    'psycopg2',
     'transaction',
     'zope.sqlalchemy',
     'waitress',
-    'marshmallow'
+    'marshmallow',
+    'alembic'
     ]
 
 setup(name='smartgymapi',
