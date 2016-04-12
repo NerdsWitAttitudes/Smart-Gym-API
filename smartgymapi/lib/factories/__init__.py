@@ -7,4 +7,3 @@ class BaseFactory(dict):
         self.request = None
         if parent is not None:
             self.request = parent.request
-
