@@ -10,5 +10,5 @@ class UserSchema(Schema):
     date_updated = fields.DateTime(dump_only=True)
     # We might want to use an external service to get country names
     country = fields.Str(required='Country is required')
-    date_of_birth = fields.DatTime(required='Date of birth is required')
+    date_of_birth = fields.DateTime(required='Date of birth is required')
     last_login = fields.DateTime(dump_only=True)

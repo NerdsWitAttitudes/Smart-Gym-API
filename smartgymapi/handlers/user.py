@@ -2,6 +2,7 @@ import logging
 from pyramid.view import view_config, view_defaults
 from smartgymapi.lib.factories.user import UserFactory
 from smartgymapi.lib.validation.user import UserSchema
+from smartgymapi.models.user import User
 
 log = logging.getLogger(__name__)
 
@@ -15,4 +16,8 @@ class RESTUser(object):
 
     @view_config(context=UserFactory, request_method="GET")
     def list(self):
-        UserSchema(many=True).dump(self.request.context.get_users())
+        return UserSchema(many=True).dump(self.request.context.get_users())
+
+    @view_config(context=User)
+    def get(self):
+        return UserSchema().dump(self.request.context)

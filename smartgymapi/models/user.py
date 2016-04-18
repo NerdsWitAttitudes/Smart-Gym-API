@@ -1,10 +1,10 @@
 import uuid
 from sqlalchemy import Column, String, DateTime, func, Boolean
 from sqlalchemy_utils import UUIDType
-from smartgymapi.models.meta import Base, DBSession as session
+from smartgymapi.models.meta import Base, LineageBase, DBSession as session
 
 
-class User(Base):
+class User(Base, LineageBase):
     __tablename__ = 'user'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
@@ -25,3 +25,7 @@ class User(Base):
 
 def list_users():
     return session.query(User)
+
+
+def get_user(id_):
+    return session.query(User).get(id_)
