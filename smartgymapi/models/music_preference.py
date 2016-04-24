@@ -17,8 +17,11 @@ class MusicPreference(Base):
     spotify_id = Column(String(100))
 
     user_id = Column(UUIDType, ForeignKey('user.id'))
-
     user = relationship("User")
+
+    def set_fields(self, data=None):
+        for key, value in data.items():
+            setattr(self, key, value)
 
 
 def list_music_preferences():

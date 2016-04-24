@@ -42,7 +42,7 @@ class RESTMusicPreference(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        user.set_fields(result)
+        music_preference.set_fields(result)
 
         try:
             persist(user)
