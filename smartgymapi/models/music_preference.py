@@ -24,5 +24,9 @@ class MusicPreference(Base):
             setattr(self, key, value)
 
 
+def get_music_preference(id_):
+    return session.query(MusicPreference).get(id_)
+
+
 def list_music_preferences():
     return session.query(MusicPreference)
