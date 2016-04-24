@@ -19,7 +19,8 @@ requires = [
     'zope.sqlalchemy',
     'waitress',
     'marshmallow',
-    'alembic'
+    'alembic',
+    'bcrypt'
     ]
 
 setup(name='smartgymapi',

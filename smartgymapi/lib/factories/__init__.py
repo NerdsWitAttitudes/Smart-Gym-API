@@ -1,4 +1,5 @@
 class BaseFactory(dict):
+
     def __init__(self, parent, name):
         self.requires_oauth = False
         self.__parent__ = parent
