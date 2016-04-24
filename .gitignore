@@ -60,3 +60,6 @@ target/
 
 # ini files
 *.ini
+
+# intellij
+/.idea
