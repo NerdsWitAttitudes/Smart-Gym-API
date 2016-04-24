@@ -4,6 +4,7 @@ from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 from smartgymapi.models.meta import Base
 from smartgymapi.models.music_preference import MusicPreference
+from smartgymapi.models.user import User
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
