@@ -1,4 +1,5 @@
 from smartgymapi.lib.factories.user import UserFactory
+from smartgymapi.lib.factories.music_preference import MusicPreferenceFactory
 
 
 class RootFactory(dict):
@@ -10,4 +11,5 @@ class RootFactory(dict):
         self.__parent__ = None
 
         self['user'] = UserFactory(self, 'user')
-        self['music_preference'] = UserFactory(self, 'music_preference')
+        self['music_preference'] = MusicPreferenceFactory(
+            self, 'music_preference')
