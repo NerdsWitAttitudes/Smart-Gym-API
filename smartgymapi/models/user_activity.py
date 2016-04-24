@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, DateTime, Float
+from sqlalchemy import Column, DateTime
 from sqlalchemy_utils import UUIDType
 from smartgymapi.models.meta import Base, LineageBase, DBSession as session
 
