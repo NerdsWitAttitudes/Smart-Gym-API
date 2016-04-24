@@ -1,5 +1,8 @@
+import logging
 from smartgymapi.lib.factories import BaseFactory
 from smartgymapi.models.user import list_users, get_user
+
+log = logging.getLogger(__name__)
 
 
 class UserFactory(BaseFactory):
@@ -10,7 +13,7 @@ class UserFactory(BaseFactory):
         user = get_user(key)
 
         if user:
-            user.set_lineage(UserFactory, 'user')
+            user.set_lineage(self, 'user')
             return user
 
         raise KeyError()

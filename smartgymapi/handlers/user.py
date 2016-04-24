@@ -6,7 +6,7 @@ from smartgymapi.lib.encrypt import hash_password
 from smartgymapi.lib.factories.user import UserFactory
 from smartgymapi.lib.validation.auth import SignupSchema
 from smartgymapi.lib.validation.user import UserSchema
-from smartgymapi.models import commit, persist, rollback
+from smartgymapi.models import commit, persist, rollback, delete
 from smartgymapi.models.user import User
 
 log = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ class RESTUser(object):
 
     def save(self, user):
         try:
-            result, errors = UserSchema(Strict=True).load(
+            result, errors = UserSchema(strict=True).load(
                 self.request.json_body)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
@@ -58,6 +58,18 @@ class RESTUser(object):
             persist(user)
         except:
             log.critical("Something went wrong saving the user",
+                         exc_info=True)
+            rollback()
+            raise HTTPInternalServerError
+        finally:
+            commit()
+
+    @view_config(context=User, request_method="DELETE")
+    def delete(self):
+        try:
+            delete(self.request.context)
+        except:
+            log.critical("Something went wrong deleting the user",
                          exc_info=True)
             rollback()
             raise HTTPInternalServerError
