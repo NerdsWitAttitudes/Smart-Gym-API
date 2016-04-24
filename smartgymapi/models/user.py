@@ -22,6 +22,10 @@ class User(Base, LineageBase):
     date_of_birth = Column(DateTime(timezone=True))
     last_login = Column(DateTime(timezone=True))
 
+    def set_fields(self, data=None):
+        for key, value in data.items():
+            setattr(self, key, value)
+
 
 def list_users():
     return session.query(User)

@@ -1,11 +1,12 @@
 import logging
 from marshmallow import ValidationError
-from pyramid.httpexceptions import HTTPBadRequest
+from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_config, view_defaults
 from smartgymapi.lib.encrypt import hash_password
 from smartgymapi.lib.factories.user import UserFactory
 from smartgymapi.lib.validation.auth import SignupSchema
 from smartgymapi.lib.validation.user import UserSchema
+from smartgymapi.models import commit, persist, rollback
 from smartgymapi.models.user import User
 
 log = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ class RESTUser(object):
     def post(self):
         try:
             result, errors = SignupSchema(strict=True).load(
-                self.request.POST)
+                self.request.json_body)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
@@ -45,4 +46,20 @@ class RESTUser(object):
         self.save(self.request.context)
 
     def save(self, user):
-        pass
+        try:
+            result, errors = UserSchema(Strict=True).load(
+                self.request.json_body)
+        except ValidationError as e:
+            raise HTTPBadRequest(json={'message': str(e)})
+
+        user.set_fields(result)
+
+        try:
+            persist(user)
+        except:
+            log.critical("Something went wrong saving the user",
+                         exc_info=True)
+            rollback()
+            raise HTTPInternalServerError
+        finally:
+            commit()
