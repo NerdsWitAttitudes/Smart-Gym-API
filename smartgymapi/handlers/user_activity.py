@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 @view_defaults(containment=UserActivityFactory,
                permission='public',
                renderer='json')
-class RESTUser(object):
+class RESTUserActivity(object):
 
     def __init__(self, request):
         self.request = request
