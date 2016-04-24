@@ -10,6 +10,6 @@ class RESTSportScheme(object):
     def __init__(self, request):
         self.request = request
 
-    @view_config(context=SportScheduleSchema, request_method="GET")
+    @view_config(context=SportScheduleFactory, request_method="GET")
     def list(self):
         SportScheduleSchema(many=True).dump(self.request.context.get_sport_schedules())

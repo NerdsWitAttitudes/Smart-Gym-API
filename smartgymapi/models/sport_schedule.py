@@ -3,11 +3,11 @@ import uuid
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy_utils import UUIDType
 
-from smartgymapi import Base, DBSession
+from smartgymapi.models.meta import Base, DBSession
 
 
 class SportSchedule(Base):
-    __tablename__ = 'sport_scheme'
+    __tablename__ = 'sport_schedule'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     # user_id = Column(UUIDType, ForeignKey('user.id'))
