@@ -8,9 +8,13 @@ class UserActivity(Base, LineageBase):
     __tablename__ = 'user_activity'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
-    hours = Column(Float)
     start_date = Column(DateTime(timezone=True))
     end_date = Column(DateTime(timezone=True))
+
+    @property
+    def hours(self):
+        total_time = self.end_date - self.start_date
+        return total_time
 
     def set_fields(self, data=None):
         for key, value in data.items():
