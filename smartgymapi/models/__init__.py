@@ -1,0 +1,1 @@
+from smartgymapi.models.sport_schedule import SportSchedule

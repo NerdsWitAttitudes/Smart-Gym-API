@@ -1,13 +1,13 @@
 from lib.factories import BaseFactory
-from smartgymapi.models.sport_scheme import list_sport_schemes
+from smartgymapi.models.sport_schedule import list_sport_schedules
 
 
-class SportSchemeFactory(BaseFactory):
+class SportScheduleFactory(BaseFactory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def __getitem__(self, key):
         raise KeyError()
 
-    def get_sport_schemes(self):
-        return list_sport_schemes()
+    def get_sport_schedules(self):
+        return list_sport_schedules()
