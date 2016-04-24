@@ -21,7 +21,7 @@ class RESTMusicPreference(object):
     @view_config(context=MusicPreferenceFactory, request_method="GET")
     def list(self):
         return MusicPreferenceSchema(many=True).dump(
-            self.request.context.get_users())
+            self.request.context.get_music_preference())
 
     @view_config(context=MusicPreference, request_method="GET")
     def get(self):
@@ -35,7 +35,7 @@ class RESTMusicPreference(object):
     def put(self):
         self.save(self.request.context)
 
-    def save(self, user):
+    def save(self, music_preference):
         try:
             result, errors = MusicPreferenceSchema(strict=True).load(
                 self.request.json_body)
@@ -45,7 +45,7 @@ class RESTMusicPreference(object):
         music_preference.set_fields(result)
 
         try:
-            persist(user)
+            persist(music_preference)
         except:
             log.critical("Something went wrong saving the music_preference",
                          exc_info=True)
