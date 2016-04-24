@@ -1,5 +1,5 @@
 from smartgymapi.lib.factories.user import UserFactory
-from smartgymapi.lib.factories.sport_schedule_factory import SportScheduleFactory
+from smartgymapi.lib.factories.sport_schedule import SportScheduleFactory
 
 
 class RootFactory(dict):
