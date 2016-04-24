@@ -3,7 +3,7 @@ from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_config, view_defaults
 from smartgymapi.lib.factories.music_preference import MusicPreferenceFactory
-from smartgymapi.lib.validation.auth import MusicPreferenceSchema
+from smartgymapi.lib.validation.music_preference import MusicPreferenceSchema
 from smartgymapi.models import commit, persist, rollback, delete
 from smartgymapi.models.music_preference import MusicPreference
 
