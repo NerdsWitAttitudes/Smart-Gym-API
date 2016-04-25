@@ -12,3 +12,4 @@ class RootFactory(dict):
 
         self['user'] = UserFactory(self, 'user')
         self['user_activity'] = UserActivityFactory(self, 'user_activity')
+        self['busyness'] = UserActivityFactory(self, 'busyness')

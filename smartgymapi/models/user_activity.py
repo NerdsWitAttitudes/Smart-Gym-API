@@ -12,16 +12,23 @@ class UserActivity(Base, LineageBase):
     end_date = Column(DateTime(timezone=True))
 
     @property
-    def hours(self):
-        total_time = self.end_date - self.start_date
-        return total_time
+    def minutes(self):
+        total = self.end_date - self.start_date
+        return (total.seconds % 3600) // 60
+
+    @property
+    def date(self):
+        return self.start_date.date()
 
     def set_fields(self, data=None):
         for key, value in data.items():
             setattr(self, key, value)
 
 
-def list_user_activities():
+def list_user_activities(date=None):
+    q = session.query(UserActivity)
+    if date:
+        q = q.filter(UserActivity.date == date)
     return session.query(UserActivity)
 
 
