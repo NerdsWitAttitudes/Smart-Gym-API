@@ -20,6 +20,7 @@ requires = [
     'waitress',
     'marshmallow',
     'alembic',
+    'pycrypto',
     'bcrypt'
     ]
 
