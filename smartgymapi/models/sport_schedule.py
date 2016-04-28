@@ -14,14 +14,17 @@ class SportSchedule(Base, LineageBase):
     name = Column(String(100))
     reminder_minutes = Column(Integer)
 
-
     def set_fields(self, data=None):
         for key, value in data.items():
             setattr(self, key, value)
 
 
-def list_sport_schedules():
-    return DBSession.query(SportSchedule)
+def list_sport_schedules(user_id=None):
+    q = DBSession.query(SportSchedule)
+    if user_id:
+        q.filter(SportSchedule.user_id == user_id)
+
+    return q
 
 
 def get_sport_schedule(id_):

@@ -19,7 +19,13 @@ class RESTSportScheme(object):
 
     @view_config(context=SportScheduleFactory, request_method="GET")
     def list(self):
-        return SportScheduleSchema(many=True).dump(self.request.context.get_sport_schedules())
+        try:
+            result, errors = SportScheduleSchema(strict=True, only=('user_id',)).load(
+                self.request.GET)
+        except ValidationError as e:
+            raise HTTPBadRequest(json={'message': str(e)})
+
+        return SportScheduleSchema(many=True).dump(self.request.context.get_sport_schedules(result))
 
     @view_config(context=SportSchedule, request_method="GET")
     def get(self):
