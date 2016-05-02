@@ -1,7 +1,7 @@
 """user table
 
 Revision ID: 100383d009f0
-Revises: 
+Revises:
 Create Date: 2016-04-12 13:47:00.038391
 
 """
