@@ -1,5 +1,6 @@
 import uuid
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Column, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 from smartgymapi.models.meta import Base, LineageBase, DBSession as session
 
@@ -10,6 +11,10 @@ class UserActivity(Base, LineageBase):
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     start_date = Column(DateTime(timezone=True))
     end_date = Column(DateTime(timezone=True))
+
+    user_id = Column(UUIDType, ForeignKey('user.id'))
+
+    user = relationship('User', backref='user_activities')
 
     @property
     def minutes(self):

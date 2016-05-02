@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.view import view_config, view_defaults
@@ -16,7 +17,7 @@ class RESTBusyness(object):
     def __init__(self, request):
         self.request = request
 
-    @view_config(view_name='past', context=BusynessFactory,
+    @view_config(name='past', context=BusynessFactory,
                  request_method="GET")
     def get_past_busyness(self):
         try:
@@ -27,13 +28,16 @@ class RESTBusyness(object):
 
         past_busyness = self.request.context.get_busyness(result['date'])
 
-    @view_config(view_name='today', context=BusynessFactory,
+    @view_config(name='today', context=BusynessFactory,
                  request_method="GET")
     def get_todays_busyness(self):
-        todays_busyness = self.request.context.get_busyness()
-        todays_predicted_busyness = self.request.context.get_busyness()
+        todays_busyness = self.request.context.get_busyness(
+            date=datetime.now())
+        return BusynessSchema(many=True).dump(todays_busyness)
+        # todo predictions
+        # todays_predicted_busyness = self.request.context.get_busyness()
 
-    @view_config(view_name='predict', context=BusynessFactory,
+    @view_config(name='predict', context=BusynessFactory,
                  request_method="GET")
     def get_predicted_busyness(self):
         try:
