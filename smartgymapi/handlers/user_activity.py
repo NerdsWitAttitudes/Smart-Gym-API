@@ -31,6 +31,10 @@ class RESTUserActivity(object):
     def post(self):
         self.save(UserActivity)
 
+    @view_config(context=UserActivityFactory, request_method="PUT")
+    def put(self):
+        self.save(self.request.context)
+
     def save(self, user_activity):
         try:
             result, errors = UserActivitySchema(strict=True).load(

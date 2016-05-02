@@ -25,12 +25,18 @@ class UserActivity(Base, LineageBase):
             setattr(self, key, value)
 
 
+def get_user_activity(id_):
+    return session.query(UserActivity).get(id_)
+
+
 def list_user_activities(date=None):
     q = session.query(UserActivity)
     if date:
         q = q.filter(UserActivity.date == date)
-    return session.query(UserActivity)
+    return q
 
 
-def get_user_activity(id_):
-    return session.query(UserActivity).get(id_)
+def predict_user_activities(date):
+    q = session.query(UserActivity)
+    q = q.filter("strftime('%w', start_date) = :dow").params(dow=1)
+    return q
