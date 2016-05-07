@@ -1,8 +1,11 @@
 import logging
 from datetime import datetime
+
 from marshmallow import ValidationError
+
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.view import view_config, view_defaults
+
 from smartgymapi.lib.factories.busyness import BusynessFactory
 from smartgymapi.lib.validation.busyness import BusynessSchema
 from smartgymapi.lib.validation.user_activity import UserActivitySchema

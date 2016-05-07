@@ -1,10 +1,14 @@
-import uuid
 import logging
-from sqlalchemy import Column, DateTime, ForeignKey, Date, cast
+import uuid
+
+from smartgymapi.models.meta import Base, DBSession as session, LineageBase
+
+from sqlalchemy import Column, Date, DateTime, ForeignKey, cast
+
 from sqlalchemy.orm import relationship
-from sqlalchemy_utils import UUIDType
 from sqlalchemy.sql import extract
-from smartgymapi.models.meta import Base, LineageBase, DBSession as session
+
+from sqlalchemy_utils import UUIDType
 
 log = logging.getLogger(__name__)
 
