@@ -37,10 +37,11 @@ class RESTBusyness(object):
                  request_method="GET")
     def get_todays_busyness(self):
         todays_busyness = self.request.context.get_busyness(
-            date=datetime.now())
-        return UserActivitySchema(many=True).dump(todays_busyness)
+            datetime.now(), True)
+
         # todo predictions
-        # todays_predicted_busyness = self.request.context.get_busyness()
+        todays_predicted_busyness = (
+            self.request.context.get_predicted_busyness(date=datetime.now()))
 
     @view_config(name='predict', context=BusynessFactory,
                  request_method="GET")
@@ -51,5 +52,5 @@ class RESTBusyness(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        return UserActivitySchema(many=True).dump(
+        predicted_busyness = (
             self.request.context.get_predicted_busyness(result['date']))
