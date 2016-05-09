@@ -1,4 +1,5 @@
 import logging
+
 import uuid
 
 from smartgymapi.models.meta import Base, DBSession as session, LineageBase
@@ -42,13 +43,10 @@ def get_user_activity(id_):
     return session.query(UserActivity).get(id_)
 
 
-def list_user_activities(date=None, group_by_hour=False):
+def list_user_activities(date=None):
     q = session.query(UserActivity)
     if date:
-        q = q.filter(cast(UserActivity.start_date, Date) == date).all()
-    if group_by_hour:
-        q = q(extract('hour',
-              UserActivity.start_date).label('h')).group_by('h')
+        q = q.filter(cast(UserActivity.start_date, Date) == date)
     return q
 
 
