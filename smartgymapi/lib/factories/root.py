@@ -1,5 +1,6 @@
-from smartgymapi.lib.factories.user import UserFactory
+from smartgymapi.lib.factories.auth import AuthFactory
 from smartgymapi.lib.factories.sport_schedule import SportScheduleFactory
+from smartgymapi.lib.factories.user import UserFactory
 
 
 class RootFactory(dict):
@@ -9,5 +10,6 @@ class RootFactory(dict):
         self.__name__ = None
         self.__parent__ = None
 
-        self['user'] = UserFactory(self, 'user')
+        self['auth'] = AuthFactory(self, 'auth')
         self['sport_schedule'] = SportScheduleFactory(self, 'sport_schedule')
+        self['user'] = UserFactory(self, 'user')
