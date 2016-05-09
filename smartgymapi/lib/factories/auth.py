@@ -1,5 +1,5 @@
 from pyramid.security import Allow, Everyone
-from partypeak.lib.factories import BaseFactory
+from smartgymapi.lib.factories import BaseFactory
 
 
 class AuthFactory(BaseFactory):
