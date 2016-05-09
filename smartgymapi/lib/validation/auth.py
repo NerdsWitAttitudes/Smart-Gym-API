@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, ValidationError, post_load
+from marshmallow import Schema, fields, ValidationError, post_load, pre_load
 
 
 class SignupSchema(Schema):
@@ -9,3 +9,16 @@ class SignupSchema(Schema):
     def compare_passwords(self, data):
         if data['password'] != data['password_confirm']:
             raise ValidationError("{'password': ['Passwords do not match']}")
+
+
+class LoginSchema(Schema):
+    email = fields.Email(required='Email is required')
+    password = fields.Str(required='Password is required')
+
+    @pre_load
+    def strip_email(self, data):
+        try:
+            data['email'] = data['email'].lower().strip()
+        except KeyError:
+            raise ValidationError('Email is required')
+        return data
