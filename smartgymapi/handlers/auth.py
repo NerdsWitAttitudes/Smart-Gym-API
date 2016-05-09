@@ -28,7 +28,7 @@ def login(request):
     schema = LoginSchema(strict=True)
 
     try:
-        result, errors = schema.load(request.POST)
+        result, errors = schema.load(request.json_body)
     except ValidationError as e:
         raise HTTPBadRequest(json={'message': str(e)})
 
@@ -36,20 +36,24 @@ def login(request):
         user = get_user_by_email(email=result['email'])
     except NoResultFound:
         raise HTTPBadRequest(
-            json={"message": "User and password don't match"})
+            json={"message": "Email address and password don't match"})
 
     check_password(result['password'], user.password_hash, user.password_salt)
 
-    remember(request, user.id)
+    headers = remember(request, str(user.id))
     user.last_login = datetime.datetime.now()
     try:
         persist(user)
     except:
-        # We do not cancel the log in since this should not affect the user
-        log.critical("Something went wrong logging in the user", exc_info=True)
+        log.critical("something went wrong updating the user login date",
+                     exc_info=True)
         rollback()
     finally:
         commit()
+
+    # Continue logging in the user. Being unable to update the login date
+    # should not prevent the user from logging in.
+    request.response.headerlist.extend(headers)
 
 
 @auth_factory_view(request_method='GET', name='logout')
