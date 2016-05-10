@@ -62,21 +62,28 @@ class RESTBusyness(object):
         predicted_busyness = (
             self.request.context.get_predicted_busyness(result['date']))
 
+        self.fill_hour_count(predicted_busyness, False, True)
+        return self.hour_count
+
     def fill_hour_count(self, activities, predict_for_today=False,
                         predict=False):
-        for item in activities:
-            if (predict_for_today and
-                    item.start_date.hour <= datetime.now().hour):
-                continue
-            if predict:
-                amount_of_days = 0
-                for (year, items) in groupby(activities, grouper):
-                    amount_of_days += 1
-                    for item in items:
-                        self.add_item_to_hour_count(item)
-                        # todo, delen door aantal dagen, alleen dagen delen na
-                        # current time if predict for today. GREAT
-            else:
+        if predict:
+            amount_of_days = 0
+            for (year, items) in groupby(activities, grouper):
+                amount_of_days += 1
+                for item in items:
+                    if (predict_for_today and
+                            item.start_date.hour <= datetime.now().hour):
+                        continue
+                    self.add_item_to_hour_count(item)
+            for hour in self.hour_count:
+                if (predict_for_today and
+                        int(hour) <= datetime.now().hour):
+                    continue
+                self.hour_count[hour] = round(
+                    self.hour_count[hour] / amount_of_days)
+        else:
+            for item in activities:
                 self.add_item_to_hour_count(item)
 
     def add_item_to_hour_count(self, item):
