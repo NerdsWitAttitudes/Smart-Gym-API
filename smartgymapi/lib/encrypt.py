@@ -19,6 +19,5 @@ def decrypt_AES(message, key, iv):
 
 
 def decrypt_secret(secret, key, iv):
-    log.info(secret)
     decoded_secret = base64.b64decode(secret.encode('utf-8'))
     return decrypt_AES(decoded_secret, key, iv).decode('utf-8')
