@@ -2,14 +2,15 @@ import logging
 
 import uuid
 
-from smartgymapi.models.meta import Base, DBSession as session, LineageBase
-
 from sqlalchemy import Column, Date, DateTime, ForeignKey, cast
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import extract
 
 from sqlalchemy_utils import UUIDType
+
+from smartgymapi.models.meta import Base, DBSession as session, LineageBase
+
 
 log = logging.getLogger(__name__)
 
@@ -51,7 +52,5 @@ def list_user_activities(date=None):
 
 
 def list_user_activities_for_prediction(date):
-    q = session.query(UserActivity)
-    q = q.filter(
+    return session.query(UserActivity).filter(
         extract('dow', UserActivity.start_date) == date.isocalendar()[2])
-    return q

@@ -9,13 +9,12 @@ from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.factories.busyness import BusynessFactory
 from smartgymapi.lib.validation.busyness import BusynessSchema
-from smartgymapi.lib.validation.user_activity import UserActivitySchema
 
 log = logging.getLogger(__name__)
 
 
 @view_defaults(containment=BusynessFactory,
-               permission='public',
+               permission='busyness',
                renderer='json')
 class RESTBusyness(object):
 
@@ -67,11 +66,14 @@ class RESTBusyness(object):
 
     def fill_hour_count(self, activities, predict_for_today=False,
                         predict=False):
+        """ Set the correct amount of activities for every hour """
         if predict:
             amount_of_days = 0
+            # group the activities.
             for (year, items) in groupby(activities, grouper):
                 amount_of_days += 1
                 for item in items:
+                    # For today we only need to predict the hours still to come
                     if (predict_for_today and
                             item.start_date.hour <= datetime.now().hour):
                         continue
@@ -80,6 +82,7 @@ class RESTBusyness(object):
                 if (predict_for_today and
                         int(hour) <= datetime.now().hour):
                     continue
+                # take the average.
                 self.hour_count[hour] = round(
                     self.hour_count[hour] / amount_of_days)
         else:
@@ -87,10 +90,18 @@ class RESTBusyness(object):
                 self.add_item_to_hour_count(item)
 
     def add_item_to_hour_count(self, item):
+        """
+        Add activity to the correct hour if exists. If not create and set
+        value to 1
+        """
         self.hour_count[str(item.start_date.hour)] = \
             self.hour_count.setdefault(
             str(item.start_date.hour), 0) + 1
 
 
 def grouper(item):
+    """
+    This function return the year of the activity. This is for grouping the
+    activities.
+    """
     return item.start_date.year
