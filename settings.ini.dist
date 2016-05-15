@@ -24,6 +24,8 @@ auth.secret =
 auth.timeout = 1200
 auth.reissue_time = 120
 
+open_weather_api_key = 
+open_weather_url = http://api.openweathermap.org/data/2.5/weather?q={}&appid={}
 
 # By default, the toolbar only appears for clients from IP addresses
 # '127.0.0.1' and '::1'.

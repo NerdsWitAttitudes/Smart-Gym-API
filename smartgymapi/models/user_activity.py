@@ -1,9 +1,7 @@
 import logging
-
 import uuid
 
-from sqlalchemy import Column, Date, DateTime, ForeignKey, cast
-
+from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Float, cast
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import extract
 
@@ -22,9 +20,14 @@ class UserActivity(Base, LineageBase):
     start_date = Column(DateTime(timezone=True))
     end_date = Column(DateTime(timezone=True))
 
+    raining_outside = Column(Boolean)
+    temparature = Column(Float(precision=1))
+
     user_id = Column(UUIDType, ForeignKey('user.id'))
+    gym_id = Column(UUIDType, ForeignKey('gym.id'))
 
     user = relationship('User', backref='user_activities')
+    gym = relationship('Gym')
 
     @property
     def minutes(self):
