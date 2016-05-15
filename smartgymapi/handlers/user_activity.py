@@ -1,4 +1,6 @@
 import logging
+import requests
+
 from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_config, view_defaults
@@ -29,6 +31,14 @@ class RESTUserActivity(object):
 
     @view_config(context=UserActivityFactory, request_method="POST")
     def post(self):
+        # TODO checking for rain en setting temparature and getting city
+        # from gym.city
+        settings = self.request.registry.settings
+        user_activity = UserActivity()
+        r_params = {"q": "Rotterdam",
+                    "appid": settings['open_weather_api_key']}
+        r = requests.get(settings['open_weather_url'], params=r_params)
+
         self.save(UserActivity)
 
     @view_config(context=UserActivityFactory, request_method="PUT")
