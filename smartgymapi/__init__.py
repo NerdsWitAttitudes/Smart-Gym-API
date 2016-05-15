@@ -29,7 +29,5 @@ def main(global_config, **settings):
                           authorization_policy=ACLAuthorizationPolicy(),
                           root_factory=RootFactory)
     config.set_default_permission('admin')
-    config = Configurator(settings=settings, root_factory=RootFactory)
-    config.add_static_view('static', 'static', cache_max_age=3600)
     config.scan('smartgymapi.handlers')
     return config.make_wsgi_app()
