@@ -1,4 +1,6 @@
 import logging
+from uuid import UUID
+
 from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_defaults, view_config
@@ -20,16 +22,15 @@ class RESTSportScheme(object):
     @view_config(context=SportScheduleFactory, request_method="GET")
     def list(self):
         try:
-            result, errors = SportScheduleSchema(strict=True, only=('user_id',)).load(
-                self.request.GET)
+            user_id = UUID(self.request.GET['user_id'])
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        return SportScheduleSchema(many=True).dump(self.request.context.get_sport_schedules(result))
+        return SportScheduleSchema(many=True).dump(self.request.context.get_sport_schedules(user_id)).data
 
     @view_config(context=SportSchedule, request_method="GET")
     def get(self):
-        return SportScheduleSchema().dump(self.request.context)
+        return SportScheduleSchema().dump(self.request.context).data
 
     @view_config(context=SportScheduleFactory, request_method="POST")
     def post(self):

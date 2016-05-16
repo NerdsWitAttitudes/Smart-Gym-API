@@ -22,7 +22,7 @@ class SportSchedule(Base, LineageBase):
 def list_sport_schedules(user_id=None):
     q = DBSession.query(SportSchedule)
     if user_id:
-        q.filter(SportSchedule.user_id == user_id)
+        q = q.filter(SportSchedule.user_id == user_id)
 
     return q
 
