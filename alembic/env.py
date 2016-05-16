@@ -4,6 +4,8 @@ from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 from smartgymapi.models.meta import Base
 from smartgymapi.models.user import User
+from smartgymapi.models.gym import Gym
+from smartgymapi.models.user_activity import UserActivity
 from smartgymapi.models.sport_schedule import SportSchedule
 
 # this is the Alembic Config object, which provides

@@ -1,7 +1,8 @@
 import logging
 import uuid
 
-from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Float, cast
+from sqlalchemy import (
+    Boolean, Column, Date, DateTime, Float, ForeignKey, cast, func)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import extract
 
@@ -17,10 +18,10 @@ class UserActivity(Base, LineageBase):
     __tablename__ = 'user_activity'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
-    start_date = Column(DateTime(timezone=True))
+    start_date = Column(DateTime(timezone=True), default=func.now())
     end_date = Column(DateTime(timezone=True))
 
-    raining_outside = Column(Boolean)
+    raining_outside = Column(Boolean, default=False)
     temparature = Column(Float(precision=1))
 
     user_id = Column(UUIDType, ForeignKey('user.id'))
