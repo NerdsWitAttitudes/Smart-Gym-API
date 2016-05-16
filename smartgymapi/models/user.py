@@ -33,3 +33,7 @@ def list_users():
 
 def get_user(id_):
     return session.query(User).get(id_)
+
+
+def get_user_by_email(email):
+    return session.query(User).filter(email=email).one()
