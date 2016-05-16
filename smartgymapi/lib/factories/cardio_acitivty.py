@@ -1,6 +1,6 @@
 import logging
 from smartgymapi.lib.factories import BaseFactory
-from smartgymapi.models.cardio_activity import get_cardio_activity, list_cardio_activities
+from smartgymapi.models.cardio_activity import get_cardio_activity, list_cardio_activities, is_cardio_activity_active
 
 log = logging.getLogger(__name__)
 
@@ -19,5 +19,8 @@ class CardioActivityFactory(BaseFactory):
 
         raise KeyError()
 
-    def list_cardio_activities(self):
-        return list_cardio_activities()
+    def list_cardio_activities(self, activity_id):
+        return list_cardio_activities(activity_id)
+
+    def is_cardio_activity_active(self, activity_id):
+        return is_cardio_activity_active(activity_id)
