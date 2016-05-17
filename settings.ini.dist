@@ -12,6 +12,7 @@ pyramid.debug_notfound = false
 pyramid.debug_routematch = false
 pyramid.default_locale_name = en
 pyramid.includes =
+    pyramid_redis_sessions
     pyramid_debugtoolbar
     pyramid_tm
 
@@ -23,6 +24,14 @@ aes.iv =
 auth.secret =
 auth.timeout = 1200
 auth.reissue_time = 120
+
+redis.sessions.secret =
+redis.sessions.timeout = 1200
+
+redis.sessions.host =
+redis.sessions.port = 6379
+redis.sessions.db = 0
+redis.sessions.password =
 
 
 # By default, the toolbar only appears for clients from IP addresses

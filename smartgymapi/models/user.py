@@ -36,4 +36,4 @@ def get_user(id_):
 
 
 def get_user_by_email(email):
-    return session.query(User).filter(email=email).one()
+    return session.query(User).filter(User.email == email).one()

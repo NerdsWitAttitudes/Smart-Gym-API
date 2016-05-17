@@ -27,3 +27,16 @@ class SignupSchema(Schema):
             # We can proceed to create the new user
             return
         raise UserFoundException
+
+
+class LoginSchema(Schema):
+    email = fields.Email(required='Email is required')
+    password = fields.Str(required='Password is required')
+
+    @pre_load
+    def strip_email(self, data):
+        try:
+            data['email'] = data['email'].lower().strip()
+        except KeyError:
+            raise ValidationError('Email is required')
+        return data
