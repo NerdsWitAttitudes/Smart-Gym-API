@@ -28,8 +28,6 @@ def main(global_config, **settings):
                           authentication_policy=authentication_policy,
                           authorization_policy=ACLAuthorizationPolicy(),
                           root_factory=RootFactory)
-    config.set_default_permission('superadmin')
-    config = Configurator(settings=settings, root_factory=RootFactory)
-    config.add_static_view('static', 'static', cache_max_age=3600)
+    config.set_default_permission('admin')
     config.scan('smartgymapi.handlers')
     return config.make_wsgi_app()
