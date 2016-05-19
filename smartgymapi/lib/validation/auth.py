@@ -22,9 +22,3 @@ class LoginSchema(Schema):
         except KeyError:
             raise ValidationError('Email is required')
         return data
-
-
-class CheckinSchema(Schema):
-    device_address = fields.Str(required='Device address is required')
-    device_class = fields.Str(required='Device class is required')
-    client_address = fields.Str(required='Client address is required')

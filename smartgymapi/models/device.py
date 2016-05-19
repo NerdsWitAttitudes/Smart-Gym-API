@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, String, ForeignKey, relationship
+from sqlalchemy import Column, String, ForeignKey, relationship, DateTime, func
 from sqlalchemy_utils import UUIDType
 
 from smartgymapi.models.meta import Base, DBSession as session
@@ -14,6 +14,7 @@ class Device(Base):
     device_class = Column(String(100))
     client_address = Column(String(100))
     user_id = Column(UUIDType, ForeignKey('user.id'))
+    last_used = Column(DateTime(timezone=True), default=func.now())
 
     user = relationship("User")
 

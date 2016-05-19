@@ -9,7 +9,7 @@ from pyramid.httpexceptions import HTTPBadRequest
 from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.lib.factories.auth import AuthFactory
-from smartgymapi.lib.validation.auth import CheckinSchema, LoginSchema
+from smartgymapi.lib.validation.auth import LoginSchema
 from smartgymapi.lib.encrypt import check_password
 from smartgymapi.models import persist, commit, rollback
 from smartgymapi.models.user import get_user_by_email
@@ -66,13 +66,3 @@ def logout(request):
 def _logout(request):
     request.session.invalidate()
     forget(request)
-
-
-@auth_factory_view(request_method='POST', name='checkin',
-                   permission='checkin')
-def checkin(request):
-    schema = CheckinSchema(strict=True)
-    try:
-        result, errors = schema.load(request.json_body)
-    except ValidationError as e:
-        raise HTTPBadRequest(json={'message': str(e)})
