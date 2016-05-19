@@ -3,10 +3,10 @@ import uuid
 from sqlalchemy import Column, String, ForeignKey, relationship, DateTime, func
 from sqlalchemy_utils import UUIDType
 
-from smartgymapi.models.meta import Base, DBSession as session
+from smartgymapi.models.meta import Base, LineageBase, DBSession as session
 
 
-class Device(Base):
+class Device(Base, LineageBase):
     __tablename__ = 'device'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
