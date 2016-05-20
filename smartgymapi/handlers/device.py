@@ -53,3 +53,14 @@ class DeviceHandler(object):
             raise HTTPInternalServerError
         finally:
             commit()
+
+    def delete(self):
+        try:
+            delete(self.request.context)
+        except:
+            log.critical("Something went wrong deleting the device",
+                         exc_info=True)
+            rollback()
+            raise HTTPInternalServerError
+        finally:
+            commit()
