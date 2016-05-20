@@ -13,14 +13,14 @@ log = logging.getLogger(__name__)
 
 
 @view_defaults(containment='smartgymapi.lib.factories.device.DeviceFactory',
+               context='smartgymapi.lib.factories.device.DeviceFactory',
                permission='device',
                renderer='json')
 class DeviceHandler(object):
     def __init__(self, request):
         self.request = request
 
-    @view_config(context=Device, request_method='POST', permission='checkin',
-                 name='checkin')
+    @view_config(request_method='POST', permission='checkin', name='checkin')
     def checkin(self):
         schema = DeviceSchema(strict=True)
         try:
@@ -28,21 +28,20 @@ class DeviceHandler(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        device = self.request.context
+        device = self.request.context.get_checkin_device(
+            result['device_address'])
         device.last_used = datetime.datetime.now()
 
         # launch activity code
 
-    @view_config(context='smartgymapi.lib.factories.device.DeviceFactory',
-                 request_method='GET')
+    @view_config(request_method='GET')
     def list(self):
         return DeviceSchema(
             many=True,
             only=('name', 'device_address', 'device_class')
         ).dump(self.request.context.get_devices())
 
-    @view_config(context='smartgymapi.lib.factories.device.DeviceFactory',
-                 request_method='POST')
+    @view_config(request_method='POST')
     def post(self):
         schema = DeviceSchema(strict=True, only=('name', 'device_address',
                                                  'device_Class'))
