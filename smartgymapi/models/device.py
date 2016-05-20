@@ -10,6 +10,7 @@ class Device(Base, LineageBase):
     __tablename__ = 'device'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
+    name = Column(String(100))
     device_address = Column(String(100))
     device_class = Column(String(100))
     client_address = Column(String(100))

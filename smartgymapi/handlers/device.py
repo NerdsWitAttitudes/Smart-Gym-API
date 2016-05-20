@@ -16,3 +16,5 @@ class Device(object):
 
         device = request.context
         device.last_used = datetime.datetime.now()
+
+        # launch activity code
