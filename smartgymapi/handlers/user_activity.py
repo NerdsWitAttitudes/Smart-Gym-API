@@ -53,11 +53,11 @@ class RESTUserActivity(object):
                     "appid": self.settings['open_weather_api_key'],
                     "units": "metric"}
         r = requests.get(
-            self.settings['open_weather_url'], params=r_params).json()
+            self.settings['open_weather_url_current'], params=r_params).json()
         if r.get('rain'):
             user_activity.raining_outside = True
         try:
-            user_activity.temp = ['main']['temp']
+            user_activity.temp = r['main']['temp']
         except KeyError:
             log.WARN('Temparature not found')
 
