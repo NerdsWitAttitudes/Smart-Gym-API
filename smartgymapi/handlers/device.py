@@ -8,6 +8,8 @@ from pyramid.view import view_config, view_defaults
 from smartgymapi.lib.validation.device import DeviceSchema
 from smartgymapi.model import commit, persist, rollback, delete
 from smartgymapi.models.device import Device
+from smartgymapi.models.gym import get_gym_by_MAC_address
+from smartgymapi.models.user_activity import UserActivity
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +34,26 @@ class DeviceHandler(object):
             result['device_address'])
         device.last_used = datetime.datetime.now()
 
-        # launch activity code
+        activity = device.user.active_activity
+
+        # if there's an active activy for the user the user needs to be checked
+        # out
+        if activity:
+            activity.end_date = datetime.datetime.now()
+        else:
+            activity = UserActivity()
+            activity.user = device.user
+            activity.gym = get_gym_by_MAC_address(result['client_address'])
+
+        try:
+            persist(device)
+            persist(activity)
+        except:
+            log.critical("Something went wrong checking in",
+                         exc_info=True)
+            rollback()
+        finally:
+            commit()
 
     @view_config(request_method='GET')
     def list(self):
