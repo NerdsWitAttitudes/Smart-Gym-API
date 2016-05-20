@@ -19,7 +19,7 @@ class Device(Base, LineageBase):
 
     user = relationship("User")
 
-    def set_field(self, data):
+    def set_fields(self, data):
         for key, value in data.items():
             setattr(self, key, value)
 
