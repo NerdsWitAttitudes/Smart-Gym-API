@@ -1,5 +1,6 @@
 import uuid
-from sqlalchemy import Column, String, DateTime, func, Boolean, relationship
+from sqlalchemy import Column, String, DateTime, func, Boolean
+from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 from smartgymapi.models.meta import Base, LineageBase, DBSession as session
 

@@ -6,7 +6,7 @@ from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.validation.device import DeviceSchema
-from smartgymapi.model import commit, persist, rollback, delete
+from smartgymapi.models import commit, persist, rollback, delete
 from smartgymapi.models.device import Device
 from smartgymapi.models.gym import get_gym_by_MAC_address
 from smartgymapi.models.user_activity import UserActivity
