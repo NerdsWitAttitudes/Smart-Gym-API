@@ -27,7 +27,6 @@ def upgrade():
                     sa.Column('city', sa.String(length=100), nullable=True),
                     sa.PrimaryKeyConstraint('id')
                     )
-    op.drop_table('cardio_activity')
     op.add_column('user_activity', sa.Column(
         'gym_id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=True))
     op.add_column('user_activity', sa.Column(
@@ -44,24 +43,5 @@ def downgrade():
     op.drop_column('user_activity', 'temparature')
     op.drop_column('user_activity', 'raining_outside')
     op.drop_column('user_activity', 'gym_id')
-    op.create_table('cardio_activity',
-                    sa.Column(
-                        'id', postgresql.UUID(), autoincrement=False, nullable=False),
-                    sa.Column(
-                        'activity_id', postgresql.UUID(), autoincrement=False, nullable=False),
-                    sa.Column('start_date', postgresql.TIMESTAMP(
-                        timezone=True), autoincrement=False, nullable=True),
-                    sa.Column('end_date', postgresql.TIMESTAMP(
-                        timezone=True), autoincrement=False, nullable=True),
-                    sa.Column(
-                        'distance', sa.INTEGER(), autoincrement=False, nullable=True),
-                    sa.Column('speed', postgresql.DOUBLE_PRECISION(
-                        precision=53), autoincrement=False, nullable=True),
-                    sa.Column('calories', postgresql.DOUBLE_PRECISION(
-                        precision=53), autoincrement=False, nullable=True),
-                    sa.ForeignKeyConstraint(
-                        ['activity_id'], ['user_activity.id'], name='cardio_activity_activity_id_fkey'),
-                    sa.PrimaryKeyConstraint('id', name='cardio_activity_pkey')
-                    )
     op.drop_table('gym')
     ### end Alembic commands ###
