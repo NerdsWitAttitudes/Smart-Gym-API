@@ -62,10 +62,10 @@ class DeviceHandler(object):
             only=('name', 'device_address', 'device_class')
         ).dump(self.request.context.get_devices())
 
-    @view_config(request_method='POST')
+    @view_config(request_method='POST', permission='public')
     def post(self):
         schema = DeviceSchema(strict=True, only=('name', 'device_address',
-                                                 'device_Class'))
+                                                 'device_class'))
         try:
             result, errors = schema.load(self.request.json_body)
         except ValidationError as e:

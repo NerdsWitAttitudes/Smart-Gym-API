@@ -12,7 +12,7 @@ class Device(Base, LineageBase):
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     name = Column(String(100))
-    device_address = Column(String(17))
+    device_address = Column(String(17), unique=True)
     device_class = Column(String(100))
     user_id = Column(UUIDType, ForeignKey('user.id'))
     last_used = Column(DateTime(timezone=True), default=func.now())

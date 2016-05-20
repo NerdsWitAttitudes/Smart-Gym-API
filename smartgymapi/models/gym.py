@@ -15,7 +15,7 @@ class Gym(Base):
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     name = Column(String(100))
     city = Column(String(100))
-    MAC_address = Column(String(17))
+    MAC_address = Column(String(17), unique=True)
 
 
 def get_gym_by_MAC_address(MAC_address):
