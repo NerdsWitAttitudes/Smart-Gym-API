@@ -1,6 +1,6 @@
 # SmartGym
 
-This documentation describes all endpoints in the SmartGym API.
+This documentation describes all endpoints in the SmartGym API. All endpoints require an authentication token unless explicitely noted.
 
 
 # Group Authentication
@@ -10,7 +10,7 @@ Endpoints related to user authentication.
 ## Login a user [/auth/login]
 ### Login [POST]
 
-Logs in a registered user based on email address and password.
+Logs in a registered user based on email address and password. Does not require an authentication token.
 
 + Request (application/json)
 
@@ -46,6 +46,9 @@ Endpoints related to users.
 
 ## Manage users [/user]
 ### Get users [GET]
+
+Retrieve all users.
+
 + Response 200(application/json)
 
         [{
@@ -72,6 +75,9 @@ Endpoints related to users.
         }]
 
 ### Create a user [POST]
+
+Create a new user. Does not require an authentication token.
+
 + Request (application/json)
 
         {
@@ -92,6 +98,9 @@ Endpoints related to users.
     + user_id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a user.
     
 ### Get a user [GET]
+
+Retrieve a user.
+
 + Response 200(application/json)
 
         {
@@ -107,9 +116,15 @@ Endpoints related to users.
         }
         
 ### Delete a user [DELETE]
+
+Delete a user.
+
 + Response 200(application/json)
 
 ### Update a user [PUT]
+
+Update a user.
+
 + Request (application/json)
 
         {
@@ -125,6 +140,9 @@ Endpoints related to users.
 # Group Devices
 ## Checkin / Checkout [/device/checkin]
 ### Checkin [POST]
+
+Check a user in or out of their gym using their bluetooth enabled device. Does not require an authentication token.
+
 + Request (application/json)
 
         {
@@ -138,6 +156,9 @@ Endpoints related to users.
 
 ## Manage devices [/device]
 ### Get devices [GET]
+
+Retrieve all devices of the user.
+
 + Response 200 (application/json)
 
         [{
@@ -154,6 +175,9 @@ Endpoints related to users.
         }]
     
 ### Create a device [POST]
+
+Create a new device for the user.
+
 + Request (application/json)
 
         {
@@ -170,4 +194,7 @@ Endpoints related to users.
     + device_id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a device.
 
 ### Delete a device [DELETE]
+
+Delete a user's device making it impossible to check in using this device.
+
 + Response 200
