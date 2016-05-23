@@ -42,8 +42,7 @@ class RESTCardioActivty(object):
         if cardio_activity.end_date is None:
             cardio_activity.end_date = datetime.now()
         else:
-            log.critical('Cardio activity is already ended')
-            raise HTTPBadRequest
+            raise HTTPBadRequest(json={'message': 'Cardio activity is already ended'})
 
         self.save(cardio_activity)
 
