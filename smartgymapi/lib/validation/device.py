@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, pre_load
+from marshmallow import Schema, fields
 from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.lib.exceptions.validation import NotUniqueException
@@ -11,7 +11,6 @@ class DeviceSchema(Schema):
     device_class = fields.Integer(required='Device class is required')
     client_address = fields.Str(required='Client address is required')
 
-    @pre_load
     def validate_device_address(self, data):
         try:
             get_device_by_device_address(data['device_address'])

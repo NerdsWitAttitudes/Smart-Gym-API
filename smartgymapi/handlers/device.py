@@ -76,6 +76,9 @@ class DeviceHandler(object):
         schema = DeviceSchema(strict=True, only=('name', 'device_address',
                                                  'device_class'))
         try:
+            # The device address should first be validated to check if no
+            # device already exists with the same address.
+            schema.validate_device_address(self.request.json_body)
             result, errors = schema.load(self.request.json_body)
         except (ValidationError, NotUniqueException) as e:
             raise HTTPBadRequest(json={'message': str(e)})
