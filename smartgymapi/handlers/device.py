@@ -5,6 +5,7 @@ from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_config, view_defaults
 
+from smartgymapi.lib.exceptions.validation import NotUniqueException
 from smartgymapi.lib.validation.device import DeviceSchema
 from smartgymapi.models import commit, persist, rollback, delete
 from smartgymapi.models.device import Device
@@ -76,7 +77,7 @@ class DeviceHandler(object):
                                                  'device_class'))
         try:
             result, errors = schema.load(self.request.json_body)
-        except ValidationError as e:
+        except (ValidationError, NotUniqueException) as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
         device = Device()
