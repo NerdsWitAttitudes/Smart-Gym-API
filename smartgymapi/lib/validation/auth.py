@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, ValidationError, post_load, pre_load
 from sqlalchemy.orm.exc import NoResultFound
 
-from smartgymapi.lib.exceptions.auth import UserFoundException
+from smartgymapi.lib.exceptions.validation import NotUniqueException
 from smartgymapi.models.user import get_user_by_email
 
 
@@ -26,7 +26,8 @@ class SignupSchema(Schema):
             # Meaning no user was found containing this email address.
             # We can proceed to create the new user
             return
-        raise UserFoundException
+        raise NotUniqueException(
+            "A user was found that already contains the given email address")
 
 
 class LoginSchema(Schema):

@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.encrypt import hash_password
-from smartgymapi.lib.exceptions.auth import UserFoundException
+from smartgymapi.lib.exceptions.validation import NotUniqueException
 from smartgymapi.lib.factories.user import UserFactory
 from smartgymapi.lib.validation.auth import SignupSchema
 from smartgymapi.lib.validation.user import UserSchema
@@ -35,7 +35,7 @@ class RESTUser(object):
         try:
             result, errors = SignupSchema(strict=True).load(
                 self.request.json_body)
-        except (ValidationError, UserFoundException) as e:
+        except (ValidationError, NotUniqueException) as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
         user = User()
