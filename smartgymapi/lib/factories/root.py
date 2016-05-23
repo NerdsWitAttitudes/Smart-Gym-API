@@ -12,9 +12,9 @@ class RootFactory(dict):
         self.__parent__ = None
 
         self['auth'] = AuthFactory(self, 'auth')
+        self['cardio_activity'] = CardioActivityFactory(self, 'cardio_activity')
         self['sport_schedule'] = SportScheduleFactory(self, 'sport_schedule')
         self['user'] = UserFactory(self, 'user')
-        self['cardio_activity'] = CardioActivityFactory(self, 'cardio_activity')
 
     def __acl__(self):
             return ((Allow, Everyone, 'public'),)
