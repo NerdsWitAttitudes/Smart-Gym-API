@@ -34,6 +34,9 @@ class RESTCardioActivty(object):
 
     @view_config(context=CardioActivityFactory, request_method='POST')
     def post(self):
+        if is_cardio_activity_active(CardioActivity().activity_id):
+            raise HTTPBadRequest(json={'message': 'There is another cardio_acitivty active'})
+
         self.save(CardioActivity())
 
     @view_config(context=CardioActivity, request_method='PUT')
@@ -64,10 +67,6 @@ class RESTCardioActivty(object):
             raise HTTPBadRequest(json={'message': str(e)})
 
         cardio_activity.set_fields(result)
-
-        if is_cardio_activity_active(cardio_activity.activity_id) and self.request.method == 'POST':
-            log.critical('There is another cardio_acitivty active')
-            raise HTTPBadRequest
 
         try:
             persist(cardio_activity)
