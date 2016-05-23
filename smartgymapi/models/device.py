@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, String, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 
@@ -13,7 +13,7 @@ class Device(Base, LineageBase):
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     name = Column(String(100))
     device_address = Column(String(17), unique=True)
-    device_class = Column(String(100))
+    device_class = Column(Integer)
     user_id = Column(UUIDType, ForeignKey('user.id'))
     last_used = Column(DateTime(timezone=True), default=func.now())
 

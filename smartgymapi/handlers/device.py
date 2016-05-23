@@ -35,15 +35,22 @@ class DeviceHandler(object):
         device.last_used = datetime.datetime.now()
 
         activity = device.user.active_activity
+        self.request.response.json_body = {
+            "user": "{} {}".format(
+                device.user.first_name, device.user.last_name)
+        }
 
         # if there's an active activy for the user the user needs to be checked
         # out
         if activity:
             activity.end_date = datetime.datetime.now()
+            self.request.response.json_body += {"status": "checked out"}
+
         else:
             activity = UserActivity()
             activity.user = device.user
             activity.gym = get_gym_by_MAC_address(result['client_address'])
+            self.request.response.json_body += {"status": "checked in"}
 
         try:
             persist(device)

@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=True),
     sa.Column('device_address', sa.String(length=17), nullable=True),
-    sa.Column('device_class', sa.String(length=100), nullable=True),
+    sa.Column('device_class', sa.Integer, nullable=True),
     sa.Column('user_id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
     sa.Column('last_used', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
