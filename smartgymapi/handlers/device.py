@@ -36,7 +36,7 @@ class DeviceHandler(object):
         device.last_used = datetime.datetime.now()
 
         activity = device.user.active_activity
-        self.request.response.json_body = {
+        response = {
             "user": "{} {}".format(
                 device.user.first_name, device.user.last_name)
         }
@@ -45,14 +45,14 @@ class DeviceHandler(object):
         # out
         if activity:
             activity.end_date = datetime.datetime.now()
-            self.request.response.json_body["status"] = "checked out"
+            response["status"] = "checked out"
 
         else:
             activity = UserActivity()
             activity.start_date = datetime.datetime.now()
             activity.user = device.user
             activity.gym = get_gym_by_MAC_address(result['client_address'])
-            self.request.response.json_body["status"] = "checked in"
+            response["status"] = "checked in"
 
         try:
             persist(device)
@@ -63,6 +63,8 @@ class DeviceHandler(object):
             rollback()
         finally:
             commit()
+
+        return response
 
     @view_config(request_method='GET')
     def list(self):
