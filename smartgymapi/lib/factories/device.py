@@ -9,6 +9,9 @@ class DeviceFactory(BaseFactory):
         super().__init__(*args, **kwargs)
 
     def __getitem__(self, key):
+        if key == 'checkin':
+            raise KeyError
+
         device = get_device(key)
 
         if device:

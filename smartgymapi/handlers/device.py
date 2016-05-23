@@ -44,13 +44,14 @@ class DeviceHandler(object):
         # out
         if activity:
             activity.end_date = datetime.datetime.now()
-            self.request.response.json_body += {"status": "checked out"}
+            self.request.response.json_body["status"] = "checked out"
 
         else:
             activity = UserActivity()
+            activity.start_date = datetime.datetime.now()
             activity.user = device.user
             activity.gym = get_gym_by_MAC_address(result['client_address'])
-            self.request.response.json_body += {"status": "checked in"}
+            self.request.response.json_body["status"] = "checked in"
 
         try:
             persist(device)
