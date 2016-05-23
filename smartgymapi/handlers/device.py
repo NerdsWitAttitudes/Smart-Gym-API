@@ -71,7 +71,7 @@ class DeviceHandler(object):
             only=('name', 'device_address', 'device_class')
         ).dump(self.request.context.get_devices())
 
-    @view_config(request_method='POST', permission='public')
+    @view_config(request_method='POST')
     def post(self):
         schema = DeviceSchema(strict=True, only=('name', 'device_address',
                                                  'device_class'))
