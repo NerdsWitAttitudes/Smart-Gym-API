@@ -1,5 +1,6 @@
 import uuid
 from sqlalchemy import Column, String, DateTime, func, Boolean
+from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 from smartgymapi.models.meta import Base, LineageBase, DBSession as session
 
@@ -22,6 +23,12 @@ class User(Base, LineageBase):
     date_of_birth = Column(DateTime(timezone=True))
     last_login = Column(DateTime(timezone=True))
 
+    active_activity = relationship(
+        "UserActivity",
+        primaryjoin="and_(foreign(UserActivity.user_id)==User.id,"
+                    "UserActivity.end_date==None)",
+        uselist=False)
+
     def set_fields(self, data=None):
         for key, value in data.items():
             setattr(self, key, value)
@@ -33,3 +40,7 @@ def list_users():
 
 def get_user(id_):
     return session.query(User).get(id_)
+
+
+def get_user_by_email(email):
+    return session.query(User).filter(User.email == email).one()

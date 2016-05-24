@@ -12,6 +12,7 @@ pyramid.debug_notfound = false
 pyramid.debug_routematch = false
 pyramid.default_locale_name = en
 pyramid.includes =
+    pyramid_redis_sessions
     pyramid_debugtoolbar
     pyramid_tm
 
@@ -24,9 +25,19 @@ auth.secret =
 auth.timeout = 1200
 auth.reissue_time = 120
 
+
 open_weather_api_key = 
 open_weather_url_current = http://api.openweathermap.org/data/2.5/weather
 open_weather_url_forecast = http://api.openweathermap.org/data/2.5/forecast
+
+redis.sessions.secret =
+redis.sessions.timeout = 1200
+
+redis.sessions.host =
+redis.sessions.port = 6379
+redis.sessions.db = 0
+redis.sessions.password =
+
 
 # By default, the toolbar only appears for clients from IP addresses
 # '127.0.0.1' and '::1'.
