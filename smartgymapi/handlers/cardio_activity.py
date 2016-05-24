@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 @view_defaults(containment=CardioActivityFactory,
-               permission='public',
+               permission='Authenticated',
                renderer='json')
 class RESTCardioActivty(object):
     def __init__(self, request):
