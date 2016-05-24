@@ -34,35 +34,6 @@ class RESTUserActivity(object):
     def get(self):
         return UserActivitySchema().dump(self.request.context)
 
-    @view_config(context=UserActivityFactory, request_method="POST")
-    def post(self):
-        user_activity = UserActivity()
-        try:
-            result, errors = UserActivitySchema(strict=True,
-                                                only=('gym_id',
-                                                      'user_id')).load(
-                self.request.json_body)
-        except ValidationError as e:
-            raise HTTPBadRequest(json={'message': str(e)})
-
-        user_activity.gym = get_gym(result['gym_id'])
-        user_activity.user = get_user(result['user_id'])
-
-        # we give units: metric for the api to return celcius
-        r_params = {"q": user_activity.gym.city,
-                    "appid": self.settings['open_weather_api_key'],
-                    "units": "metric"}
-        r = requests.get(
-            self.settings['open_weather_url_current'], params=r_params).json()
-        if r.get('rain'):
-            user_activity.raining_outside = True
-        try:
-            user_activity.temp = r['main']['temp']
-        except KeyError:
-            log.WARN('Temparature not found')
-
-        self.save(user_activity)
-
     @view_config(context=UserActivityFactory, request_method="PUT")
     def put(self):
         self.save(self.request.context)
