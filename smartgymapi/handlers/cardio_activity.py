@@ -23,10 +23,11 @@ class RESTCardioActivty(object):
     @view_config(context=CardioActivityFactory, request_method='GET')
     def list(self):
         try:
-            activity_id = self.request.GET['activity_id']
-            return CardioActivitySchema(many=True).dump(self.request.context.list_cardio_activities(activity_id)).data
-        except KeyError as e:
-            raise HTTPBadRequest(json={'message': 'Query parameter %s is needed' % e})
+            result, errors = CardioActivitySchema(strict=True, only=('activity_id',)).load(self.request.GET)
+            return CardioActivitySchema(many=True).dump(
+                self.request.context.list_cardio_activities(result['activity_id'])).data
+        except ValidationError as e:
+            raise HTTPBadRequest(json={'message': str(e)})
 
     @view_config(context=CardioActivity, request_method='GET')
     def get(self):
