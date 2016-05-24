@@ -1,4 +1,7 @@
 import logging
+
+from pyramid.security import Allow, Everyone
+
 from smartgymapi.lib.factories import BaseFactory
 from smartgymapi.models.cardio_activity import get_cardio_activity, list_cardio_activities, is_cardio_activity_active
 
@@ -6,7 +9,6 @@ log = logging.getLogger(__name__)
 
 
 class CardioActivityFactory(BaseFactory):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -24,3 +26,6 @@ class CardioActivityFactory(BaseFactory):
 
     def is_cardio_activity_active(self, activity_id):
         return is_cardio_activity_active(activity_id)
+
+    def __acl__(self):
+        return ((Allow, Everyone, 'Authenticated'),)
