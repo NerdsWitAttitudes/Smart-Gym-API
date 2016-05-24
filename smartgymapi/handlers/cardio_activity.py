@@ -31,7 +31,7 @@ class RESTCardioActivty(object):
 
     @view_config(context=CardioActivity, request_method='GET')
     def get(self):
-        return CardioActivity().dump(self.request.context).data
+        return CardioActivitySchema().dump(self.request.context).data
 
     @view_config(context=CardioActivityFactory, request_method='POST')
     def post(self):
