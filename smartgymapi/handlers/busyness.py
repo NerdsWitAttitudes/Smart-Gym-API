@@ -131,6 +131,7 @@ def create_weather_prediction_list(weather_prediction):
     as value for every hour in the day.
     """
     predictions = {}
+    first_iteration = True
     # todo fix van 2 uur vooruit.
     for prediction in weather_prediction['list']:
         rain = False
@@ -139,6 +140,13 @@ def create_weather_prediction_list(weather_prediction):
         temp = prediction['main']['temp']
         weather = {"temperature": temp, "rain": rain}
         predictions[datetime.fromtimestamp(prediction['dt'])] = weather
+        if first_iteration:
+            predictions[
+                datetime.fromtimestamp(
+                    prediction['dt']) + timedelta(hours=-1)] = weather
+            predictions[
+                datetime.fromtimestamp(
+                    prediction['dt']) + timedelta(hours=-2)] = weather
         predictions[
             datetime.fromtimestamp(
                 prediction['dt']) + timedelta(hours=1)] = weather
@@ -160,6 +168,7 @@ def filter_on_weather(activities, weather):
 
     new_activities = []
     for activity in activities:
+        log.info(activity.start_date)
         if activity.weather.rain == weather[
             date_list[activity.start_date.hour]]['rain'] and (
                 activity.weather.temperature >= weather[
