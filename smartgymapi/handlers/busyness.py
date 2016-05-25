@@ -1,7 +1,7 @@
 import logging
 import requests
 
-from datetime import datetime
+from datetime import date, datetime, time, timedelta
 from itertools import groupby
 
 from marshmallow import ValidationError
@@ -71,19 +71,13 @@ class RESTBusyness(object):
             self.settings['open_weather_url_forecast'],
             params=r_params).json()
 
-        weather_prediction = create_weather_prediction_list(r)
-        return
-        # if r.get('rain'):
-        #     weather.raining_outside = True
-        # try:
-        #     weather.temperature = r['main']['temp']
-        # except KeyError:
-        #     log.WARN('Temparature not found')
-
-        #     activity.weather = weather
-
         predicted_busyness = (
-            self.request.context.get_predicted_busyness(result['date']))
+            self.request.context.get_predicted_busyness(
+                date=result['date']
+            ))
+
+        predicted_busyness = filter_on_weather(
+            predicted_busyness, create_weather_prediction_list(r))
 
         self.fill_hour_count(predicted_busyness, False, True)
         return self.hour_count
@@ -133,13 +127,47 @@ def grouper(item):
 
 def create_weather_prediction_list(weather_prediction):
     """
-    This function creates a json object with epoch as key and temperature
+    This function creates a json object with datetime as key and temperature
     as value.
     """
     predictions = {}
     for prediction in weather_prediction['list']:
-        predictions[datetime.fromtimestamp(prediction['dt'])] = prediction[
-            'main']['temp']
-        log.info(datetime.fromtimestamp(prediction['dt']))
+        rain = False
+        if prediction.get('rain'):
+            rain = True
+        predictions[datetime.fromtimestamp(prediction['dt'])] = {
+            "temperature": prediction['main']['temp'],
+            "rain": rain}
+        predictions[
+            datetime.fromtimestamp(prediction['dt']) + timedelta(hours=1)] = {
+            "temperature": prediction['main']['temp'],
+            "rain": rain}
+        predictions[
+            datetime.fromtimestamp(prediction['dt']) + timedelta(hours=2)] = {
+            "temperature": prediction['main']['temp'],
+            "rain": rain}
+
     log.info(predictions)
     return predictions
+
+
+def filter_on_weather(activities, weather):
+    """
+    This function removes all activities where the weather does not match the
+    weather of the day we predict
+    """
+    # create an object with hours as keys and datetimes as value for every
+    # hour of the day
+    date_list = {x: datetime.combine(
+        date.today(), time()) + timedelta(hours=x) for x in range(0, 24)}
+
+    new_activities = []
+    for activity in activities:
+        if activity.weather.rain == weather[
+            date_list[activity.start_date.hour]]['rain'] and (
+                activity.weather.temperature >= weather[
+                    date_list[activity.start_date.hour]]['temperature'] - 5 or
+            activity.weather.temperature <= weather[
+                    date_list[activity.start_date.hour]]['temperature'] + 5):
+            new_activities.append(activity)
+    return new_activities

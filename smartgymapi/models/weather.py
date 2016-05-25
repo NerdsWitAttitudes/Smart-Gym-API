@@ -18,7 +18,7 @@ class Weather(Base):
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     date = Column(DateTime(timezone=True), default=func.now())
 
-    raining_outside = Column(Boolean, default=False)
+    rain = Column(Boolean, default=False)
     temperature = Column(Float(2))
 
     def set_fields(self, data=None):
