@@ -147,6 +147,7 @@ def create_weather_prediction_list(weather_prediction):
             predictions[
                 datetime.fromtimestamp(
                     prediction['dt']) + timedelta(hours=-2)] = weather
+            first_iteration = False
         predictions[
             datetime.fromtimestamp(
                 prediction['dt']) + timedelta(hours=1)] = weather
