@@ -1,12 +1,12 @@
 import logging
-from uuid import UUID
 
 from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_defaults, view_config
-from smartgymapi.models import persist, rollback, commit, delete
+
 from smartgymapi.lib.factories.sport_schedule import SportScheduleFactory
 from smartgymapi.lib.validation.sport_scheme import SportScheduleSchema
+from smartgymapi.models import persist, rollback, commit, delete
 from smartgymapi.models.sport_schedule import SportSchedule
 
 log = logging.getLogger(__name__)
