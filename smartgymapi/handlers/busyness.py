@@ -46,9 +46,29 @@ class RESTBusyness(object):
     def get_todays_busyness(self):
         todays_busyness = self.request.context.get_busyness(
             datetime.now().date())
+
+        try:
+            result, errors = BusynessSchema(strict=True).load(
+                self.request.GET)
+        except ValidationError as e:
+            raise HTTPBadRequest(json={'message': str(e)})
+
+        gym = get_gym(result['gym_id'])
+        r_params = {"q": gym.city,
+                    "appid": self.settings['open_weather_api_key'],
+                    "units": "metric"}
+
+        r = requests.get(
+            self.settings['open_weather_url_forecast'],
+            params=r_params).json()
+
         todays_predicted_busyness = (
             self.request.context.get_predicted_busyness(
                 date=datetime.now().date()))
+
+        todays_predicted_busyness = filter_on_weather(
+            todays_predicted_busyness, create_weather_prediction_list(r))
+
         self.fill_hour_count(todays_busyness)
 
         self.fill_hour_count(todays_predicted_busyness, True, True)
@@ -169,7 +189,6 @@ def filter_on_weather(activities, weather):
 
     new_activities = []
     for activity in activities:
-        log.info(activity.start_date)
         if activity.weather.rain == weather[
             date_list[activity.start_date.hour]]['rain'] and (
                 activity.weather.temperature >= weather[
