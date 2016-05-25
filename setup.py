@@ -11,6 +11,7 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
 requires = [
     'pyramid',
     'pyramid_debugtoolbar',
+    'pyramid_redis_sessions',
     'pyramid_tm',
     'SQLAlchemy',
     'sqlalchemy_utils',
@@ -20,19 +21,20 @@ requires = [
     'waitress',
     'marshmallow',
     'alembic',
+    'pycrypto',
     'bcrypt'
-    ]
+]
 
 setup(name='smartgymapi',
       version='0.0',
       description='smartgymapi',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
-        "Programming Language :: Python",
-        "Framework :: Pyramid",
-        "Topic :: Internet :: WWW/HTTP",
-        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
-        ],
+          "Programming Language :: Python",
+          "Framework :: Pyramid",
+          "Topic :: Internet :: WWW/HTTP",
+          "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+      ],
       author='',
       author_email='',
       url='',

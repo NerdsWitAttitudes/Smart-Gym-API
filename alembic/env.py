@@ -2,8 +2,11 @@ from __future__ import with_statement
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
+from smartgymapi.models.device import Device
+from smartgymapi.models.gym import Gym
 from smartgymapi.models.meta import Base
 from smartgymapi.models.user import User
+from smartgymapi.models.user_activity import UserActivity
 from smartgymapi.models.sport_schedule import SportSchedule
 
 # this is the Alembic Config object, which provides

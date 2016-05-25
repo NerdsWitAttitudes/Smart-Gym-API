@@ -1,0 +1,200 @@
+# SmartGym
+
+This documentation describes all endpoints in the SmartGym API. All endpoints require an authentication token unless explicitely noted.
+
+
+# Group Authentication
+
+Endpoints related to user authentication.
+
+## Login a user [/auth/login]
+### Login [POST]
+
+Logs in a registered user based on email address and password. Does not require an authentication token.
+
++ Request (application/json)
+
+        {
+            "email": "example@email.com",
+            "password": "examplepassword123"
+        }
+
++ Response 200
+
+    + Headers
+    
+            Set-Cookie: exampleauthenticationcookie
+
+
+## Logout a user [/auth/logout]
+### Logout [POST]
+
+Logs out the user based on the authentication cookie.
+
++ Request (application/json)
+
+    + Headers
+    
+            Set-Cookie: exampleauthcookie
+
++ Response 200
+
+
+# Group Users
+
+Endpoints related to users.
+
+## Manage users [/user]
+### Get users [GET]
+
+Retrieve all users.
+
++ Response 200(application/json)
+
+        [{
+            "id": "00000000-0000-0000-0000-000000000000",
+            "email": "example@email.com",
+            "first_name": "example",
+            "last_name": "name",
+            "date_created": "",
+            "date_updated": "",
+            "country": "The Netherlands",
+            "date_of_birth": "",
+            "last_login": ""
+        },
+        {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "email": "example2@email.com",
+            "first_name": "other",
+            "last_name": "name",
+            "date_created": "",
+            "date_updated": "",
+            "country": "The Netherlands",
+            "date_of_birth": "",
+            "last_login": ""
+        }]
+
+### Create a user [POST]
+
+Create a new user. Does not require an authentication token.
+
++ Request (application/json)
+
+        {
+            "email": "example@email.com",
+            "password": "example password",
+            "password_confirm": "example password confirm",
+            "first_name": "example",
+            "last_name": "name",
+            "country": "The Netherlands",
+            "date_of_birth": ""
+        }
+
++ Response 200
+
+
+## Manage a user for a given id [/user/{user_id}]
++ Parameters
+    + user_id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a user.
+    
+### Get a user [GET]
+
+Retrieve a user.
+
++ Response 200(application/json)
+
+        {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "email": "example@email.com",
+            "first_name": "example",
+            "last_name": "name",
+            "date_created": "",
+            "date_updated": "",
+            "country": "The Netherlands",
+            "date_of_birth": "",
+            "last_login": ""
+        }
+        
+### Delete a user [DELETE]
+
+Delete a user.
+
++ Response 200(application/json)
+
+### Update a user [PUT]
+
+Update a user.
+
++ Request (application/json)
+
+        {
+            "email": "example@email.com",
+            "first_name": "example",
+            "last_name": "name",
+            "country": "The Netherlands",
+            "date_of_birth": ""
+        }
+
++ response 200(application/json)
+
+# Group Devices
+## Checkin / Checkout [/device/checkin]
+### Checkin [POST]
+
+Check a user in or out of their gym using their bluetooth enabled device. Does not require an authentication token.
+
++ Request (application/json)
+
+        {
+            "name": "Example name",
+            "device_address": "00:00:00:00:00:00",
+            "device_class": "00000",
+            "client_address": "00:00:00:00:00:00"
+        }
+    
++ Response 200
+
+## Manage devices [/device]
+### Get devices [GET]
+
+Retrieve all devices of the user.
+
++ Response 200 (application/json)
+
+        [{
+            "name": "Example name",
+            "device_address": "00:00:00:00:00:00",
+            "device_class": "00000",
+            "client_address": "00:00:00:00:00:00"
+        },
+        {
+            "name": "Other example",
+            "device_address": "00:00:00:00:00:00",
+            "device_class": "00000",
+            "client_address": "00:00:00:00:00:00"
+        }]
+    
+### Create a device [POST]
+
+Create a new device for the user.
+
++ Request (application/json)
+
+        {
+            "name": "Example name",
+            "device_address": "00:00:00:00:00:00",
+            "device_class": "00000",
+            "client_address": "00:00:00:00:00:00"
+        }
+
++ Response 200
+    
+## Manage a device for a given id [/device/{device_id}]
++ Parameters
+    + device_id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a device.
+
+### Delete a device [DELETE]
+
+Delete a user's device making it impossible to check in using this device.
+
++ Response 200
