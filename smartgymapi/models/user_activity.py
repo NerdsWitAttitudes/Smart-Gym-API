@@ -9,7 +9,7 @@ from sqlalchemy.sql import extract
 from sqlalchemy_utils import UUIDType
 
 from smartgymapi.models.meta import Base, DBSession as session, LineageBase
-
+from smartgymapi.models.weather import Weather
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class UserActivity(Base, LineageBase):
     start_date = Column(DateTime(timezone=True), default=func.now())
     end_date = Column(DateTime(timezone=True))
 
-    weahter_id = Column(UUIDType, ForeignKey('weather.id'))
+    weather_id = Column(UUIDType, ForeignKey('weather.id'))
     user_id = Column(UUIDType, ForeignKey('user.id'))
     gym_id = Column(UUIDType, ForeignKey('gym.id'))
 
@@ -54,6 +54,10 @@ def list_user_activities(date=None):
     return q
 
 
-def list_user_activities_for_prediction(date):
-    return session.query(UserActivity).filter(
-        extract('dow', UserActivity.start_date) == date.isocalendar()[2])
+def list_user_activities_for_prediction(date, temperature, rain=False):
+    return session.query(UserActivity).join(
+        Weather, UserActivity.weather_id == Weather.id).filter(
+        extract('dow',
+                UserActivity.start_date) == date.isocalendar()[2]).filter(
+        Weather.temperature >= (temperature - 5),
+        Weather.temperature <= (temperature + 5)).filter(Weather.rain == rain)

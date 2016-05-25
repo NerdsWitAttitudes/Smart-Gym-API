@@ -8,6 +8,7 @@ from smartgymapi.models.meta import Base
 from smartgymapi.models.user import User
 from smartgymapi.models.user_activity import UserActivity
 from smartgymapi.models.sport_schedule import SportSchedule
+from smartgymapi.models.weather import Weather
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

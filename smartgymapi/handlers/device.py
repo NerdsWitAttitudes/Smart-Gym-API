@@ -25,6 +25,7 @@ class DeviceHandler(object):
 
     def __init__(self, request):
         self.request = request
+        self.settings = self.request.registry.settings
 
     @view_config(request_method='POST', permission='checkin', name='checkin')
     def checkin(self):

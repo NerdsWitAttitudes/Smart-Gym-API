@@ -1,4 +1,6 @@
 import logging
+import requests
+
 from datetime import datetime
 from itertools import groupby
 
@@ -6,6 +8,8 @@ from marshmallow import ValidationError
 
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.view import view_config, view_defaults
+
+from smartgymapi.models.gym import get_gym
 
 from smartgymapi.lib.factories.busyness import BusynessFactory
 from smartgymapi.lib.validation.busyness import BusynessSchema
@@ -21,6 +25,7 @@ class RESTBusyness(object):
     def __init__(self, request):
         self.request = request
         self.hour_count = {}
+        self.settings = request.registry.settings
 
     @view_config(name='past', context=BusynessFactory,
                  request_method="GET")
@@ -57,6 +62,26 @@ class RESTBusyness(object):
                 self.request.GET)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
+
+        gym = get_gym(result['gym_id'])
+        r_params = {"q": gym.city,
+                    "appid": self.settings['open_weather_api_key'],
+                    "units": "metric"}
+        r = requests.get(
+            self.settings['open_weather_url_forecast'],
+            params=r_params).json()
+
+        weather_prediction = create_weather_prediction_list(r)
+        log.info(weather_prediction)
+        return
+        # if r.get('rain'):
+        #     weather.raining_outside = True
+        # try:
+        #     weather.temperature = r['main']['temp']
+        # except KeyError:
+        #     log.WARN('Temparature not found')
+
+        #     activity.weather = weather
 
         predicted_busyness = (
             self.request.context.get_predicted_busyness(result['date']))
@@ -105,3 +130,15 @@ def grouper(item):
     activities.
     """
     return item.start_date.year
+
+
+def create_weather_prediction_list(weather_prediction):
+    """
+    This function creates a json object with epoch as key and temperature
+    as value.
+    """
+    predictions = {}
+    for prediction in weather_prediction['list']:
+        predictions[prediction['dt']] = prediction['main']['temp']
+        log.info(predictions[prediction['dt']])
+    return predictions

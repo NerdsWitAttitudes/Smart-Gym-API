@@ -1,4 +1,5 @@
 import logging
+import requests
 
 from pyramid.security import Allow, Everyone
 
@@ -22,5 +23,5 @@ class BusynessFactory(BaseFactory):
     def get_busyness(self, date):
         return list_user_activities(date)
 
-    def get_predicted_busyness(self, date):
+    def get_predicted_busyness(self, date, temperature, rain=False):
         return list_user_activities_for_prediction(date)

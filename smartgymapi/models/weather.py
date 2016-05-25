@@ -13,13 +13,13 @@ log = logging.getLogger(__name__)
 
 
 class Weather(Base):
-    __tablename__ = 'Weather'
+    __tablename__ = 'weather'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     date = Column(DateTime(timezone=True), default=func.now())
 
     raining_outside = Column(Boolean, default=False)
-    temparature = Column(Float(precision=1))
+    temperature = Column(Float(2))
 
     def set_fields(self, data=None):
         for key, value in data.items():
