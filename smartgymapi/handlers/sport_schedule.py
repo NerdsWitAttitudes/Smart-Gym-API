@@ -22,11 +22,11 @@ class RESTSportScheme(object):
     @view_config(context=SportScheduleFactory, request_method="GET")
     def list(self):
         try:
-            user_id = UUID(self.request.GET['user_id'])
+            result, errors = SportScheduleSchema(strict=True, only=('user_id',)).load(self.request.GET)
+            return SportScheduleSchema(many=True).dump(
+                self.request.context.get_sport_schedules(result['user_id'])).data
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
-
-        return SportScheduleSchema(many=True).dump(self.request.context.get_sport_schedules(user_id)).data
 
     @view_config(context=SportSchedule, request_method="GET")
     def get(self):
