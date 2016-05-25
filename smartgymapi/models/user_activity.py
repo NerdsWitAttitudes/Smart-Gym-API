@@ -2,7 +2,7 @@ import logging
 import uuid
 
 from sqlalchemy import (
-    Column, Date, DateTime, ForeignKey, cast, func, or_, and_)
+    Column, Date, DateTime, ForeignKey, cast, func, or_, and_, desc)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import extract
 
@@ -58,17 +58,5 @@ def list_user_activities_for_prediction(date):
     return session.query(UserActivity).join(
         Weather, UserActivity.weather_id == Weather.id).filter(
         extract('dow',
-                UserActivity.start_date) == date.isocalendar()[2])
-
-    # .filter(
-    #     and_(Weather.rain == weather[
-    #         date_list[extract('hour', UserActivity.start_date)]]['rain'],
-    #         or_(
-    #             Weather.temperature >= weather[
-    #                 date_list[UserActivity.start_date.hour]][
-    #                 'temperature'] - 5,
-    #             Weather.temperature <= weather[
-    #                 date_list[UserActivity.start_date.hour]][
-    #                 'temperature'] + 5
-    #     )
-    #     ))
+                UserActivity.start_date) == date.isocalendar()[2]).order_by(
+        desc(UserActivity.start_date))

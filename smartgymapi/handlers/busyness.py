@@ -88,7 +88,7 @@ class RESTBusyness(object):
         if predict:
             amount_of_days = 0
             # group the activities.
-            for (year, items) in groupby(activities, grouper):
+            for (day, items) in groupby(activities, grouper):
                 amount_of_days += 1
                 for item in items:
                     # For today we only need to predict the hours still to come
@@ -112,42 +112,39 @@ class RESTBusyness(object):
         Add activity to the correct hour if exists. If not create and set
         value to 1
         """
-        self.hour_count[str(item.start_date.hour)] = \
-            self.hour_count.setdefault(
+        self.hour_count[
+            str(item.start_date.hour)] = self.hour_count.setdefault(
             str(item.start_date.hour), 0) + 1
 
 
 def grouper(item):
     """
-    This function return the year of the activity. This is for grouping the
+    This function return the day of the activity. This is for grouping the
     activities.
     """
-    return item.start_date.year
+    return item.start_date.day
 
 
 def create_weather_prediction_list(weather_prediction):
     """
     This function creates a json object with datetime as key and temperature
-    as value.
+    as value for every hour in the day.
     """
     predictions = {}
+    # todo fix van 2 uur vooruit.
     for prediction in weather_prediction['list']:
         rain = False
         if prediction.get('rain'):
             rain = True
-        predictions[datetime.fromtimestamp(prediction['dt'])] = {
-            "temperature": prediction['main']['temp'],
-            "rain": rain}
+        temp = prediction['main']['temp']
+        weather = {"temperature": temp, "rain": rain}
+        predictions[datetime.fromtimestamp(prediction['dt'])] = weather
         predictions[
-            datetime.fromtimestamp(prediction['dt']) + timedelta(hours=1)] = {
-            "temperature": prediction['main']['temp'],
-            "rain": rain}
+            datetime.fromtimestamp(
+                prediction['dt']) + timedelta(hours=1)] = weather
         predictions[
-            datetime.fromtimestamp(prediction['dt']) + timedelta(hours=2)] = {
-            "temperature": prediction['main']['temp'],
-            "rain": rain}
-
-    log.info(predictions)
+            datetime.fromtimestamp(
+                prediction['dt']) + timedelta(hours=2)] = weather
     return predictions
 
 
@@ -166,8 +163,11 @@ def filter_on_weather(activities, weather):
         if activity.weather.rain == weather[
             date_list[activity.start_date.hour]]['rain'] and (
                 activity.weather.temperature >= weather[
-                    date_list[activity.start_date.hour]]['temperature'] - 5 or
+                    date_list[activity.start_date.hour]][
+                    'temperature'] - 5 or
             activity.weather.temperature <= weather[
-                    date_list[activity.start_date.hour]]['temperature'] + 5):
+                    date_list[activity.start_date.hour]][
+                    'temperature'] + 5):
             new_activities.append(activity)
+
     return new_activities
