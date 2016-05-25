@@ -72,7 +72,6 @@ class RESTBusyness(object):
             params=r_params).json()
 
         weather_prediction = create_weather_prediction_list(r)
-        log.info(weather_prediction)
         return
         # if r.get('rain'):
         #     weather.raining_outside = True
@@ -139,6 +138,8 @@ def create_weather_prediction_list(weather_prediction):
     """
     predictions = {}
     for prediction in weather_prediction['list']:
-        predictions[prediction['dt']] = prediction['main']['temp']
-        log.info(predictions[prediction['dt']])
+        predictions[datetime.fromtimestamp(prediction['dt'])] = prediction[
+            'main']['temp']
+        log.info(datetime.fromtimestamp(prediction['dt']))
+    log.info(predictions)
     return predictions
