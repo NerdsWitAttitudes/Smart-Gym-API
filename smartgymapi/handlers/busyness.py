@@ -71,8 +71,10 @@ class RESTBusyness(object):
 
         self.fill_hour_count(todays_busyness)
 
-        self.fill_hour_count(todays_predicted_busyness, True, True)
-        return self.hour_count
+        self.fill_hour_count(todays_predicted_busyness,
+                             True, True)
+        return replace_keys_with_datetimes(datetime.now().date(),
+                                           self.hour_count)
 
     @view_config(name='predict', context=BusynessFactory,
                  request_method="GET")
@@ -200,3 +202,13 @@ def filter_on_weather(activities, weather):
             new_activities.append(activity)
 
     return new_activities
+
+
+def replace_keys_with_datetimes(date, hour_count):
+    new_hour_count = {}
+    for key in hour_count.keys():
+        new_key = datetime.combine(date, time(int(key), 00))
+        if new_key != key:
+            new_hour_count[new_key.isoformat()] = hour_count[key]
+    log.info(new_hour_count)
+    return new_hour_count
