@@ -23,7 +23,8 @@ requires = [
     'alembic',
     'pycrypto',
     'bcrypt',
-    'requests'
+    'requests',
+    'pytz',
 ]
 
 setup(name='smartgymapi',

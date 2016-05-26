@@ -3,6 +3,7 @@ import requests
 
 from datetime import date, datetime, time, timedelta
 from itertools import groupby
+from pytz import timezone
 
 from marshmallow import ValidationError
 
@@ -67,7 +68,8 @@ class RESTBusyness(object):
                 date=datetime.now().date()))
 
         todays_predicted_busyness = filter_on_weather(
-            todays_predicted_busyness, create_weather_prediction_list(r))
+            todays_predicted_busyness, create_weather_prediction_list(r),
+            date.today())
 
         self.fill_hour_count(todays_busyness)
 
@@ -99,10 +101,12 @@ class RESTBusyness(object):
             ))
 
         predicted_busyness = filter_on_weather(
-            predicted_busyness, create_weather_prediction_list(r))
+            predicted_busyness, create_weather_prediction_list(r),
+            result['date'])
 
         self.fill_hour_count(predicted_busyness, False, True)
-        return self.hour_count
+        return replace_keys_with_datetimes(result['date'],
+                                           self.hour_count)
 
     def fill_hour_count(self, activities, predict_for_today=False,
                         predict=False):
@@ -122,9 +126,12 @@ class RESTBusyness(object):
                 if (predict_for_today and
                         int(hour) <= datetime.now().hour):
                     continue
-                # take the average.
-                self.hour_count[hour] = round(
-                    self.hour_count[hour] / amount_of_days)
+                    # take the average.
+                    self.hour_count[hour] = round(
+                        self.hour_count[hour] / amount_of_days - 1)
+                else:
+                    self.hour_count[hour] = round(
+                        self.hour_count[hour] / amount_of_days)
         else:
             for item in activities:
                 self.add_item_to_hour_count(item)
@@ -153,8 +160,6 @@ def create_weather_prediction_list(weather_prediction):
     as value for every hour in the day.
     """
     predictions = {}
-    first_iteration = True
-    # todo fix van 2 uur vooruit.
     for prediction in weather_prediction['list']:
         rain = False
         if prediction.get('rain'):
@@ -162,53 +167,46 @@ def create_weather_prediction_list(weather_prediction):
         temp = prediction['main']['temp']
         weather = {"temperature": temp, "rain": rain}
         predictions[datetime.fromtimestamp(prediction['dt'])] = weather
-        if first_iteration:
-            predictions[
-                datetime.fromtimestamp(
-                    prediction['dt']) + timedelta(hours=-1)] = weather
-            predictions[
-                datetime.fromtimestamp(
-                    prediction['dt']) + timedelta(hours=-2)] = weather
-            first_iteration = False
-        predictions[
-            datetime.fromtimestamp(
-                prediction['dt']) + timedelta(hours=1)] = weather
-        predictions[
-            datetime.fromtimestamp(
-                prediction['dt']) + timedelta(hours=2)] = weather
     return predictions
 
 
-def filter_on_weather(activities, weather):
+def filter_on_weather(activities, weather, date):
     """
     This function removes all activities where the weather does not match the
     weather of the day we predict
     """
     # create an object with hours as keys and datetimes as value for every
-    # hour of the day
+    # 3 hours of the day
+    # todo, not date.today but day we want to predict
     date_list = {x: datetime.combine(
-        date.today(), time()) + timedelta(hours=x) for x in range(0, 24)}
-
+        date, time()) + timedelta(hours=x) for x in range(0, 24)}
     new_activities = []
+    # calculate offset
+    offset = timezone('CET').utcoffset(datetime.now()).total_seconds() / 3600
     for activity in activities:
+        # get the correct key because the weather is saved in steps of 3 hours.
+        # we have to add our gmt offset to that number.
+        correct_key = activity.start_date.hour + \
+            (3 - (activity.start_date.hour % 3)) + offset
         if activity.weather.rain == weather[
-            date_list[activity.start_date.hour]]['rain'] and (
+            date_list[correct_key]]['rain'] and (
                 activity.weather.temperature >= weather[
-                    date_list[activity.start_date.hour]][
+                    date_list[correct_key]][
                     'temperature'] - 5 or
             activity.weather.temperature <= weather[
-                    date_list[activity.start_date.hour]][
+                    date_list[correct_key]][
                     'temperature'] + 5):
             new_activities.append(activity)
-
     return new_activities
 
 
 def replace_keys_with_datetimes(date, hour_count):
+    """
+    This function replaces the keys in hour_count with real datetimes
+    """
     new_hour_count = {}
     for key in hour_count.keys():
         new_key = datetime.combine(date, time(int(key), 00))
         if new_key != key:
             new_hour_count[new_key.isoformat()] = hour_count[key]
-    log.info(new_hour_count)
     return new_hour_count
