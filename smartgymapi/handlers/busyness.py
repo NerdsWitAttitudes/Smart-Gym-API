@@ -40,7 +40,8 @@ class RESTBusyness(object):
         past = self.request.context.get_busyness(date=result['date'])
 
         self.fill_hour_count(past)
-        return self.hour_count
+        return replace_keys_with_datetimes(result['date'],
+                                           self.hour_count)
 
     @view_config(name='today', context=BusynessFactory,
                  request_method="GET")
@@ -177,7 +178,6 @@ def filter_on_weather(activities, weather, date):
     """
     # create an object with hours as keys and datetimes as value for every
     # 3 hours of the day
-    # todo, not date.today but day we want to predict
     date_list = {x: datetime.combine(
         date, time()) + timedelta(hours=x) for x in range(0, 24)}
     new_activities = []
