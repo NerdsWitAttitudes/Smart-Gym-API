@@ -1,11 +1,13 @@
 import datetime
 import logging
 from functools import partial
+
 from marshmallow import ValidationError
 from pyramid.view import view_config
 from pyramid.security import forget, remember
 from pyramid.httpexceptions import HTTPBadRequest
 from sqlalchemy.orm.exc import NoResultFound
+
 from smartgymapi.lib.factories.auth import AuthFactory
 from smartgymapi.lib.validation.auth import LoginSchema
 from smartgymapi.lib.encrypt import check_password
