@@ -1,6 +1,7 @@
 from pyramid.security import Allow, Everyone
 
 from smartgymapi.lib.factories.auth import AuthFactory
+from smartgymapi.lib.factories.cardio_acitivty import CardioActivityFactory
 from smartgymapi.lib.factories.device import DeviceFactory
 from smartgymapi.lib.factories.sport_schedule import SportScheduleFactory
 from smartgymapi.lib.factories.user import UserFactory
