@@ -2,8 +2,10 @@ import datetime
 import logging
 
 from marshmallow import ValidationError
-from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
+from pyramid.httpexceptions import (HTTPNotFound, HTTPBadRequest,
+                                    HTTPInternalServerError)
 from pyramid.view import view_config, view_defaults
+from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.lib.exceptions.validation import NotUniqueException
 from smartgymapi.lib.validation.device import DeviceSchema
@@ -28,11 +30,14 @@ class DeviceHandler(object):
         schema = DeviceSchema(strict=True)
         try:
             result, errors = schema.load(self.request.json_body)
+            device = self.request.context.get_checkin_device(
+                result['device_address'])
+
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
+        except NoResultFound as e:
+            raise HTTPNotFound(json={'message': str(e)})
 
-        device = self.request.context.get_checkin_device(
-            result['device_address'])
         device.last_used = datetime.datetime.now()
 
         activity = device.user.active_activity
@@ -66,12 +71,12 @@ class DeviceHandler(object):
 
         return response
 
-    @view_config(request_method='GET')
+    @view_config(request_method='GET', permission='public')
     def list(self):
         return DeviceSchema(
             many=True,
-            only=('name', 'device_address', 'device_class')
-        ).dump(self.request.context.get_devices())
+            only=('id', 'name', 'device_address', 'device_class')
+        ).dump(self.request.context.get_devices()).data
 
     @view_config(request_method='POST')
     def post(self):
