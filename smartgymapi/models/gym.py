@@ -5,12 +5,12 @@ from sqlalchemy import Column, String
 
 from sqlalchemy_utils import UUIDType
 
-from smartgymapi.models.meta import Base, DBSession as session, LineageBase
+from smartgymapi.models.meta import Base, DBSession as session
 
 log = logging.getLogger(__name__)
 
 
-class Gym(Base, LineageBase):
+class Gym(Base):
     __tablename__ = 'gym'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)

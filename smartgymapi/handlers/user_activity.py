@@ -1,6 +1,6 @@
 import logging
-import requests
 
+import requests
 from marshmallow import ValidationError
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
@@ -9,8 +9,6 @@ from pyramid.view import view_config, view_defaults
 from smartgymapi.lib.factories.user_activity import UserActivityFactory
 from smartgymapi.lib.validation.user_activity import UserActivitySchema
 from smartgymapi.models import commit, persist, rollback
-from smartgymapi.models.gym import get_gym
-from smartgymapi.models.user import get_user
 from smartgymapi.models.user_activity import UserActivity
 
 log = logging.getLogger(__name__)
@@ -28,11 +26,11 @@ class RESTUserActivity(object):
     @view_config(context=UserActivityFactory, request_method="GET")
     def list(self):
         return UserActivitySchema(many=True).dump(
-            self.request.context.get_user_activities())
+            self.request.context.get_user_activities()).data
 
     @view_config(context=UserActivity, request_method="GET")
     def get(self):
-        return UserActivitySchema().dump(self.request.context)
+        return UserActivitySchema().dump(self.request.context).data
 
     @view_config(context=UserActivityFactory, request_method="PUT")
     def put(self):

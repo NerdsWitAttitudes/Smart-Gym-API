@@ -1,11 +1,13 @@
 import datetime
 import logging
-import requests
 
+import requests
 from marshmallow import ValidationError
+
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_config, view_defaults
 
+from smartgymapi.handlers.busyness import get_weather
 from smartgymapi.lib.exceptions.validation import NotUniqueException
 from smartgymapi.lib.validation.device import DeviceSchema
 from smartgymapi.models import commit, persist, rollback, delete
@@ -58,13 +60,7 @@ class DeviceHandler(object):
             activity.gym = get_gym_by_MAC_address(result['client_address'])
             response["status"] = "checked in"
 
-            # we give units: metric for the api to return celcius
-            r_params = {"q": activity.gym.city,
-                        "appid": self.settings['open_weather_api_key'],
-                        "units": "metric"}
-            r = requests.get(
-                self.settings['open_weather_url_current'],
-                params=r_params).json()
+            r = get_weather(self.settings, activity.gym)
             weather = Weather()
             if r.get('rain'):
                 weather.raining_outside = True

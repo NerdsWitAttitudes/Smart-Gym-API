@@ -1,9 +1,11 @@
 import logging
-import requests
-
 from datetime import date, datetime, time, timedelta
+
 from itertools import groupby
+
 from pytz import timezone
+
+import requests
 
 from marshmallow import ValidationError
 
@@ -20,7 +22,9 @@ log = logging.getLogger(__name__)
 
 @view_defaults(containment=BusynessFactory,
                permission='busyness',
-               renderer='json')
+               renderer='json',
+               context=BusynessFactory,
+               request_method="GET")
 class RESTBusyness(object):
 
     def __init__(self, request):
@@ -28,8 +32,7 @@ class RESTBusyness(object):
         self.hour_count = {}
         self.settings = request.registry.settings
 
-    @view_config(name='past', context=BusynessFactory,
-                 request_method="GET")
+    @view_config(name='past')
     def get_past_busyness(self):
         try:
             result, errors = BusynessSchema(strict=True).load(
@@ -43,26 +46,18 @@ class RESTBusyness(object):
         return replace_keys_with_datetimes(result['date'],
                                            self.hour_count)
 
-    @view_config(name='today', context=BusynessFactory,
-                 request_method="GET")
+    @view_config(name='today')
     def get_todays_busyness(self):
-        todays_busyness = self.request.context.get_busyness(
-            datetime.now().date())
-
         try:
             result, errors = BusynessSchema(strict=True).load(
                 self.request.GET)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        gym = get_gym(result['gym_id'])
-        r_params = {"q": gym.city,
-                    "appid": self.settings['open_weather_api_key'],
-                    "units": "metric"}
+        todays_busyness = self.request.context.get_busyness(
+            datetime.now().date())
 
-        r = requests.get(
-            self.settings['open_weather_url_forecast'],
-            params=r_params).json()
+        r = get_weather(self.settings, get_gym(result['gym_id']))
 
         todays_predicted_busyness = (
             self.request.context.get_predicted_busyness(
@@ -79,8 +74,7 @@ class RESTBusyness(object):
         return replace_keys_with_datetimes(datetime.now().date(),
                                            self.hour_count)
 
-    @view_config(name='predict', context=BusynessFactory,
-                 request_method="GET")
+    @view_config(name='predict')
     def get_predicted_busyness(self):
         try:
             result, errors = BusynessSchema(strict=True).load(
@@ -88,13 +82,7 @@ class RESTBusyness(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        gym = get_gym(result['gym_id'])
-        r_params = {"q": gym.city,
-                    "appid": self.settings['open_weather_api_key'],
-                    "units": "metric"}
-        r = requests.get(
-            self.settings['open_weather_url_forecast'],
-            params=r_params).json()
+        r = get_weather(self.settings, get_gym(result['gym_id']))
 
         predicted_busyness = (
             self.request.context.get_predicted_busyness(
@@ -127,7 +115,8 @@ class RESTBusyness(object):
                 if (predict_for_today and
                         int(hour) <= datetime.now().hour):
                     continue
-                    # take the average.
+                    # take the average not including today in the amount of
+                    # days.
                     self.hour_count[hour] = round(
                         self.hour_count[hour] / amount_of_days - 1)
                 else:
@@ -145,6 +134,16 @@ class RESTBusyness(object):
         self.hour_count[
             str(item.start_date.hour)] = self.hour_count.setdefault(
             str(item.start_date.hour), 0) + 1
+
+
+def get_weather(settings, gym):
+    r_params = {"q": gym.city,
+                "appid": settings['open_weather_api_key'],
+                "units": "metric"}
+
+    return requests.get(
+        settings['open_weather_url_forecast'],
+        params=r_params).json()
 
 
 def grouper(item):

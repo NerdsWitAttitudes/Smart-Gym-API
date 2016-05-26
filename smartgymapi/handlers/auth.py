@@ -5,7 +5,7 @@ from functools import partial
 from marshmallow import ValidationError
 from pyramid.view import view_config
 from pyramid.security import forget, remember
-from pyramid.httpexceptions import HTTPBadRequest
+from pyramid.httpexceptions import HTTPBadRequest, HTTPOk
 from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.lib.factories.auth import AuthFactory
@@ -28,7 +28,6 @@ auth_factory_view = partial(
 def login(request):
     _logout(request)
     schema = LoginSchema(strict=True)
-
     try:
         result, errors = schema.load(request.json_body)
     except ValidationError as e:
