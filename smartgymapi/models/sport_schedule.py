@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Integer, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, String, Integer, ForeignKey, UniqueConstraint, DateTime
 from sqlalchemy_utils import UUIDType
 from smartgymapi.models.meta import Base, DBSession, LineageBase
 
@@ -13,6 +13,7 @@ class SportSchedule(Base, LineageBase):
     user_id = Column(UUIDType, ForeignKey('user.id'))
     name = Column(String(100))
     reminder_minutes = Column(Integer)
+    datetime = Column(DateTime)
 
     def set_fields(self, data=None):
         for key, value in data.items():
