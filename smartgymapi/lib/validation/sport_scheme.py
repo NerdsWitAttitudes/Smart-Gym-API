@@ -7,3 +7,4 @@ class SportScheduleSchema(Schema):
     name = fields.Str(required='Name is required')
     reminder_minutes = fields.Integer(required='Reminder is required')
     datetime = fields.DateTime(required='Datetime is required')
+    is_active = fields.Boolean(default=True)
