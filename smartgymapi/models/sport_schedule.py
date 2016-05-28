@@ -30,3 +30,7 @@ def list_sport_schedules(user_id=None):
 
 def get_sport_schedule(id_):
     return DBSession.query(SportSchedule).get(id_)
+
+
+def get_sport_schedule_by_name(sport_schedule_name):
+    return DBSession.query(SportSchedule).filter(SportSchedule.name == sport_schedule_name).one_or_none()

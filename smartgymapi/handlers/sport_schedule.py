@@ -7,7 +7,7 @@ from pyramid.view import view_defaults, view_config
 from smartgymapi.lib.factories.sport_schedule import SportScheduleFactory
 from smartgymapi.lib.validation.sport_scheme import SportScheduleSchema
 from smartgymapi.models import persist, rollback, commit, delete
-from smartgymapi.models.sport_schedule import SportSchedule
+from smartgymapi.models.sport_schedule import SportSchedule, get_sport_schedule_by_name
 
 log = logging.getLogger(__name__)
 
@@ -34,6 +34,9 @@ class RESTSportScheme(object):
 
     @view_config(context=SportScheduleFactory, request_method="POST")
     def post(self):
+        if get_sport_schedule_by_name(self.request.json_body['name']):
+            raise HTTPBadRequest(json={'message': 'Sport schedule name already exists'})
+
         self.save(SportSchedule())
 
     @view_config(context=SportSchedule, request_method="PUT")
