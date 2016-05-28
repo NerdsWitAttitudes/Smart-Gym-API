@@ -24,6 +24,7 @@ def upgrade():
     sa.Column('user_id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
     sa.Column('name', sa.String(length=100), nullable=True),
     sa.Column('reminder_minutes', sa.Integer(), nullable=True),
+    sa.Column('datetime', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
