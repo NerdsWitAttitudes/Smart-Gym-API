@@ -2,6 +2,7 @@ import logging
 import uuid
 
 from sqlalchemy import Column, String
+
 from sqlalchemy_utils import UUIDType
 
 from smartgymapi.models.meta import Base, DBSession as session
@@ -16,6 +17,14 @@ class Gym(Base):
     name = Column(String(100))
     city = Column(String(100))
     MAC_address = Column(String(17), unique=True)
+
+
+def get_gym(id_):
+    return session.query(Gym).get(id_)
+
+
+def list_gyms():
+    return session.query(Gym)
 
 
 def get_gym_by_MAC_address(MAC_address):
