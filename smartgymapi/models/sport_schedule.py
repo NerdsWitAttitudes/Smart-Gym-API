@@ -1,7 +1,7 @@
 import uuid
 
 from sqlalchemy import Column, String, Integer, ForeignKey, UniqueConstraint, Time, Boolean
-from sqlalchemy_utils import UUIDType, WeekDaysType
+from sqlalchemy_utils import UUIDType
 
 from smartgymapi.models.meta import Base, DBSession, LineageBase
 
@@ -16,7 +16,7 @@ class SportSchedule(Base, LineageBase):
     name = Column(String(100))
     reminder_minutes = Column(Integer)
     time = Column(Time)
-    weekdays = Column(WeekDaysType)
+    weekdays = Column(Integer)
     is_active = Column(Boolean)
 
     def set_fields(self, data=None):
