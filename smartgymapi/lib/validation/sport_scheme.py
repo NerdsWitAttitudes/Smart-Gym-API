@@ -8,7 +8,7 @@ class SportScheduleSchema(Schema):
     user_id = fields.UUID(required='User id is required')
     name = fields.Str(required='Name is required')
     reminder_minutes = fields.Integer(required='Reminder is required')
-    time = fields.Str(required='Datetime is required')
+    time = fields.Str(required='Time is required')
     weekdays = fields.List(fields.Integer(), required='Weekday is required')
     is_active = fields.Boolean(default=True)
 
