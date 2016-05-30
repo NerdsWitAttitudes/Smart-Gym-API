@@ -15,7 +15,7 @@ class SportSchedule(Base, LineageBase):
     user_id = Column(UUIDType, ForeignKey('user.id'))
     name = Column(String(100))
     reminder_minutes = Column(Integer)
-    time = Column(Time)
+    time = Column(Time(timezone=True))
     weekdays = Column(Integer)
     is_active = Column(Boolean)
 
