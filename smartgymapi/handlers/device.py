@@ -1,7 +1,6 @@
 import datetime
 import logging
 
-import requests
 from marshmallow import ValidationError
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
@@ -9,6 +8,7 @@ from pyramid.view import view_config, view_defaults
 
 from smartgymapi.handlers.busyness import get_weather
 from smartgymapi.lib.exceptions.validation import NotUniqueException
+from smartgymapi.lib.spotify import update_playlist
 from smartgymapi.lib.validation.device import DeviceSchema
 from smartgymapi.models import commit, persist, rollback, delete
 from smartgymapi.models.device import Device
@@ -80,7 +80,7 @@ class DeviceHandler(object):
             rollback()
         finally:
             commit()
-
+        update_playlist(self.request)
         return response
 
     @view_config(request_method='GET')
