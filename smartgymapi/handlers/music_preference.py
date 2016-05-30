@@ -35,6 +35,19 @@ class RESTUserActivity(object):
     def put(self):
         self.save(self.request.context)
 
+    @view_config(context=MusicPreferenceFactory, request_method="POST")
+    def post(self):
+        try:
+            result, errors = MusicPreferenceSchema(strict=True).load(
+                self.request.json_body)
+        except ValidationError as e:
+            raise HTTPBadRequest(json={'message': str(e)})
+
+        music_preference = MusicPreference()
+        music_preference.user = self.request.user
+
+        self.save(music_preference)
+
     def save(self, music_preference):
         try:
             result, errors = MusicPreferenceSchema(strict=True).load(
@@ -43,7 +56,7 @@ class RESTUserActivity(object):
             raise HTTPBadRequest(json={'message': str(e)})
 
         music_preference.set_fields(result)
-
+        music_preference.user = self.request.user
         try:
             persist(music_preference)
         except:
