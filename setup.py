@@ -22,7 +22,9 @@ requires = [
     'marshmallow',
     'alembic',
     'pycrypto',
-    'bcrypt'
+    'bcrypt',
+    'requests',
+    'pytz',
 ]
 
 setup(name='smartgymapi',
