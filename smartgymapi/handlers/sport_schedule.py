@@ -34,8 +34,11 @@ class RESTSportScheme(object):
 
     @view_config(context=SportScheduleFactory, request_method="POST")
     def post(self):
-        if get_sport_schedule_by_name(self.request.json_body['name']):
-            raise KeyError(json={'message': 'Sport schedule name already exists'})
+        try:
+            if get_sport_schedule_by_name(self.request.json_body['name']):
+                raise HTTPBadRequest(json={'message': 'Sport schedule name already exists'})
+        except KeyError as e:
+            raise HTTPBadRequest(json={'message': str(e)})
 
         self.save(SportSchedule())
 
