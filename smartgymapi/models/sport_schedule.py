@@ -24,7 +24,7 @@ class SportSchedule(Base, LineageBase):
             setattr(self, key, value)
 
 
-def list_sport_schedules(user_id=None):
+def list_sport_schedules(user_id):
     q = DBSession.query(SportSchedule)
     if user_id:
         q = q.filter(SportSchedule.user_id == user_id)
