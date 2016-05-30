@@ -1,5 +1,6 @@
 import datetime
 import logging
+import uuid
 
 from marshmallow import ValidationError
 from pyramid.httpexceptions import (HTTPNotFound, HTTPBadRequest,
@@ -106,8 +107,10 @@ class DeviceHandler(object):
             raise HTTPBadRequest(json={'message': str(e)})
 
         device = Device()
+        device.id = uuid.uuid4()
         device.user = self.request.user
         device.set_fields(result)
+        response_body = DeviceSchema().dump(device).data
 
         try:
             persist(device)
@@ -119,7 +122,7 @@ class DeviceHandler(object):
         finally:
             commit()
 
-        raise HTTPCreated(json=device)
+        raise HTTPCreated(json=response_body)
 
     @view_config(context=Device, request_method='DELETE')
     def delete(self):
