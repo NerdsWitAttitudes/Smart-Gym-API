@@ -9,7 +9,7 @@ class DeviceSchema(Schema):
     id = fields.Str(dump_only=True)
     name = fields.Str(required='Name is required')
     device_address = fields.Str(required='Device address is required')
-    device_class = fields.Integer(required='Device class is required')
+    device_class = fields.Integer()
     client_address = fields.Str(required='Client address is required')
 
     def validate_device_address(self, data):
