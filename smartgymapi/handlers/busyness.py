@@ -48,6 +48,7 @@ class RESTBusyness(object):
 
     @view_config(name='today')
     def get_todays_busyness(self):
+        log.info(self.request.user.first_name)
         try:
             result, errors = BusynessSchema(strict=True).load(
                 self.request.GET)
