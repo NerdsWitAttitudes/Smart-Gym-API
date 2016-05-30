@@ -23,7 +23,7 @@ requires = [
     'alembic',
     'pycrypto',
     'bcrypt',
-    'dateutil'
+    'python-dateutil'
 ]
 
 setup(name='smartgymapi',
