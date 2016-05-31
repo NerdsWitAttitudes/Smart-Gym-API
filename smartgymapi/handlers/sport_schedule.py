@@ -22,9 +22,8 @@ class RESTSportScheme(object):
     @view_config(context=SportScheduleFactory, request_method="GET")
     def list(self):
         try:
-            result, errors = SportScheduleSchema(strict=True, only=('user_id',)).load(self.request.GET)
             return SportScheduleSchema(many=True).dump(
-                self.request.context.get_sport_schedules(result['user_id'])).data
+                self.request.context.get_sport_schedules()).data
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 

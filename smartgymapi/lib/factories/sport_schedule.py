@@ -21,8 +21,8 @@ class SportScheduleFactory(BaseFactory):
 
         raise KeyError()
 
-    def get_sport_schedules(self, user_id):
-        return list_sport_schedules(user_id)
+    def get_sport_schedules(self):
+        return list_sport_schedules(self.request.user)
 
     def __acl__(self):
         return (
