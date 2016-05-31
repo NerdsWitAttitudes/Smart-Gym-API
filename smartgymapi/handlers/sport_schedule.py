@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 @view_defaults(containment=SportScheduleFactory,
-               permission='public',
+               permission='sport_schedule',
                renderer='json')
 class RESTSportScheme(object):
     def __init__(self, request):
