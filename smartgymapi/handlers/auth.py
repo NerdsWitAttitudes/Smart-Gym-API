@@ -28,7 +28,6 @@ auth_factory_view = partial(
 def login(request):
     _logout(request)
     schema = LoginSchema(strict=True)
-
     try:
         result, errors = schema.load(request.json_body)
     except ValidationError as e:

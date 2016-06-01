@@ -23,6 +23,8 @@ requires = [
     'alembic',
     'pycrypto',
     'bcrypt',
+    'requests',
+    'pytz',
     'python-dateutil'
 ]
 
