@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, ForeignKey, Integer, DateTime, Float
+from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 
 from smartgymapi.models.meta import Base, LineageBase, DBSession
@@ -20,6 +21,8 @@ class CardioActivity(Base, LineageBase):
     speed = Column(Float)
     calories = Column(Float)
 
+    user_activity = relationship('UserActivity')
+
     @property
     def is_active(self):
         return self.end_date is None
@@ -33,8 +36,8 @@ def get_cardio_activity(id_):
     return DBSession.query(CardioActivity).get(id_)
 
 
-def list_cardio_activities(activity_id):
-    return DBSession.query(CardioActivity).filter(CardioActivity.activity_id == activity_id)
+def list_cardio_activities(active_activity):
+    return DBSession.query(CardioActivity).filter(CardioActivity.user_activity == active_activity)
 
 
 def is_cardio_activity_active(activity_id):

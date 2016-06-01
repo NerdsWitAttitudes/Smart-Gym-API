@@ -23,9 +23,8 @@ class RESTCardioActivty(object):
     @view_config(context=CardioActivityFactory, request_method='GET')
     def list(self):
         try:
-            result, errors = CardioActivitySchema(strict=True, only=('activity_id',)).load(self.request.GET)
             return CardioActivitySchema(many=True).dump(
-                self.request.context.list_cardio_activities(result['activity_id'])).data
+                self.request.context.list_cardio_activities(self.request.user.active_activity)).data
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
