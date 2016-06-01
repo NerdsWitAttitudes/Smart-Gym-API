@@ -4,7 +4,8 @@ import uuid
 
 from marshmallow import ValidationError
 from pyramid.httpexceptions import (HTTPNotFound, HTTPBadRequest,
-                                    HTTPInternalServerError, HTTPCreated)
+                                    HTTPInternalServerError, HTTPCreated,
+                                    HTTPNoContent)
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -135,3 +136,5 @@ class DeviceHandler(object):
             raise HTTPInternalServerError
         finally:
             commit()
+
+        raise HTTPNoContent
