@@ -24,7 +24,7 @@ class RESTCardioActivty(object):
     def list(self):
         try:
             return CardioActivitySchema(many=True).dump(
-                self.request.context.list_cardio_activities(self.request.user.active_activity)).data
+                self.request.context.list_cardio_activities()).data
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
