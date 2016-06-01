@@ -25,6 +25,11 @@ auth.secret =
 auth.timeout = 1200
 auth.reissue_time = 120
 
+
+open_weather_api_key = 
+open_weather_url_current = http://api.openweathermap.org/data/2.5/weather
+open_weather_url_forecast = http://api.openweathermap.org/data/2.5/forecast
+
 redis.sessions.secret =
 redis.sessions.timeout = 1200
 

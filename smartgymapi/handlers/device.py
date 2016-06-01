@@ -1,16 +1,20 @@
 import datetime
 import logging
 
+import requests
 from marshmallow import ValidationError
+
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_config, view_defaults
 
+from smartgymapi.handlers.busyness import get_weather
 from smartgymapi.lib.exceptions.validation import NotUniqueException
 from smartgymapi.lib.validation.device import DeviceSchema
 from smartgymapi.models import commit, persist, rollback, delete
 from smartgymapi.models.device import Device
 from smartgymapi.models.gym import get_gym_by_MAC_address
 from smartgymapi.models.user_activity import UserActivity
+from smartgymapi.models.weather import Weather
 
 log = logging.getLogger(__name__)
 
@@ -20,8 +24,10 @@ log = logging.getLogger(__name__)
                permission='device',
                renderer='json')
 class DeviceHandler(object):
+
     def __init__(self, request):
         self.request = request
+        self.settings = self.request.registry.settings
 
     @view_config(request_method='POST', permission='checkin', name='checkin')
     def checkin(self):
@@ -53,6 +59,17 @@ class DeviceHandler(object):
             activity.user = device.user
             activity.gym = get_gym_by_MAC_address(result['client_address'])
             response["status"] = "checked in"
+
+            r = get_weather(self.settings, activity.gym)
+            weather = Weather()
+            if r.get('rain'):
+                weather.raining_outside = True
+            try:
+                weather.temperature = r['main']['temp']
+            except KeyError:
+                log.WARN('Temparature not found')
+
+            activity.weather = weather
 
         try:
             persist(device)

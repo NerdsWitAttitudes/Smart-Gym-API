@@ -198,3 +198,159 @@ Create a new device for the user.
 Delete a user's device making it impossible to check in using this device.
 
 + Response 200
+
+# Group Busyness
+## Get past busyness [/busyness/past]
+### Past [GET]
+
+Get the busyness for a specific date in the past
+
++ Request (application/json)
+
+        {
+            "date": "2016-05-10",
+            "gym_id": "00000000-0000-0000-0000-000000000000",
+        }
+
++ Response 200
+
+        {
+            "2016-05-10T00:00:00": 1,
+            "2016-05-10T01:00:00": 3,
+            "2016-05-10T03:00:00": 3,
+            "2016-05-10T08:00:00": 6,
+            "2016-05-10T10:00:00": 2,
+            "2016-05-10T12:00:00": 5,
+            "2016-05-10T13:00:00": 9,
+            "2016-05-10T14:00:00": 12,
+        }
+    
+
+
+## Get today's busyness [/busyness/today]
+### Today [GET]
+
+Get the busyness for today
+
++ Response 200 (application/json)
+
+        + Request (application/json)
+
+        {
+            "gym_id": "00000000-0000-0000-0000-000000000000",
+        }
+
++ Response 200
+
+        {
+            "2016-05-10T00:00:00": 1,
+            "2016-05-10T01:00:00": 3,
+            "2016-05-10T03:00:00": 3,
+            "2016-05-10T08:00:00": 6,
+            "2016-05-10T10:00:00": 2,
+            "2016-05-10T12:00:00": 5,
+            "2016-05-10T13:00:00": 9,
+            "2016-05-10T14:00:00": 12,
+        }
+    
+## predict busyness [/busyness/predict]
+### predict [GET]
+
+Get the busyness for a specific date in the future (max 5 days from now) 
+
++ Response 200 (application/json)
+
+        + Request (application/json)
+
+        {
+            "date": "2016-05-10",
+            "gym_id": "00000000-0000-0000-0000-000000000000",
+        }
+
++ Response 200
+
+        {
+            "2016-05-10T00:00:00": 1,
+            "2016-05-10T01:00:00": 3,
+            "2016-05-10T03:00:00": 3,
+            "2016-05-10T08:00:00": 6,
+            "2016-05-10T10:00:00": 2,
+            "2016-05-10T12:00:00": 5,
+            "2016-05-10T13:00:00": 9,
+            "2016-05-10T14:00:00": 12,
+        }
+        
+# Group Sport Schedules
+## Get schedules [/sport_schedule]
+### Get sport schedule [GET]
+
+For this GET request, it will return a list of all the sport schedule of the authenticated user.
+
+
++ Response 200(application/json)
+
+        [
+          {
+            "name": "Sport schedule name",
+            "weekdays": [
+              2,
+              4
+            ],
+            "time": "00:00:00-00:00",
+            "is_active": true,
+            "reminder_minutes": 15,
+            "id": "00000000-0000-0000-0000-000000000000",
+            "user_id": "00000000-0000-0000-0000-000000000000"
+          }
+        ]
+    
+### Add sport schedule [POST]
+
+Adds a sport schedule for the authenticated user.
+
++ Request (application/json)
+
+        {
+            "name": "Sport schedule name",
+            "weekdays": [
+              2,
+              4
+            ],
+            "time": "00:00:00-00:00",
+            "is_active": true,
+            "reminder_minutes": 15,
+            "user_id": "00000000-0000-0000-0000-000000000000"
+        }
+        
++ Response 200
+
+## Manage sport schedules [/sport_schedule/{id}]
++ Parameters
+    + id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a sport schedule.
+    
+### Change a sport schedule [PUT]
+
+This will update a sport schedule with one or multiple fields for the authenticated user.
+
++ Request (application/json)
+
+        {
+            "name": "Sport schedule new name",
+            "weekdays": [
+              2,
+              4,
+              5
+            ],
+            "time": "00:00:00-00:00",
+            "is_active": false,
+            "reminder_minutes": 15,
+            "user_id": "00000000-0000-0000-0000-000000000000"
+        }
+        
++ Response 200
+
+### Delete a sport schedule [DELETE]
+
+This will delete a sport schedule of the authenticated user.
+
++ Response 200
