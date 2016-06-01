@@ -46,7 +46,7 @@ def get_user(id_):
 
 def list_current_users_in_gym(gym_id):
     return session.query(User).join(
-        UserActivity, User.id == UserActivity.id).filter(
+        UserActivity, User.id == UserActivity.user_id).filter(
     ).filter(UserActivity.end_date == None,
              UserActivity.gym_id == gym_id)
 

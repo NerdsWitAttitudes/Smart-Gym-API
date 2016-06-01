@@ -8,7 +8,7 @@ from pyramid.view import view_config, view_defaults
 
 from smartgymapi.handlers.busyness import get_weather
 from smartgymapi.lib.exceptions.validation import NotUniqueException
-from smartgymapi.lib.spotify.playlist import update_playlist
+from smartgymapi.lib.spotify.spotify import Spotify
 from smartgymapi.lib.validation.device import DeviceSchema
 from smartgymapi.models import commit, persist, rollback, delete
 from smartgymapi.models.device import Device
@@ -70,17 +70,17 @@ class DeviceHandler(object):
                 log.warn('Temparature not found')
 
             activity.weather = weather
-
+        spotify = Spotify(self.request, activity.gym)
         try:
             persist(device)
             persist(activity)
+            spotify.update_playlist()
         except:
             log.critical("Something went wrong checking in",
                          exc_info=True)
             rollback()
         finally:
             commit()
-        update_playlist(self.request, activity.gym.id)
         return response
 
     @view_config(request_method='GET')
