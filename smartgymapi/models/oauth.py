@@ -5,6 +5,7 @@ import uuid
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, String
 from sqlalchemy_utils import UUIDType
 
+from smartgymapi.lib.encrypt import get_secure_token
 from smartgymapi.models.meta import Base
 
 log = logging.getLogger(__name__)
@@ -15,7 +16,7 @@ class OAuthClient(Base):
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     client_id = Column(UUIDType(binary=False), default=uuid.uuid4)
-    client_secret = Column(String(64))
+    client_secret = Column(String(64), default=get_secure_token)
 
 
 class OAuthAccessToken(Base):
@@ -24,7 +25,7 @@ class OAuthAccessToken(Base):
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     client_id = (Column(UUIDType(binary=False),
                         ForeignKey('oauth_consumer.id')))
-    access_token = Column(String(64))
+    access_token = Column(String(64), default=get_secure_token)
     token_type = Column(Enum("bearer"), default="bearer")
     expiry_date = Column(DateTime(timezone=True))
 
