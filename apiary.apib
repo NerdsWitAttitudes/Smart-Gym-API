@@ -279,3 +279,78 @@ Get the busyness for a specific date in the future (max 5 days from now)
             "2016-05-10T13:00:00": 9,
             "2016-05-10T14:00:00": 12,
         }
+        
+# Group Sport Schedules
+## Get schedules [/sport_schedule]
+### Get sport schedule [GET]
+
+For this GET request, it will return a list of all the sport schedule of the authenticated user.
+
+
++ Response 200(application/json)
+
+        [
+          {
+            "name": "Sport schedule name",
+            "weekdays": [
+              2,
+              4
+            ],
+            "time": "00:00:00-00:00",
+            "is_active": true,
+            "reminder_minutes": 15,
+            "id": "00000000-0000-0000-0000-000000000000",
+            "user_id": "00000000-0000-0000-0000-000000000000"
+          }
+        ]
+    
+### Add sport schedule [POST]
+
+Adds a sport schedule for the authenticated user.
+
++ Request (application/json)
+
+        {
+            "name": "Sport schedule name",
+            "weekdays": [
+              2,
+              4
+            ],
+            "time": "00:00:00-00:00",
+            "is_active": true,
+            "reminder_minutes": 15,
+            "user_id": "00000000-0000-0000-0000-000000000000"
+        }
+        
++ Response 200
+
+## Manage sport schedules [/sport_schedule/{id}]
++ Parameters
+    + id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a sport schedule.
+    
+### Change a sport schedule [PUT]
+
+This will update a sport schedule with one or multiple fields for the authenticated user.
+
++ Request (application/json)
+
+        {
+            "name": "Sport schedule new name",
+            "weekdays": [
+              2,
+              4,
+              5
+            ],
+            "time": "00:00:00-00:00",
+            "is_active": false,
+            "reminder_minutes": 15,
+            "user_id": "00000000-0000-0000-0000-000000000000"
+        }
+        
++ Response 200
+
+### Delete a sport schedule [DELETE]
+
+This will delete a sport schedule of the authenticated user.
+
++ Response 200
