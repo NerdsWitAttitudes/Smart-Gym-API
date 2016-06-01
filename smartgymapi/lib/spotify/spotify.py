@@ -1,5 +1,5 @@
 import base64
-
+import json
 import logging
 import requests
 
@@ -48,14 +48,14 @@ class Spotify(object):
         if r.status_code is not requests.codes.ok:
             # this means the playlist does not exist yet.
             # so we have to create it
-            headers = {"Authorization": "Bearer {}".format(self.access_token),
-                       "Content-Type": "application/json"}
-            data = {'name': 'test'}
+            headers = {"Content-Type": "application/json",
+                       "Authorization": "Bearer {}".format(self.access_token)}
+
             create_playlist_request = requests.post(
                 '{}/users/{}/playlists'.format(
                     self.settings['spotify.base_url'],
                     self.settings['spotify.user_id']),
-                headers=headers, data=data)
+                headers=headers, data=json.dumps({"name": str(self.gym.id)}))
             log.info(create_playlist_request)
 
         # todo
