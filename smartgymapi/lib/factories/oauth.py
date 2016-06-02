@@ -1,5 +1,8 @@
 import logging
 
+from marshmallow import ValidationError
+from pyramid.httpexceptions import HTTPBadRequest
+
 from smartgymapi.lib.factories import BaseFactory
 from smartgymapi.lib.validation.oauth import GETTokenSchema
 
@@ -22,7 +25,7 @@ class OAuthFactory(BaseFactory):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        return self[grant_type]
+        return self[result['grant_type']]
 
 
 class ClientCredentialsFactory(BaseFactory):
