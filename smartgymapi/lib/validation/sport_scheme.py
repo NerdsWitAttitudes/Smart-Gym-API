@@ -5,7 +5,7 @@ from marshmallow import Schema, fields, ValidationError, validates
 
 class SportScheduleSchema(Schema):
     id = fields.Str(dump_only=True)
-    user_id = fields.UUID(required='User id is required')
+    user_id = fields.UUID(dump_only=True)
     name = fields.Str(required='Name is required')
     reminder_minutes = fields.Integer(required='Reminder is required')
     time = fields.Str(required='Time is required')

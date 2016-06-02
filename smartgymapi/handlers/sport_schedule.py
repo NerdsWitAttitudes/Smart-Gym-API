@@ -52,6 +52,7 @@ class RESTSportScheme(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
+        sport_schedule.user = self.request.user
         sport_schedule.set_fields(result)
 
         try:
