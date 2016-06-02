@@ -17,6 +17,7 @@ class OAuthClient(Base):
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     client_id = Column(UUIDType(binary=False), default=uuid.uuid4)
     client_secret = Column(String(64), default=get_secure_token)
+    name = Column(String(100))
 
 
 class OAuthAccessToken(Base):
