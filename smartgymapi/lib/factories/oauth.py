@@ -6,7 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.lib.factories import BaseFactory
 from smartgymapi.lib.security import extract_client_authorization
-from smartgymapi.lib.validation.oauth import GETTokenSchema, OAuthClientSchema
+from smartgymapi.lib.validation.oauth import OAuthClientSchema
 from smartgymapi.models.oauth import get_client
 
 log = logging.getLogger(__name__)
@@ -23,14 +23,9 @@ class TokenFactory(BaseFactory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def get_client(self):
+    def get_client(self, grant_type):
         try:
-            result, errors = GETTokenSchema(strict=True).load(
-                self.request.json_body)
-
-            grant_type = result['grant_type']
             client_credentials = extract_client_authorization(self.request)
-
             result, errors = OAuthClientSchema(
                 strict=True, only=('client_id', 'client_secret')).load(
                     client_credentials)

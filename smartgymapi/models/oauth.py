@@ -3,6 +3,7 @@ import logging
 import uuid
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, String
+from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 
 from smartgymapi.lib.encrypt import get_secure_token
@@ -30,6 +31,8 @@ class OAuthAccessToken(Base):
     access_token = Column(String(64), default=get_secure_token)
     token_type = Column(Enum("bearer"), default="bearer")
     expiry_date = Column(DateTime(timezone=True))
+
+    client = relationship('OAuthClient')
 
     @property
     def expires_in(self):
