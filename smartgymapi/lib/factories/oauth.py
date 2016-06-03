@@ -2,9 +2,12 @@ import logging
 
 from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest
+from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.lib.factories import BaseFactory
+from smartgymapi.lib.security import extract_client_authorization
 from smartgymapi.lib.validation.oauth import GETTokenSchema, OAuthClientSchema
+from smartgymapi.models.oauth import get_client
 
 log = logging.getLogger(__name__)
 
@@ -13,25 +16,28 @@ class OAuthFactory(BaseFactory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self['client_credentials'] = ClientCredentialsFactory(
-            self,
-            'client_credentials')
-
-    def __getitem__(self, key):
-        try:
-            result, errors = GETTokenSchema(strict=True).load(
-                self.request.json_body)
-        except ValidationError as e:
-            raise HTTPBadRequest(json={'message': str(e)})
-
-        return self[result['grant_type']]
+        self['token'] = TokenFactory(self, 'token')
 
 
-class ClientCredentialsFactory(BaseFactory):
+class TokenFactory(BaseFactory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def __getitem__(self, key):
+    def get_client(self):
         try:
+            result, errors = GETTokenSchema(strict=True).load(
+                self.request.json_body)
+
+            grant_type = result['grant_type']
+            client_credentials = extract_client_authorization(self.request)
+
             result, errors = OAuthClientSchema(
-                strict=True, only=('client_id', 'client_secret'))
+                strict=True, only=('client_id', 'client_secret')).load(
+                    client_credentials)
+        except ValidationError as e:
+            raise HTTPBadRequest(json=str(e))
+
+        try:
+            return get_client(**result)
+        except NoResultFound:
+            raise HTTPBadRequest

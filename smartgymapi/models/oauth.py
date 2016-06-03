@@ -6,7 +6,7 @@ from sqlalchemy import Column, DateTime, Enum, ForeignKey, String
 from sqlalchemy_utils import UUIDType
 
 from smartgymapi.lib.encrypt import get_secure_token
-from smartgymapi.models.meta import Base
+from smartgymapi.models.meta import Base, DBSession as session
 
 log = logging.getLogger(__name__)
 
@@ -36,3 +36,9 @@ class OAuthAccessToken(Base):
         seconds_left = (self.expiry_date - datetime.datetime.now()
                         ).total_seconds()
         return seconds_left if seconds_left > 0 else 0
+
+
+def get_client(client_id, client_secret):
+    return session.query(OAuthClient).filter(
+        OAuthClient.client_id == client_id,
+        OAuthClient.client_secret == client_secret).one()
