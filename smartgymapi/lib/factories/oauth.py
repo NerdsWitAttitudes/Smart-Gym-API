@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest
 
 from smartgymapi.lib.factories import BaseFactory
-from smartgymapi.lib.validation.oauth import GETTokenSchema
+from smartgymapi.lib.validation.oauth import GETTokenSchema, OAuthClientSchema
 
 log = logging.getLogger(__name__)
 
@@ -18,10 +18,9 @@ class OAuthFactory(BaseFactory):
             'client_credentials')
 
     def __getitem__(self, key):
-        # preemptive validation stuff
         try:
             result, errors = GETTokenSchema(strict=True).load(
-                self.request.GET)
+                self.request.json_body)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
@@ -31,3 +30,8 @@ class OAuthFactory(BaseFactory):
 class ClientCredentialsFactory(BaseFactory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def __getitem__(self, key):
+        try:
+            result, errors = OAuthClientSchema(
+                strict=True, only=('client_id', 'client_secret'))

@@ -20,4 +20,9 @@ class OAuthClientSchema(Schema):
             equal=64,
             error='client_secret must be exactly 64 characters long')
     )
+    client_type = fields.Str(
+        required='client_type is required',
+        validate=OneOf(
+            ('confidential', 'public'),
+            error='client_type must be set to one of the following: {choices}'))
     name = fields.Str(required='name is required')
