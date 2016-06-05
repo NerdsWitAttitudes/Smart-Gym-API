@@ -36,3 +36,8 @@ class TokenFactory(BaseFactory):
             return get_client(**result)
         except NoResultFound:
             raise HTTPBadRequest
+
+
+class ClientFactory(BaseFactory):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

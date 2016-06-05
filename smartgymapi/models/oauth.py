@@ -21,6 +21,10 @@ class OAuthClient(Base):
     client_type = Column(Enum("confidential", "public"), default="public")
     name = Column(String(100))
 
+    def set_fields(self, data):
+        for key, value in data.items():
+            setattr(self, key, value)
+
 
 class OAuthAccessToken(Base):
     __tablename__ = 'oauth_access_token'
