@@ -28,7 +28,7 @@ class OAuthAccessToken(Base):
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     client_id = (Column(UUIDType(binary=False),
                         ForeignKey('oauth_consumer.id')))
-    access_token = Column(String(64), default=get_secure_token)
+    access_token = Column(String(64), default=get_secure_token, unique=True)
     token_type = Column(Enum("bearer"), default="bearer")
     expiry_date = Column(DateTime(timezone=True))
 
@@ -45,3 +45,8 @@ def get_client(client_id, client_secret):
     return session.query(OAuthClient).filter(
         OAuthClient.client_id == client_id,
         OAuthClient.client_secret == client_secret).one()
+
+
+def get_token_by_token(access_token):
+    return session.query(OAuthAccessToken).filter(
+        OAuthAccessToken.access_token == access_token).one()
