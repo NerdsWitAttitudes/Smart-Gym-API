@@ -2,6 +2,7 @@ import logging
 
 from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest
+from pyramid.security import Allow, Everyone
 from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.lib.factories import BaseFactory
@@ -22,6 +23,9 @@ class OAuthFactory(BaseFactory):
 class TokenFactory(BaseFactory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def __acl__(self):
+        ((Allow, Everyone, 'token'),)
 
     def get_client(self, grant_type):
         try:

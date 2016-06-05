@@ -1,4 +1,4 @@
-from pyramid.security import Allow, Authenticated, Everyone
+from pyramid.security import Allow, Authenticated
 
 from smartgymapi.lib.factories import BaseFactory
 from smartgymapi.models.device import get_device, get_device_by_device_address
@@ -26,5 +26,5 @@ class DeviceFactory(BaseFactory):
     def __acl__(self):
         return (
             (Allow, Authenticated, 'device'),
-            (Allow, Everyone, 'checkin')
+            (Allow, 'client:confidential', 'checkin')
         )
