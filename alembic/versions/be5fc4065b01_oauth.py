@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
     sa.Column('client_id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
     sa.Column('client_secret', sa.String(length=64), nullable=True),
-    sa.Column('client_type', sa.Enum('confidential', 'public'), nullable=True),
+    sa.Column('client_type', sa.Enum('confidential', 'public', name='client_type'), nullable=True),
     sa.Column('name', sa.String(length=100), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
@@ -31,7 +31,7 @@ def upgrade():
     sa.Column('id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
     sa.Column('client_id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
     sa.Column('access_token', sa.String(length=64), nullable=True),
-    sa.Column('token_type', sa.Enum('bearer'), nullable=True),
+    sa.Column('token_type', sa.Enum('bearer', name='token_type'), nullable=True),
     sa.Column('expiry_date', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['client_id'], ['oauth_consumer.id'], ),
     sa.PrimaryKeyConstraint('id'),
