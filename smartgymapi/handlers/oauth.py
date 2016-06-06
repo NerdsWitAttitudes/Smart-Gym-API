@@ -76,12 +76,12 @@ class OAuthClientHandler(object):
         except ValidationError as e:
             raise HTTPBadRequest(json=str(e))
 
-        return_body = {
+        response_body = {
             "client_id": uuid.uuid4(),
             "client_secret": get_secure_token()
         }
 
-        result.update(return_body)
+        result.update(response_body)
 
         client = OAuthClient()
         client.set_fields(result)
@@ -95,4 +95,5 @@ class OAuthClientHandler(object):
         finally:
             commit()
 
-        return return_body
+        self.request.response.status_code = 201
+        return response_body
