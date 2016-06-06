@@ -41,4 +41,4 @@ def list_cardio_activities(active_activity):
 
 
 def is_cardio_activity_active(activity_id):
-    return DBSession.query(CardioActivity).filter(CardioActivity.activity_id == activity_id).filter(CardioActivity.end_date is None).one_or_none()
+    return DBSession.query(CardioActivity).filter(CardioActivity.activity_id == activity_id).filter(CardioActivity.end_date == None).one_or_none()

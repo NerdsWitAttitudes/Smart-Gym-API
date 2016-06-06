@@ -34,8 +34,11 @@ class RESTCardioActivty(object):
 
     @view_config(context=CardioActivityFactory, request_method='POST')
     def post(self):
-        if is_cardio_activity_active(CardioActivity().activity_id):
-            raise HTTPBadRequest(json={'message': 'There is another cardio_acitivty active'})
+        try:
+            if is_cardio_activity_active(self.request.json_body['activity_id']):
+                raise HTTPBadRequest(json={'message': 'There is another cardio_acitivty active'})
+        except KeyError as e:
+            raise HTTPBadRequest(json={'message': str(e)})
 
         self.save(CardioActivity())
 
