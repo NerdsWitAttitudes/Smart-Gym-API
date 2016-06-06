@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class OAuthClient(Base):
-    __tablename__ = 'oauth_consumer'
+    __tablename__ = 'oauth_client'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     client_id = Column(UUIDType(binary=False), default=uuid.uuid4)
@@ -31,17 +31,18 @@ class OAuthAccessToken(Base):
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     client_id = (Column(UUIDType(binary=False),
-                        ForeignKey('oauth_consumer.id')))
+                        ForeignKey('oauth_client.id')))
     access_token = Column(String(64), default=get_secure_token, unique=True)
-    token_type = Column(Enum("bearer"), default="bearer")
+    token_type = Column(Enum("Bearer"), default="Bearer")
     expiry_date = Column(DateTime(timezone=True))
 
     client = relationship('OAuthClient')
 
     @property
     def expires_in(self):
-        seconds_left = (self.expiry_date - datetime.datetime.now()
-                        ).total_seconds()
+        seconds_left = (self.expiry_date - datetime.datetime.now(
+            datetime.timezone.utc)
+        ).total_seconds()
         return seconds_left if seconds_left > 0 else 0
 
 

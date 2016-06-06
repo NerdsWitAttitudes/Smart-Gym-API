@@ -39,4 +39,4 @@ def decrypt_secret(secret, key, iv):
 
 
 def get_secure_token():
-    return binascii.b2a_hqx(Random.get_random_bytes(32))
+    return binascii.b2a_hex(Random.get_random_bytes(32)).decode('utf-8')

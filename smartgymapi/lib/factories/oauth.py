@@ -18,6 +18,7 @@ class OAuthFactory(BaseFactory):
         super().__init__(*args, **kwargs)
 
         self['token'] = TokenFactory(self, 'token')
+        self['client'] = ClientFactory(self, 'client')
 
 
 class TokenFactory(BaseFactory):
@@ -25,7 +26,7 @@ class TokenFactory(BaseFactory):
         super().__init__(*args, **kwargs)
 
     def __acl__(self):
-        ((Allow, Everyone, 'token'),)
+        return ((Allow, Everyone, 'token'),)
 
     def get_client(self, grant_type):
         try:

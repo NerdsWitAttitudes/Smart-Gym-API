@@ -10,16 +10,11 @@ from smartgymapi.models.oauth import get_token_by_token
 log = logging.getLogger(__name__)
 
 
-def extract_authorization_header(request):
-    authorization_header = request.authorization
-    return authorization_header.split(' ')
-
-
 def extract_client_authorization(request):
-    auth_method, encoded_string = extract_authorization_header(request)
+    auth_method, encoded_string = request.authorization
     if not auth_method == 'Basic':
         raise ValueError
-    decoded_header = base64.b64decode(encoded_string)
+    decoded_header = base64.b64decode(encoded_string).decode('utf-8')
     client_id, client_secret = decoded_header.split(':')
     return {
         "client_id": client_id,
@@ -29,7 +24,12 @@ def extract_client_authorization(request):
 
 class SmartGymAuthenticationPolicy(AuthTktAuthenticationPolicy):
     def authenticated_access_token(self, request):
-        auth_method, token_string = extract_authorization_header(request)
+        try:
+            auth_method, token_string = request.authorization
+        except ValueError:
+            # Meaning the token is invalid
+            return
+
         if auth_method != 'Bearer':
             return
         access_token = get_token_by_token(token_string)
@@ -39,8 +39,8 @@ class SmartGymAuthenticationPolicy(AuthTktAuthenticationPolicy):
 
         return access_token
 
-    def effictive_principals(self, request):
-        principals = (Everyone,)
+    def effective_principals(self, request):
+        principals = [Everyone]
 
         if request.user is not None:
             principals.append(Authenticated)

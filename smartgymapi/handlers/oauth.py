@@ -7,7 +7,7 @@ from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
 from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.encrypt import get_secure_token
-from smartgymapi.lib.validation.oauth import (GETTokenSchema,
+from smartgymapi.lib.validation.oauth import (OAuthAccessTokenSchema,
                                               OAuthClientSchema)
 from smartgymapi.models import commit, persist, rollback
 from smartgymapi.models.oauth import OAuthClient, OAuthAccessToken
@@ -26,7 +26,7 @@ class OAuthTokenHandler(object):
         context='smartgymapi.lib.factories.oauth.TokenFactory')
     def post(self):
         try:
-            result, errors = GETTokenSchema(strict=True).load(
+            result, errors = OAuthAccessTokenSchema(strict=True).load(
                 self.request.json_body)
             grant_type = result['grant_type']
         except ValidationError as e:
@@ -37,13 +37,13 @@ class OAuthTokenHandler(object):
         token = OAuthAccessToken()
         token.access_token = get_secure_token()
         token.client = client
-        token.expire_date = (datetime.datetime.now() +
+        token.expiry_date = (datetime.datetime.now(datetime.timezone.utc) +
                              datetime.timedelta(hours=1))
-        token.type = 'bearer'
+        token.token_type = 'Bearer'
 
         try:
             persist(token)
-            response_body = ''
+            response_body = OAuthAccessTokenSchema().dump(token).data
         except:
             log.critical("Something went wrong saving the token",
                          exc_info=True)
@@ -56,7 +56,7 @@ class OAuthTokenHandler(object):
 
 
 @view_defaults(containment='smartgymapi.lib.factories.oauth.OAuthFactory',
-               permission='client',
+               permission='public',
                renderer='json')
 class OAuthClientHandler(object):
     def __init__(self, request):
@@ -84,9 +84,9 @@ class OAuthClientHandler(object):
 
         try:
             persist(client)
+        except:
             log.critical("Something went wrong saving the client",
                          exc_info=True)
-        except:
             rollback()
         finally:
             commit()

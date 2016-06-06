@@ -2,7 +2,10 @@ from marshmallow import Schema, fields
 from marshmallow.validate import Length, OneOf
 
 
-class GETTokenSchema(Schema):
+class OAuthAccessTokenSchema(Schema):
+    access_token = fields.Str(dump_only=True)
+    expires_in = fields.Integer(dump_only=True)
+    token_type = fields.Str(dump_only=True)
     grant_type = fields.Str(
         required='grant_type is required',
         validate=OneOf(
@@ -11,10 +14,6 @@ class GETTokenSchema(Schema):
     )
 
 
-class OAuthAccessTokenSchema(Schema):
-    access_token = fields.Str(dump_only=True)
-    expires_in = fields.Integer(dump_only=True)
-    token_type = fields.Str(dump_only=True)
 
 
 class OAuthClientSchema(Schema):
