@@ -26,8 +26,8 @@ class SmartGymAuthenticationPolicy(AuthTktAuthenticationPolicy):
     def authenticated_access_token(self, request):
         try:
             auth_method, token_string = request.authorization
-        except ValueError:
-            # Meaning the token is invalid
+        except (ValueError, TypeError):
+            # Meaning the token is invalid or no token was found
             return
 
         if auth_method != 'Bearer':
