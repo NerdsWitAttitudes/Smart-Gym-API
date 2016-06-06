@@ -57,7 +57,7 @@ def login(request):
     request.response.headerlist.extend(headers)
 
 
-@auth_factory_view(request_method='GET', name='logout')
+@auth_factory_view(permission='logout', request_method='GET', name='logout')
 def logout(request):
     _logout(request)
 
