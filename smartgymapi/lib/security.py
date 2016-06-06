@@ -45,7 +45,7 @@ class SmartGymAuthenticationPolicy(AuthTktAuthenticationPolicy):
             return
         access_token = get_token_by_token(token_string)
 
-        if access_token.expires_in == 0:
+        if access_token.client.active is False or access_token.expires_in == 0:
             return
 
         return access_token

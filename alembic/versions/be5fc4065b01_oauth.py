@@ -24,6 +24,7 @@ def upgrade():
     sa.Column('client_id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
     sa.Column('client_secret', sa.String(length=64), nullable=True),
     sa.Column('client_type', sa.Enum('confidential', 'public', name='client_type'), nullable=True),
+    sa.Column('active', sa.Boolean, default=True)
     sa.Column('name', sa.String(length=100), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )

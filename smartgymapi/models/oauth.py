@@ -2,7 +2,7 @@ import datetime
 import logging
 import uuid
 
-from sqlalchemy import Column, DateTime, Enum, ForeignKey, String
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, String
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 
@@ -19,6 +19,7 @@ class OAuthClient(Base):
     client_id = Column(UUIDType(binary=False), default=uuid.uuid4)
     client_secret = Column(String(64), default=get_secure_token)
     client_type = Column(Enum("confidential", "public"), default="public")
+    active = Column(Boolean, default=True)
     name = Column(String(100))
 
     def set_fields(self, data):

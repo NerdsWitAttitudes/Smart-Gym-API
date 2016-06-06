@@ -52,6 +52,10 @@ class OAuthTokenHandler(object):
         finally:
             commit()
 
+        # response headers according to RFC 6749
+        self.request.response.cache_control = 'no-store'
+        self.request.response.pragma = 'no-cache'
+
         return response_body
 
 
