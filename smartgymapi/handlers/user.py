@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 
 @view_defaults(containment=UserFactory,
-               permission='public',
+               permission='user',
                renderer='json')
 class RESTUser(object):
     def __init__(self, request):
@@ -30,7 +30,8 @@ class RESTUser(object):
     def get(self):
         return UserSchema().dump(self.request.context)
 
-    @view_config(context=UserFactory, request_method="POST")
+    @view_config(context=UserFactory, permission='signup',
+                 request_method="POST")
     def post(self):
         try:
             result, errors = SignupSchema(strict=True).load(
