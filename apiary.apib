@@ -3,6 +3,54 @@
 This documentation describes all endpoints in the SmartGym API. All endpoints require an authentication token unless explicitely noted.
 
 
+# Group OAuth
+
+Some requests like the checkin of devices requires the requesting client to be authenticated. This is done using the
+OAuth 2 [client credentials grant](https://tools.ietf.org/html/rfc6749#section-4.4). This is implemented according to [RFC 6749](https://tools.ietf.org/html/rfc6749).
+
+## Manage clients [/oauth/client]
+### Create a client [POST]
+
+Create a client to be used with OAuth 2. This endpoint requires the user to be an administrator and
+will therefore not be available to default users. Note the client_secret will only be shown once and cannot be retrieved again.
+
+`client_type` should be either "public" or "confidential" as described [here](https://tools.ietf.org/html/rfc6749#section-2.1)
+
++ Request (application/json)
+
+        {
+            "name": "Example descriptive name",
+            "client_type": "public"
+        }
+        
++ Response 201(application/json)
+
+        {
+            "client_id": "00000000-0000-0000-0000-000000000000",
+            "client_secret": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+
+## Manage access tokens [oauth/token]
+### Request a token [POST]
+
+Request an access token to be used with OAuth 2. This request requires valid client credentials in the
+`Authorization` header. The authorization header should 
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: Basic <base64 encoded client_id:client_secret>
+
+        
++ Response 200(application/json)
+
+        {
+            "access_token": "0000000000000000000000000000000000000000000000000000000000000000",
+            "expires_in" 3600,
+            "token_type": "Bearer"
+        }
+
 # Group Authentication
 
 Endpoints related to user authentication.
@@ -144,13 +192,18 @@ Update a user.
 Check a user in or out of their gym using their bluetooth enabled device. Does not require an authentication token.
 
 + Request (application/json)
+    + Headers
+    
+            Authorization: Bearer 0000000000000000000000000000000000000000000000000000000000000000
 
-        {
-            "name": "Example name",
-            "device_address": "00:00:00:00:00:00",
-            "device_class": "00000",
-            "client_address": "00:00:00:00:00:00"
-        }
+    + Body
+    
+            {
+                "name": "Example name",
+                "device_address": "00:00:00:00:00:00",
+                "device_class": "00000",
+                "client_address": "00:00:00:00:00:00"
+            }
     
 + Response 200
 
