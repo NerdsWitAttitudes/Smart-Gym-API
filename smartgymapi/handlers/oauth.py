@@ -34,6 +34,13 @@ class OAuthTokenHandler(object):
 
         client = self.request.context.get_client(grant_type)
 
+        if (grant_type == 'client_credentials' and
+                client.client_type != 'confidential'):
+            raise HTTPBadRequest(json={
+                    "invalid_client": "Client not authorized\
+                    to use this grant type"
+                })
+
         token = OAuthAccessToken()
         token.access_token = get_secure_token()
         token.client = client
