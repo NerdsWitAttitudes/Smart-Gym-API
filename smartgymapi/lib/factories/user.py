@@ -23,7 +23,7 @@ class UserFactory(BaseFactory):
             user.set_lineage(self, 'user')
             return user
 
-        raise KeyError()
+        raise KeyError
 
     def get_users(self):
         return list_users()

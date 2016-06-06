@@ -24,10 +24,15 @@ class Device(Base, LineageBase):
             setattr(self, key, value)
 
 
+def get_devices(user):
+    return session.query(Device).filter(Device.user == user)
+
+
 def get_device_by_device_address(device_address):
     return session.query(Device).filter(
         Device.device_address == device_address).one()
 
 
-def get_device(id_):
-    return session.query(Device).get(id_)
+def get_device(user, id_):
+    return session.query(Device).filter(Device.id == id_,
+                                        Device.user == user).one()
