@@ -5,8 +5,8 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import Allow, Everyone
 from sqlalchemy.orm.exc import NoResultFound
 
-from smartgymapi.lib.exceptions import (AuthorizationHeaderNotFound,
-                                        InvalidAuthorizationMethod)
+from smartgymapi.lib.exceptions.oauth import (AuthorizationHeaderNotFound,
+                                              InvalidAuthorizationMethod)
 from smartgymapi.lib.factories import BaseFactory
 from smartgymapi.lib.security import extract_client_authorization
 from smartgymapi.lib.validation.oauth import OAuthClientSchema
