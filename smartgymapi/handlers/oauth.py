@@ -56,7 +56,7 @@ class OAuthTokenHandler(object):
 
 
 @view_defaults(containment='smartgymapi.lib.factories.oauth.OAuthFactory',
-               permission='public',
+               permission='client',
                renderer='json')
 class OAuthClientHandler(object):
     def __init__(self, request):
