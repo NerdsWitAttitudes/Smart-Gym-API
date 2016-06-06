@@ -381,6 +381,7 @@ Adds a sport schedule for the authenticated user.
 + Parameters
     + id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a sport schedule.
     
+
 ### Change a sport schedule [PUT]
 
 This will update a sport schedule with one or multiple fields for the authenticated user.
@@ -407,3 +408,80 @@ This will update a sport schedule with one or multiple fields for the authentica
 This will delete a sport schedule of the authenticated user.
 
 + Response 200
+
+
+# Group Cardio Activity
+
+This group is used for starting session activities and closing them with the session data.
+It it also used for visualizing the user healthy.
+
+## Get Cardio activities [/cardio_activity]
+### Get cardio activity [GET]
+
+This will return all cardio activity sessions of the user.
+
++ Response 200(application/json)
+
+        [
+          {
+            "distance": null,
+            "end_date": "00:00:00-00:00",
+            "calories": null,
+            "id": "00000000-0000-0000-0000-000000000000",
+            "start_date": "00:00:00-00:00",
+            "activity_id": "00000000-0000-0000-0000-000000000000",
+            "is_active": true,
+            "speed": null
+          }
+        ]
+        
+    
+### Start a cardio activty [POST]
+
+Start a new cardio activity session, this will require the user activity id
+
++ Request (application/json)
+
+        {
+            "activity_id": "00000000-0000-0000-0000-000000000000"
+        }
+        
++ Response 200
+
+## Manage cardio activities [/cardio_activity/{id}]
++ Parameters
+    + id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a cardio activity.
+    
+
+### End a cardio activity [PUT]
+
+This endpoint is used for ending a cardio activity. Here will be the session data be send to the API. 
+The endate will be assigned by the API.
+
++ Request (application/json)
+
+          {
+            "distance": null,
+            "calories": null,
+            "start_date": "00:00:00-00:00",
+            "activity_id": "00000000-0000-0000-0000-000000000000",
+            "is_active": true,
+            "speed": null
+          }
+        
++ Response 200
+
+### Get a single cardio activity [GET]
+
+This endpoint will return a single cardio activity.
+
++ Response 200(application/json)
+
+          {
+            "distance": null,
+            "calories": null,
+            "start_date": "00:00:00-00:00",
+            "activity_id": "00000000-0000-0000-0000-000000000000",
+            "is_active": true,
+            "speed": null
+          }
