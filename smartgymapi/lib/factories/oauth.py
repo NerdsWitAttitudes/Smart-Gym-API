@@ -5,6 +5,8 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import Allow, Everyone
 from sqlalchemy.orm.exc import NoResultFound
 
+from smartgymapi.lib.exceptions import (AuthorizationHeaderNotFound,
+                                        InvalidAuthorizationMethod)
 from smartgymapi.lib.factories import BaseFactory
 from smartgymapi.lib.security import extract_client_authorization
 from smartgymapi.lib.validation.oauth import OAuthClientSchema
@@ -34,7 +36,8 @@ class TokenFactory(BaseFactory):
             result, errors = OAuthClientSchema(
                 strict=True, only=('client_id', 'client_secret')).load(
                     client_credentials)
-        except ValidationError as e:
+        except (ValidationError, AuthorizationHeaderNotFound,
+                InvalidAuthorizationMethod) as e:
             raise HTTPBadRequest(json=str(e))
 
         try:
