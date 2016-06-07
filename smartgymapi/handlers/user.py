@@ -142,9 +142,10 @@ class RESTBuddy(object):
 
     @view_config(context=BuddyFactory, request_method="PUT")
     def put(self):
+        schema = BuddySchema(strict=True)
         try:
-            result, errors = BuddySchema(strict=True).load(
-                self.request.json_body)
+            result, errors = schema.load(self.request.json_body)
+            schema.validate_user_id(result, self.request.user.id)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
