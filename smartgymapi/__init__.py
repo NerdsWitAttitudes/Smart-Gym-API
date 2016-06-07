@@ -10,6 +10,7 @@ from smartgymapi.models.meta import (
 )
 from smartgymapi.lib.encrypt import decrypt_secret
 from smartgymapi.lib.factories.root import RootFactory
+from smartgymapi.lib.redis import RedisSession
 from smartgymapi.models.user import get_user
 
 
@@ -19,6 +20,10 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
+
+    RedisSession(settings['redis.host'], settings['redis.port'],
+                 settings['redis.db'], settings['redis.password'])
+
     authentication_policy = AuthTktAuthenticationPolicy(
         secret=decrypt_secret(settings['auth.secret'],
                               settings['aes.key'],
