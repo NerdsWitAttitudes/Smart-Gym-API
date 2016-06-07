@@ -8,6 +8,7 @@ from pyramid.view import view_config, view_defaults
 from smartgymapi.lib.encrypt import hash_password
 from smartgymapi.lib.exceptions.validation import NotUniqueException
 from smartgymapi.lib.factories.user import BuddyFactory, UserFactory
+from smartgymapi.lib.redis import RedisSession
 from smartgymapi.lib.similarity import get_ordered_list_similarity
 from smartgymapi.lib.validation.auth import SignupSchema
 from smartgymapi.lib.validation.user import BuddySchema, UserSchema
@@ -107,10 +108,20 @@ class RESTBuddy(object):
     @view_config(context=BuddyFactory, request_method="GET",
                  name="recommended")
     def list_recommended(self):
-        """Returns 5 users we recommend for the user to befriend"""
-        current_user = self.request.user
-        recommended_buddies = {}
+        """Returns 5 users we recommend for the user to befriend
 
+        To improve performace the output is cached and will be retrieved
+        from cache if possible.
+        """
+
+        current_user = self.request.user
+        recommended_buddies = RedisSession().get(
+            "{}_recommended_buddies".format(current_user.id))
+
+        if recommended_buddies:
+            return recommended_buddies
+
+        recommended_buddies = {}
         favorite_weekdays = get_favorite_weekdays_for_user(current_user).all()
         users = list_users()
         for user in users:
@@ -139,7 +150,13 @@ class RESTBuddy(object):
                 recommended_buddies.pop(lowest_user, None)
                 recommended_buddies[user] = favorite_weekday_similarity
 
-        return UserSchema(many=True).dump(recommended_buddies).data
+        recommended_buddies_data = UserSchema(many=True).dump(
+            recommended_buddies).data
+        RedisSession().session.set(
+            "{}_recommended_buddies".format(current_user.id),
+            recommended_buddies_data)
+
+        return recommended_buddies_data
 
     @view_config(context=BuddyFactory, request_method="PUT")
     def put(self):
