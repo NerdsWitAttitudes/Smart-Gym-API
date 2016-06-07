@@ -1,7 +1,10 @@
+import datetime
 import uuid
-from sqlalchemy import Column, String, DateTime, func, Boolean
+
+from sqlalchemy import Column, String, DateTime, ForeignKey, func, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
+
 from smartgymapi.models.meta import Base, LineageBase, DBSession as session
 
 
@@ -29,9 +32,21 @@ class User(Base, LineageBase):
                     "UserActivity.end_date==None)",
         uselist=False)
 
+    buddies = relationship("User", secondary="Buddy")
+
     def set_fields(self, data=None):
         for key, value in data.items():
             setattr(self, key, value)
+
+
+class Buddy(Base):
+    __tablename__ = 'buddy'
+
+    user_1_id = Column(UUIDType(binary=False), ForeignKey('user.id'),
+                       primary_key=True)
+    user_2_id = Column(UUIDType(binary=False), ForeignKey('user.id'),
+                       primary_key=True)
+    buddies_since = Column(DateTime, default=datetime.datetime.utcnow)
 
 
 def list_users():
