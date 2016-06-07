@@ -20,7 +20,7 @@ class UserFactory(BaseFactory):
 
     def __getitem__(self, key):
         if key == 'buddies':
-            return self['buddies']
+            return BuddyFactory(self, 'buddies')
 
         user = get_user(key)
 

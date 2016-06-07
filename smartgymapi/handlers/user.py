@@ -12,7 +12,7 @@ from smartgymapi.lib.similarity import get_ordered_list_similarity
 from smartgymapi.lib.validation.auth import SignupSchema
 from smartgymapi.lib.validation.user import BuddySchema, UserSchema
 from smartgymapi.models import commit, persist, rollback, delete
-from smartgymapi.model.sport_schedule import get_favorite_weekdays_for_user
+from smartgymapi.models.sport_schedule import get_favorite_weekdays_for_user
 from smartgymapi.models.user import User, get_user, list_users
 
 log = logging.getLogger(__name__)
@@ -27,11 +27,12 @@ class RESTUser(object):
 
     @view_config(context=UserFactory, request_method="GET")
     def list(self):
-        return UserSchema(many=True).dump(self.request.context.get_users())
+        return UserSchema(many=True).dump(self.request.context.get_users()
+                                          ).data
 
     @view_config(context=User, request_method="GET")
     def get(self):
-        return UserSchema().dump(self.request.context)
+        return UserSchema().dump(self.request.context).data
 
     @view_config(context=UserFactory, permission='signup',
                  request_method="POST")
@@ -101,27 +102,43 @@ class RESTBuddy(object):
 
     @view_config(context=BuddyFactory, request_method="GET")
     def list(self):
-        return UserSchema(many=True).dump(self.request.user.buddies)
+        return UserSchema(many=True).dump(self.request.user.buddies).data
 
     @view_config(context=BuddyFactory, request_method="GET",
                  name="recommended")
     def list_recommended(self):
         """Returns 5 users we recommend for the user to befriend"""
+        current_user = self.request.user
         recommended_buddies = {}
 
-        favorite_weekdays = get_favorite_weekdays_for_user(self.request.user)
+        favorite_weekdays = get_favorite_weekdays_for_user(current_user).all()
         users = list_users()
         for user in users:
+            if user is current_user:
+                # Don't recommend the user to befriend him or herself
+                continue
+
             favorite_weekday_similarity = get_ordered_list_similarity(
                 favorite_weekdays,
-                get_favorite_weekdays_for_user(user))
+                get_favorite_weekdays_for_user(user).all())
 
-            if (len(recommended_buddies) < 5 or
-                favorite_weekday_similarity > min(
-                    recommended_buddies, key=recommended_buddies.get)):
+            if len(recommended_buddies) < 5:
+                # List not full, we can continue early
+                recommended_buddies[user] = favorite_weekday_similarity
+                continue
+
+            # Get the lowest similarity currently in the list
+            lowest_user = min(recommended_buddies,
+                              key=recommended_buddies.get)
+            lowest_similarity = recommended_buddies[lowest_user]
+
+            # Replace the lowest user if this user fits the current user
+            # better.
+            if favorite_weekday_similarity > lowest_similarity:
+                recommended_buddies.pop(lowest_user, None)
                 recommended_buddies[user] = favorite_weekday_similarity
 
-        return UserSchema(many=True).dump(recommended_buddies)
+        return UserSchema(many=True).dump(recommended_buddies).data
 
     @view_config(context=BuddyFactory, request_method="PUT")
     def put(self):

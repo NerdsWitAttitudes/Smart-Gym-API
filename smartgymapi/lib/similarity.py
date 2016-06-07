@@ -20,7 +20,7 @@ def get_ordered_list_similarity(target_list, comparison_list):
     max_similarity = triangle_number(initial_weight)
     min_similarity = initial_weight
 
-    for target_value, index in enumerate(target_list):
+    for index, target_value in enumerate(target_list):
         # Make sure the values are of decreasing importance
         weight = initial_weight - index
 

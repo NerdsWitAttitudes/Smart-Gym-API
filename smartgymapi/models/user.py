@@ -32,7 +32,11 @@ class User(Base, LineageBase):
                     "UserActivity.end_date==None)",
         uselist=False)
 
-    buddies = relationship("User", secondary="Buddy")
+    buddies = relationship(
+        "User",
+        primaryjoin="Buddy.user_1_id==User.id",
+        secondaryjoin="Buddy.user_2_id==User.id",
+        secondary="buddy")
     sport_schedules = relationship("SportSchedule", uselist=True)
 
     def set_fields(self, data=None):

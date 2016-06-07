@@ -45,4 +45,5 @@ def get_favorite_weekdays_for_user(user):
     return DBSession.query(SportSchedule.weekdays)\
         .filter(SportSchedule.user == user)\
         .order_by(
-            func.count(SportSchedule.weekdays).desc())
+            func.count(SportSchedule.weekdays).desc())\
+        .group_by(SportSchedule.weekdays)
