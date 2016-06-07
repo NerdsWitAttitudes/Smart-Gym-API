@@ -37,3 +37,12 @@ class UserFactory(BaseFactory):
 class BuddyFactory(BaseFactory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def __getitem(self, key):
+        buddy = get_user(key)
+
+        if buddy:
+            buddy.set_lineage(self, 'user')
+            return buddy
+
+        raise KeyError

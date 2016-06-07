@@ -7,11 +7,11 @@ from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.encrypt import hash_password
 from smartgymapi.lib.exceptions.validation import NotUniqueException
-from smartgymapi.lib.factories.user import UserFactory
+from smartgymapi.lib.factories.user import BuddyFactory, UserFactory
 from smartgymapi.lib.validation.auth import SignupSchema
-from smartgymapi.lib.validation.user import UserSchema
+from smartgymapi.lib.validation.user import BuddySchema, UserSchema
 from smartgymapi.models import commit, persist, rollback, delete
-from smartgymapi.models.user import User
+from smartgymapi.models.user import User, get_user
 
 log = logging.getLogger(__name__)
 
@@ -85,16 +85,54 @@ class RESTUser(object):
 
         raise HTTPNoContent
 
+    @view_config(context=User, request_method="GET", name="buddies")
+    def list_buddies(self):
+        return UserSchema(many=True).dump(self.request.context.friends)
 
+
+@view_defaults(containment=BuddyFactory,
+               permission='buddy',
+               renderer='json')
 class RESTBuddy(object):
     def __init__(self, request):
         self.request = request
 
+    @view_config(context=BuddyFactory, request_method="GET")
     def list(self):
-        pass
+        return UserSchema(many=True).dump(self.request.user.buddies)
 
-    def post(self):
-        pass
+    @view_config(context=BuddyFactory, request_method="PUT")
+    def put(self):
+        try:
+            result, errors = BuddySchema(strict=True).load(
+                self.request.json_body)
+        except ValidationError as e:
+            raise HTTPBadRequest(json={'message': str(e)})
 
+        new_buddy = get_user(result['user_id'])
+
+        # add the new buddy to the user's existing buddies
+        self.request.user.buddies.append(new_buddy)
+
+        try:
+            persist(self.request.user)
+        except:
+            log.critical("Something went wrong adding a new buddy",
+                         exc_info=True)
+            rollback()
+        finally:
+            commit()
+
+    @view_config(context=User, request_method="DELETE")
     def delete(self):
-        pass
+        self.request.user.buddies.remove(self.request.context)
+        try:
+            persist(self.request.user)
+        except:
+            log.critical("Something went wrong deleting a buddy",
+                         exc_info=True)
+            rollback()
+        finally:
+            commit()
+
+        raise HTTPNoContent

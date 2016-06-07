@@ -2,7 +2,7 @@ from marshmallow import Schema, fields
 
 
 class UserSchema(Schema):
-    id = fields.Str(dump_only=True)
+    id = fields.UUID(dump_only=True)
     email = fields.Email(required='Email is required')
     first_name = fields.Str(required='Firstname is required')
     last_name = fields.Str(required='Lastname is required')
@@ -12,3 +12,7 @@ class UserSchema(Schema):
     country = fields.Str(required='Country is required')
     date_of_birth = fields.DateTime(required='Date of birth is required')
     last_login = fields.DateTime(dump_only=True)
+
+
+class BuddySchema(Schema):
+    user_id = fields.UUID(required='user_id is required')
