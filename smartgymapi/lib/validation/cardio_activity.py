@@ -7,6 +7,7 @@ class CardioActivitySchema(Schema):
     start_date = fields.DateTime()
     end_date = fields.DateTime()
     is_active = fields.Boolean(dump_only=True)
+    cardio_type = fields.Str()
     distance = fields.Integer()
     speed = fields.Float()
     calories = fields.Float()

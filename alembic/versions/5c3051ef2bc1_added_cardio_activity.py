@@ -24,6 +24,7 @@ def upgrade():
     sa.Column('activity_id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
     sa.Column('start_date', sa.DateTime(timezone=False), nullable=True),
     sa.Column('end_date', sa.DateTime(timezone=False), nullable=True),
+    sa.Column('cardio_type', sa.String(), nullable=True),
     sa.Column('distance', sa.Integer(), nullable=True),
     sa.Column('speed', sa.Float(), nullable=True),
     sa.Column('calories', sa.Float(), nullable=True),

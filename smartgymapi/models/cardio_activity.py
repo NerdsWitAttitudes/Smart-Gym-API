@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, ForeignKey, Integer, DateTime, Float
+from sqlalchemy import Column, ForeignKey, Integer, DateTime, Float, String
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 
@@ -16,6 +16,8 @@ class CardioActivity(Base, LineageBase):
 
     start_date = Column(DateTime(timezone=True), default=datetime.now)
     end_date = Column(DateTime(timezone=True), default=None)
+
+    cardio_type = Column(String)
 
     distance = Column(Integer)
     speed = Column(Float)
