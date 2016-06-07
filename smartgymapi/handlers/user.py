@@ -8,10 +8,12 @@ from pyramid.view import view_config, view_defaults
 from smartgymapi.lib.encrypt import hash_password
 from smartgymapi.lib.exceptions.validation import NotUniqueException
 from smartgymapi.lib.factories.user import BuddyFactory, UserFactory
+from smartgymapi.lib.similarity import get_ordered_list_similarity
 from smartgymapi.lib.validation.auth import SignupSchema
 from smartgymapi.lib.validation.user import BuddySchema, UserSchema
 from smartgymapi.models import commit, persist, rollback, delete
-from smartgymapi.models.user import User, get_user
+from smartgymapi.model.sport_schedule import get_favorite_weekdays_for_user
+from smartgymapi.models.user import User, get_user, list_users
 
 log = logging.getLogger(__name__)
 
@@ -104,7 +106,22 @@ class RESTBuddy(object):
     @view_config(context=BuddyFactory, request_method="GET",
                  name="recommended")
     def list_recommended(self):
-        pass
+        """Returns 5 users we recommend for the user to befriend"""
+        recommended_buddies = {}
+
+        favorite_weekdays = get_favorite_weekdays_for_user(self.request.user)
+        users = list_users()
+        for user in users:
+            favorite_weekday_similarity = get_ordered_list_similarity(
+                favorite_weekdays,
+                get_favorite_weekdays_for_user(user))
+
+            if (len(recommended_buddies) < 5 or
+                favorite_weekday_similarity > min(
+                    recommended_buddies, key=recommended_buddies.get)):
+                recommended_buddies[user] = favorite_weekday_similarity
+
+        return UserSchema(many=True).dump(recommended_buddies)
 
     @view_config(context=BuddyFactory, request_method="PUT")
     def put(self):

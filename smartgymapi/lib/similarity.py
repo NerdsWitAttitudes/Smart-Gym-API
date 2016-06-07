@@ -1,7 +1,7 @@
 from smartgymapi.lib.math import normalize, triangle_number
 
 
-def get_order_similarity(target_list, comparison_list):
+def get_ordered_list_similarity(target_list, comparison_list):
     """Returns similarity of 2 lists that are ordered by importance.
 
     These 2 lists should contain the same values that are ordered by most
