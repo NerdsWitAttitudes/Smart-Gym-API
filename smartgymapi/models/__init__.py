@@ -6,6 +6,10 @@ def commit():
     transaction.commit()
 
 
+def flush():
+    session.flush()
+
+
 def persist(obj):
     session.add(obj)
 

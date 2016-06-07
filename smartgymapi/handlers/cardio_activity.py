@@ -2,10 +2,10 @@ import logging
 from datetime import datetime
 
 from marshmallow import ValidationError
-from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
+from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError, HTTPCreated
 from pyramid.view import view_defaults, view_config
 
-from smartgymapi.models import persist, commit, rollback, delete
+from smartgymapi.models import persist, commit, rollback, delete, flush
 from smartgymapi.lib.factories.cardio_acitivty import CardioActivityFactory, is_cardio_activity_active
 from smartgymapi.lib.validation.cardio_activity import CardioActivitySchema
 from smartgymapi.models.cardio_activity import CardioActivity
@@ -40,7 +40,8 @@ class RESTCardioActivty(object):
         except KeyError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        self.save(CardioActivity())
+        cardio_activity = self.save(CardioActivity())
+        raise HTTPCreated(json=cardio_activity)
 
     @view_config(context=CardioActivity, request_method='PUT')
     def put(self):
@@ -73,9 +74,13 @@ class RESTCardioActivty(object):
 
         try:
             persist(cardio_activity)
+            flush()
+            data = CardioActivitySchema().dump(cardio_activity).data
         except:
             log.critical('Something went wrong saving the cardio activity')
             rollback()
             raise HTTPInternalServerError
         finally:
             commit()
+
+        return data
