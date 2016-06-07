@@ -12,11 +12,16 @@ class UserFactory(BaseFactory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self['buddies'] = BuddyFactory(self, 'buddies')
+
     def __acl__(self):
         return ((Allow, Authenticated, 'user'),
                 (Allow, Everyone, 'signup'))
 
     def __getitem__(self, key):
+        if key == 'buddies':
+            return self['buddies']
+
         user = get_user(key)
 
         if user:
@@ -27,3 +32,8 @@ class UserFactory(BaseFactory):
 
     def get_users(self):
         return list_users()
+
+
+class BuddyFactory(BaseFactory):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

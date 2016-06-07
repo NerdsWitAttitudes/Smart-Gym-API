@@ -84,3 +84,17 @@ class RESTUser(object):
             commit()
 
         raise HTTPNoContent
+
+
+class RESTBuddy(object):
+    def __init__(self, request):
+        self.request = request
+
+    def list(self):
+        pass
+
+    def post(self):
+        pass
+
+    def delete(self):
+        pass
