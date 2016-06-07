@@ -33,6 +33,7 @@ class User(Base, LineageBase):
         uselist=False)
 
     buddies = relationship("User", secondary="Buddy")
+    sport_schedules = relationship("SportSchedule", uselist=True)
 
     def set_fields(self, data=None):
         for key, value in data.items():

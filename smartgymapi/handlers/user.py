@@ -101,6 +101,11 @@ class RESTBuddy(object):
     def list(self):
         return UserSchema(many=True).dump(self.request.user.buddies)
 
+    @view_config(context=BuddyFactory, request_method="GET",
+                 name="recommended")
+    def list_recommended(self):
+        pass
+
     @view_config(context=BuddyFactory, request_method="PUT")
     def put(self):
         try:
