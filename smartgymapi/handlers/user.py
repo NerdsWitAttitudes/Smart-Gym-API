@@ -114,8 +114,9 @@ class RESTBuddy(object):
         favorite_weekdays = get_favorite_weekdays_for_user(current_user).all()
         users = list_users()
         for user in users:
-            if user is current_user:
+            if user is current_user or user in user.buddies:
                 # Don't recommend the user to befriend him or herself
+                # or users that are already buddies.
                 continue
 
             favorite_weekday_similarity = get_ordered_list_similarity(
