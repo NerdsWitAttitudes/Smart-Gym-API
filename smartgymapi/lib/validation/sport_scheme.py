@@ -1,6 +1,6 @@
 from dateutil.parser import parse
 
-from marshmallow import Schema, fields, ValidationError, validates
+from marshmallow import Schema, fields, ValidationError, validates, validate
 
 
 class SportScheduleSchema(Schema):
@@ -9,7 +9,9 @@ class SportScheduleSchema(Schema):
     name = fields.Str(required='Name is required')
     reminder_minutes = fields.Integer(required='Reminder is required')
     time = fields.Str(required='Time is required')
-    weekdays = fields.List(fields.Integer(), required='Weekday is required')
+    weekdays = fields.List(
+        fields.Integer(validate=validate.Range(1, 7, 'Weekday is not valid')),
+        required='Weekday is required')
     is_active = fields.Boolean(default=True)
 
     @validates('time')
@@ -18,9 +20,3 @@ class SportScheduleSchema(Schema):
             parse(time_)
         except:
             raise ValidationError(time_ + ' Is not a valid time')
-
-    @validates('weekdays')
-    def validate_weekday(self, weekdays):
-        for weekday in weekdays:
-            if weekday > 7:
-                raise ValidationError('Weekdays are not valid')
