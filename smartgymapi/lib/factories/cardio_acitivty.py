@@ -22,7 +22,7 @@ class CardioActivityFactory(BaseFactory):
         raise KeyError()
 
     def list_cardio_activities(self):
-        return list_cardio_activities(self.request.user.active_activity)
+        return list_cardio_activities(self.request.user)
 
     def is_cardio_activity_active(self, activity_id):
         return is_cardio_activity_active(activity_id)
