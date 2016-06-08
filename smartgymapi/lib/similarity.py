@@ -12,13 +12,17 @@ def get_ordered_list_similarity(target_list, comparison_list):
     is found.
     """
 
-    initial_weight = len(target_list)
+    if not target_list or not comparison_list:
+        # If one of the lists does not exist or is empty we can return early
+        return 0
+
+    initial_weight = len(comparison_list)
 
     # A dictionary to contain the comparison value as a key and the similarity
     # as a value
     similarity = 0
     max_similarity = triangle_number(initial_weight)
-    min_similarity = initial_weight
+    min_similarity = 0
 
     for index, target_value in enumerate(target_list):
         # Make sure the values are of decreasing importance

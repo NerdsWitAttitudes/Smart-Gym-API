@@ -115,11 +115,12 @@ class RESTBuddy(object):
         """
 
         current_user = self.request.user
-        recommended_buddies = RedisSession().get(
+        recommended_buddies = RedisSession().session.get(
             "{}_recommended_buddies".format(current_user.id))
 
         if recommended_buddies:
-            return recommended_buddies
+            # return recommended_buddies
+            pass
 
         recommended_buddies = {}
         favorite_weekdays = get_favorite_weekdays_for_user(current_user).all()
@@ -133,6 +134,7 @@ class RESTBuddy(object):
             favorite_weekday_similarity = get_ordered_list_similarity(
                 favorite_weekdays,
                 get_favorite_weekdays_for_user(user).all())
+            log.info(favorite_weekday_similarity)
 
             if len(recommended_buddies) < 5:
                 # List not full, we can continue early
