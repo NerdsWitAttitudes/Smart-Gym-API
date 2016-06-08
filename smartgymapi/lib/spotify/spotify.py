@@ -3,8 +3,11 @@ import json
 import logging
 import requests
 
+import random
+
 from smartgymapi.models import commit, persist, rollback
-from smartgymapi.models.user import list_current_users_in_gym
+from smartgymapi.models.user import list_users_in_gym
+from smartgymapi.models.music_preference import list_music_preferences_for_users_in_gym
 
 log = logging.getLogger(__name__)
 
@@ -50,7 +53,29 @@ class Spotify(object):
         return r.json()['access_token']
 
     def update_playlist(self):
-        users_in_gym = (list_current_users_in_gym(self.gym.id))
+        """
+        This function updates the spotify playlist with music based on the
+        users currently in the gym
+        """
+        users_in_gym = list_users_in_gym(self.gym.id)
+
+        # we have to make a list of id's because we can't use sqlalchemy's
+        # in_() function with relationships. (not implemented yet)
+        user_ids = []
+        for user in users_in_gym:
+            user_ids.append(user.id)
+
+        genres = (
+            [r.genre for r in
+             list_music_preferences_for_users_in_gym(user_ids)])
+
+        try:
+            random_genres = []
+            # we can only send 5 genres to spotify to give us recommendations
+            for i in range(0, 5):
+                random_genres.append(random.choice(genres))
+        except IndexError:
+            return
 
         if not self.gym.spotify_playlist_id:
             # this means the playlist does not exist yet.
@@ -69,7 +94,11 @@ class Spotify(object):
             self.settings['spotify.user_id'], self.gym.spotify_playlist_id),
             headers=self.get_headers)
 
-        params = {'seed_genres': ['dance', 'electro'], 'limit': 5}
+        params = {'seed_genres': random_genres,
+                  'limit': 5,
+                  'target_energy': 0.7,
+                  'target_popularity': 100,
+                  }
 
         r = requests.get('{}/recommendations'.format(
             self.settings['spotify.base_url']), headers=self.get_headers,
@@ -79,11 +108,9 @@ class Spotify(object):
         for song in r.json()['tracks']:
             song_uris.append(song['uri'])
 
-        # - add numbers to playlist
+        # - add numbers to playlisttoe
         r = requests.post('{}/users/{}/playlists/{}/tracks'.format(
             self.settings['spotify.base_url'],
             self.settings['spotify.user_id'],
             self.gym.spotify_playlist_id),
             headers=self.post_headers, data=json.dumps({'uris': song_uris}))
-
-        return

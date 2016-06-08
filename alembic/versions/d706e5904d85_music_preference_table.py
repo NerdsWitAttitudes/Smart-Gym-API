@@ -23,7 +23,7 @@ def upgrade():
     op.create_table('music_preference',
                     sa.Column(
                         'id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
-                    sa.Column('artist', sa.String(length=100), nullable=True),
+                    sa.Column('genre', sa.String(length=100), nullable=True),
                     sa.Column(
                         'user_id', sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
                     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),

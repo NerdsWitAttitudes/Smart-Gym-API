@@ -16,7 +16,7 @@ class MusicPreference(Base, LineageBase):
     __tablename__ = 'music_preference'
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
-    artist = Column(String(100))
+    genre = Column(String(100))
     user_id = Column(UUIDType, ForeignKey('user.id'))
 
     user = relationship('User', backref='music_preferences')
@@ -30,6 +30,12 @@ def get_music_preference(id_):
     return session.query(MusicPreference).get(id_)
 
 
-def list_music_preferences(user_ids=[]):
+def list_music_preferences():
     q = session.query(MusicPreference)
+    return q
+
+
+def list_music_preferences_for_users_in_gym(user_ids=[]):
+    q = session.query(MusicPreference).filter(
+        MusicPreference.user_id.in_(user_ids))
     return q
