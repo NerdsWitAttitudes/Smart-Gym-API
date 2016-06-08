@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy import (Column, String, DateTime, func, Boolean)
-from sqlalchemy.orm import relationship, joinedload
+from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 
 from smartgymapi.models.user_activity import UserActivity
