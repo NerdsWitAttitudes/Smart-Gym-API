@@ -2,11 +2,13 @@ import logging
 from datetime import datetime
 
 from marshmallow import ValidationError
-from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError, HTTPCreated
+from pyramid.httpexceptions import (HTTPBadRequest, HTTPInternalServerError,
+                                    HTTPCreated, HTTPNoContent)
 from pyramid.view import view_defaults, view_config
 
 from smartgymapi.models import persist, commit, rollback, delete, flush
-from smartgymapi.lib.factories.cardio_acitivty import CardioActivityFactory, is_cardio_activity_active
+from smartgymapi.lib.factories.cardio_activity import (CardioActivityFactory,
+                                                       is_cardio_activity_active)
 from smartgymapi.lib.validation.cardio_activity import CardioActivitySchema
 from smartgymapi.models.cardio_activity import CardioActivity
 
@@ -32,8 +34,10 @@ class RESTCardioActivty(object):
     @view_config(context=CardioActivityFactory, request_method='POST')
     def post(self):
         try:
-            if is_cardio_activity_active(self.request.json_body['activity_id']):
-                raise HTTPBadRequest(json={'message': 'There is another cardio_acitivty active'})
+            if is_cardio_activity_active(
+                    self.request.json_body['activity_id']):
+                raise HTTPBadRequest(json={
+                    'message': 'There is another cardio_acitivty active'})
         except KeyError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
@@ -46,7 +50,8 @@ class RESTCardioActivty(object):
         if cardio_activity.end_date is None:
             cardio_activity.end_date = datetime.now()
         else:
-            raise HTTPBadRequest(json={'message': 'Cardio activity is already ended'})
+            raise HTTPBadRequest(
+                json={'message': 'Cardio activity is already ended'})
 
         self.save(cardio_activity)
 
@@ -55,15 +60,18 @@ class RESTCardioActivty(object):
         try:
             delete(self.request.context)
         except:
-            log.critical('Something went wrong deleting the cardio activity')
+            log.critical('Something went wrong deleting the cardio activity',
+                         exc_info=True)
             rollback()
             raise HTTPInternalServerError
         finally:
             commit()
+            raise HTTPNoContent()
 
     def save(self, cardio_activity):
         try:
-            result, errors = CardioActivitySchema(strict=True).load(self.request.json_body)
+            result, errors = CardioActivitySchema(strict=True).load(
+                self.request.json_body)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
@@ -74,7 +82,8 @@ class RESTCardioActivty(object):
             flush()
             data = CardioActivitySchema().dump(cardio_activity).data
         except:
-            log.critical('Something went wrong saving the cardio activity')
+            log.critical('Something went wrong saving the cardio activity',
+                         exc_info=True)
             rollback()
             raise HTTPInternalServerError
         finally:

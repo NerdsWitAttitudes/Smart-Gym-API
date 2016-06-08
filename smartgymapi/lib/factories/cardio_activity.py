@@ -3,7 +3,9 @@ import logging
 from pyramid.security import Allow, Authenticated
 
 from smartgymapi.lib.factories import BaseFactory
-from smartgymapi.models.cardio_activity import get_cardio_activity, list_cardio_activities, is_cardio_activity_active
+from smartgymapi.models.cardio_activity import (get_cardio_activity,
+                                                list_cardio_activities,
+                                                is_cardio_activity_active)
 
 log = logging.getLogger(__name__)
 
