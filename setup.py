@@ -25,8 +25,6 @@ requires = [
     'bcrypt',
     'requests',
     'pytz',
-    'pyspotify',
-    'pyechonest',
 ]
 
 setup(name='smartgymapi',
