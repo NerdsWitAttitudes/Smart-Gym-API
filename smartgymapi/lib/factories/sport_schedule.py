@@ -3,7 +3,8 @@ import logging
 from pyramid.security import Authenticated, Allow
 
 from smartgymapi.lib.factories import BaseFactory
-from smartgymapi.models.sport_schedule import list_sport_schedules, get_sport_schedule
+from smartgymapi.models.sport_schedule import (list_sport_schedules,
+                                               get_sport_schedule)
 
 log = logging.getLogger(__name__)
 
