@@ -1,9 +1,5 @@
 import logging
 
-import threading
-import spotify
-
-
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
