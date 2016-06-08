@@ -17,6 +17,7 @@ class Gym(Base):
     name = Column(String(100))
     city = Column(String(100))
     MAC_address = Column(String(17), unique=True)
+    spotify_playlist_id = Column(String(50))
 
 
 def get_gym(id_):
