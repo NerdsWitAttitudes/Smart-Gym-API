@@ -3,6 +3,54 @@
 This documentation describes all endpoints in the SmartGym API. All endpoints require an authentication token unless explicitely noted.
 
 
+# Group OAuth
+
+Some requests like the checkin of devices requires the requesting client to be authenticated. This is done using the
+OAuth 2 [client credentials grant](https://tools.ietf.org/html/rfc6749#section-4.4). This is implemented according to [RFC 6749](https://tools.ietf.org/html/rfc6749).
+
+## Manage clients [/oauth/client]
+### Create a client [POST]
+
+Create a client to be used with OAuth 2. This endpoint requires the user to be an administrator and
+will therefore not be available to default users. Note the client_secret will only be shown once and cannot be retrieved again.
+
+`client_type` should be either "public" or "confidential" as described [here](https://tools.ietf.org/html/rfc6749#section-2.1)
+
++ Request (application/json)
+
+        {
+            "name": "Example descriptive name",
+            "client_type": "public"
+        }
+        
++ Response 201(application/json)
+
+        {
+            "client_id": "00000000-0000-0000-0000-000000000000",
+            "client_secret": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+
+## Manage access tokens [oauth/token]
+### Request a token [POST]
+
+Request an access token to be used with OAuth 2. This request requires valid client credentials in the
+`Authorization` header.
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: Basic <base64 encoded client_id:client_secret>
+
+        
++ Response 200(application/json)
+
+        {
+            "access_token": "0000000000000000000000000000000000000000000000000000000000000000",
+            "expires_in" 3600,
+            "token_type": "Bearer"
+        }
+
 # Group Authentication
 
 Endpoints related to user authentication.
@@ -144,13 +192,18 @@ Update a user.
 Check a user in or out of their gym using their bluetooth enabled device. Does not require an authentication token.
 
 + Request (application/json)
+    + Headers
+    
+            Authorization: Bearer 0000000000000000000000000000000000000000000000000000000000000000
 
-        {
-            "name": "Example name",
-            "device_address": "00:00:00:00:00:00",
-            "device_class": "00000",
-            "client_address": "00:00:00:00:00:00"
-        }
+    + Body
+    
+            {
+                "name": "Example name",
+                "device_address": "00:00:00:00:00:00",
+                "device_class": "00000",
+                "client_address": "00:00:00:00:00:00"
+            }
     
 + Response 200
 
@@ -279,3 +332,156 @@ Get the busyness for a specific date in the future (max 5 days from now)
             "2016-05-10T13:00:00": 9,
             "2016-05-10T14:00:00": 12,
         }
+        
+# Group Sport Schedules
+## Get schedules [/sport_schedule]
+### Get sport schedule [GET]
+
+For this GET request, it will return a list of all the sport schedule of the authenticated user.
+
+
++ Response 200(application/json)
+
+        [
+          {
+            "name": "Sport schedule name",
+            "weekdays": [
+              2,
+              4
+            ],
+            "time": "00:00:00-00:00",
+            "is_active": true,
+            "reminder_minutes": 15,
+            "id": "00000000-0000-0000-0000-000000000000",
+            "user_id": "00000000-0000-0000-0000-000000000000"
+          }
+        ]
+    
+### Add sport schedule [POST]
+
+Adds a sport schedule for the authenticated user.
+
++ Request (application/json)
+
+        {
+            "name": "Sport schedule name",
+            "weekdays": [
+              2,
+              4
+            ],
+            "time": "00:00:00-00:00",
+            "is_active": true,
+            "reminder_minutes": 15,
+            "user_id": "00000000-0000-0000-0000-000000000000"
+        }
+        
++ Response 200
+
+## Manage sport schedules [/sport_schedule/{id}]
++ Parameters
+    + id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a sport schedule.
+    
+
+### Change a sport schedule [PUT]
+
+This will update a sport schedule with one or multiple fields for the authenticated user.
+
++ Request (application/json)
+
+        {
+            "name": "Sport schedule new name",
+            "weekdays": [
+              2,
+              4,
+              5
+            ],
+            "time": "00:00:00-00:00",
+            "is_active": false,
+            "reminder_minutes": 15,
+            "user_id": "00000000-0000-0000-0000-000000000000"
+        }
+        
++ Response 200
+
+### Delete a sport schedule [DELETE]
+
+This will delete a sport schedule of the authenticated user.
+
++ Response 200
+
+
+# Group Cardio Activity
+
+This group is used for starting session activities and closing them with the session data.
+It it also used for visualizing the user healthy.
+
+## Get Cardio activities [/cardio_activity]
+### Get cardio activity [GET]
+
+This will return all cardio activity sessions of the user.
+
++ Response 200(application/json)
+
+        [
+          {
+            "distance": null,
+            "end_date": "00:00:00-00:00",
+            "calories": null,
+            "id": "00000000-0000-0000-0000-000000000000",
+            "start_date": "00:00:00-00:00",
+            "activity_id": "00000000-0000-0000-0000-000000000000",
+            "is_active": true,
+            "speed": null
+          }
+        ]
+        
+    
+### Start a cardio activty [POST]
+
+Start a new cardio activity session, this will require the user activity id
+
++ Request (application/json)
+
+        {
+            "activity_id": "00000000-0000-0000-0000-000000000000"
+        }
+        
++ Response 200
+
+## Manage cardio activities [/cardio_activity/{id}]
++ Parameters
+    + id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a cardio activity.
+    
+
+### End a cardio activity [PUT]
+
+This endpoint is used for ending a cardio activity. Here will be the session data be send to the API. 
+The endate will be assigned by the API.
+
++ Request (application/json)
+
+          {
+            "distance": null,
+            "calories": null,
+            "start_date": "00:00:00-00:00",
+            "activity_id": "00000000-0000-0000-0000-000000000000",
+            "is_active": true,
+            "speed": null
+          }
+        
++ Response 200
+
+### Get a single cardio activity [GET]
+
+This endpoint will return a single cardio activity.
+
++ Response 200(application/json)
+
+          {
+            "distance": null,
+            "calories": null,
+            "start_date": "00:00:00-00:00",
+            "activity_id": "00000000-0000-0000-0000-000000000000",
+            "is_active": true,
+            "speed": null
+          }
