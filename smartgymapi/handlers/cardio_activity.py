@@ -22,11 +22,8 @@ class RESTCardioActivty(object):
 
     @view_config(context=CardioActivityFactory, request_method='GET')
     def list(self):
-        try:
-            return CardioActivitySchema(many=True).dump(
-                self.request.context.list_cardio_activities()).data
-        except ValidationError as e:
-            raise HTTPBadRequest(json={'message': str(e)})
+        return CardioActivitySchema(many=True).dump(
+            self.request.context.list_cardio_activities()).data
 
     @view_config(context=CardioActivity, request_method='GET')
     def get(self):
