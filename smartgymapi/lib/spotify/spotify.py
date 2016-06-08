@@ -24,17 +24,6 @@ class Spotify(object):
         self.get_headers = {
             "Authorization": "Bearer {}".format(self.access_token)}
 
-    def authorize(self):
-        auth_body = {'grant_type': 'authorization_code',
-                     'refresh_token':
-                     self.settings['spotify.refresh_token'],
-                     'code': self.settings['spotify.auth_code'],
-                     'client_id': self.settings['spotify.client.id'],
-                     'redirect_uri': 'http://www.partypeak.nl/'}
-        r = requests.post(self.settings['spotify.authorize_url'],
-                          data=auth_body)
-        log.info(r.json())
-
     def get_access_token(self):
         """
         This function gets an acces token which we need to send requests to
