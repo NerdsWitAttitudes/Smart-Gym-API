@@ -35,6 +35,10 @@ class RESTUser(object):
     def get(self):
         return UserSchema().dump(self.request.context).data
 
+    @view_config(context=UserFactory, request_method="GET", name="me")
+    def get_current_user(self):
+        return UserSchema().dump(self.request.user).data
+
     @view_config(context=UserFactory, permission='signup',
                  request_method="POST")
     def post(self):

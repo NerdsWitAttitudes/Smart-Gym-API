@@ -32,12 +32,21 @@ class User(Base, LineageBase):
                     "UserActivity.end_date==None)",
         uselist=False)
 
-    buddies = relationship(
+    self_to_buddies = relationship(
         "User",
         primaryjoin="Buddy.user_1_id==User.id",
         secondaryjoin="Buddy.user_2_id==User.id",
-        secondary="buddy")
+        secondary="buddy",
+        backref="buddies_to_self")
     sport_schedules = relationship("SportSchedule", uselist=True)
+
+    @property
+    def buddies(self):
+        return self.self_to_buddies + self.buddies_to_self
+
+    @property
+    def buddy_ids(self):
+        return [user.id for user in self.buddies]
 
     def set_fields(self, data=None):
         for key, value in data.items():

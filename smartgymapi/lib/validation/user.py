@@ -12,6 +12,7 @@ class UserSchema(Schema):
     country = fields.Str(required='Country is required')
     date_of_birth = fields.DateTime(required='Date of birth is required')
     last_login = fields.DateTime(dump_only=True)
+    buddy_ids = fields.List(fields.UUID, dump_only=True)
 
 
 class BuddySchema(Schema):

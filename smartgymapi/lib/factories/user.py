@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 from pyramid.security import Allow, Authenticated, Everyone
 
@@ -22,7 +23,12 @@ class UserFactory(BaseFactory):
         if key == 'buddies':
             return BuddyFactory(self, 'buddies')
 
-        user = get_user(key)
+        try:
+            converted_key = uuid.UUID(key)
+        except (TypeError, ValueError):
+            raise KeyError("Invalid UUID")
+
+        user = get_user(converted_key)
 
         if user:
             user.set_lineage(self, 'user')
