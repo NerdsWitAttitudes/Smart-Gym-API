@@ -175,12 +175,15 @@ class RESTBuddy(object):
 
         try:
             persist(self.request.user)
+            response_body = UserSchema().dump(new_buddy).data
         except:
             log.critical("Something went wrong adding a new buddy",
                          exc_info=True)
             rollback()
         finally:
             commit()
+
+        return response_body
 
     @view_config(context=User, request_method="DELETE")
     def delete(self):

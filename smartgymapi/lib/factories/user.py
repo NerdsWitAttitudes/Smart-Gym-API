@@ -38,7 +38,7 @@ class BuddyFactory(BaseFactory):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def __getitem(self, key):
+    def __getitem__(self, key):
         buddy = get_user(key)
 
         if buddy:
