@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 @view_defaults(containment=SpotifyFactory,
-               permission='busyness',
+               permission='spotify',
                renderer='json',
                context=SpotifyFactory)
 class RESTSpotify(object):
@@ -23,30 +23,29 @@ class RESTSpotify(object):
         self.request = request
         self.settings = request.registry.settings
 
-    @view_config(name='add', request_method='POST')
+    @view_config(request_method='POST')
     def add_track(self):
         try:
             result, errors = SpotifySchema(
-                strict=True, only='client_address').load(
+                strict=True).load(
                 self.request.json_body)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
-
+        log.info(result)
         spotify = Spotify(
             self.request, get_gym_by_MAC_address(result['client_address']))
         spotify.update_playlist()
-        return HTTPCreated
+        raise HTTPCreated
 
     @view_config(request_method='DELETE')
     def delete_track(self):
         try:
             result, errors = SpotifySchema(
-                strict=True, only='client_address').load(
+                strict=True).load(
                 self.request.json_body)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
-
         spotify = Spotify(
             self.request, get_gym_by_MAC_address(result['client_address']))
-        spotify.delete_track(result['uri'])
-        return HTTPNoContent
+        spotify.remove_track(result['uri'])
+        raise HTTPNoContent

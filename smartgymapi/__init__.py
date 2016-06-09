@@ -1,8 +1,10 @@
 import logging
 
-from pyramid.authentication import AuthTktAuthenticationPolicy
+from uuid import UUID
 from pyramid.authorization import ACLAuthorizationPolicy
+from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.config import Configurator
+from pyramid.renderers import JSON
 from pyramid.security import authenticated_userid
 
 from sqlalchemy import engine_from_config
@@ -12,6 +14,8 @@ from smartgymapi.models.meta import (
 )
 from smartgymapi.lib.encrypt import decrypt_secret
 from smartgymapi.lib.factories.root import RootFactory
+from smartgymapi.lib.renderer import uuid_adapter
+from smartgymapi.lib.security import SmartGymAuthenticationPolicy
 from smartgymapi.models.user import get_user
 
 log = logging.getLogger(__name__)
@@ -23,7 +27,7 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
-    authentication_policy = AuthTktAuthenticationPolicy(
+    authentication_policy = SmartGymAuthenticationPolicy(
         secret=decrypt_secret(settings['auth.secret'],
                               settings['aes.key'],
                               settings['aes.iv']),
@@ -46,4 +50,8 @@ def main(global_config, **settings):
     config.set_default_permission('admin')
     config.scan('smartgymapi.handlers')
 
+    renderers = {'json': JSON()}
+    for name, renderer in renderers.items():
+        renderer.add_adapter(UUID, uuid_adapter)
+        config.add_renderer(name, renderer)
     return config.make_wsgi_app()
