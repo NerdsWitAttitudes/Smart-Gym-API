@@ -46,3 +46,6 @@ class BuddyFactory(BaseFactory):
             return buddy
 
         raise KeyError
+
+    def __acl__(self):
+        return ((Allow, Authenticated, 'buddy'),)
