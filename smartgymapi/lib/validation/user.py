@@ -22,3 +22,10 @@ class BuddySchema(Schema):
         """ Checks if the user isn't trying to befriend him or herself."""
         if data['user_id'] == current_user_id:
             raise ValidationError("You can not add yourself as a buddy")
+
+
+class GETUserSchema(Schema):
+    exclude = fields.List(fields.UUID)
+    term = fields.Str()
+    limit = fields.Integer()
+    offset = fields.Integer()

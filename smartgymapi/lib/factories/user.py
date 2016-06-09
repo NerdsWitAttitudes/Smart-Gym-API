@@ -36,8 +36,8 @@ class UserFactory(BaseFactory):
 
         raise KeyError
 
-    def get_users(self):
-        return list_users()
+    def get_users(self, **kwargs):
+        return list_users(**kwargs)
 
 
 class BuddyFactory(BaseFactory):

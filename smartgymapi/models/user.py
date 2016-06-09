@@ -41,6 +41,10 @@ class User(Base, LineageBase):
     sport_schedules = relationship("SportSchedule", uselist=True)
 
     @property
+    def full_name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+
+    @property
     def buddies(self):
         return self.self_to_buddies + self.buddies_to_self
 
@@ -63,8 +67,14 @@ class Buddy(Base):
     buddies_since = Column(DateTime, default=datetime.datetime.utcnow)
 
 
-def list_users():
-    return session.query(User)
+def list_users(exclude=None, term='', offset=0, limit=10):
+    q = session.query(User).filter(
+        User.full_name.contains(term))
+
+    if exclude:
+        q = q.filter(~User.id.in_(exclude))
+
+    return q.offset(offset).limit(limit)
 
 
 def get_user(id_):

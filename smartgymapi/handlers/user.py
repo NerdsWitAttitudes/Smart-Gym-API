@@ -11,7 +11,8 @@ from smartgymapi.lib.factories.user import BuddyFactory, UserFactory
 from smartgymapi.lib.redis import RedisSession
 from smartgymapi.lib.similarity import get_ordered_list_similarity
 from smartgymapi.lib.validation.auth import SignupSchema
-from smartgymapi.lib.validation.user import BuddySchema, UserSchema
+from smartgymapi.lib.validation.user import (BuddySchema, UserSchema,
+                                             GETUserSchema)
 from smartgymapi.models import commit, persist, rollback, delete
 from smartgymapi.models.user import User, get_user, list_users
 from smartgymapi.models.user_activity import get_favorite_weekdays_for_user
@@ -28,8 +29,14 @@ class RESTUser(object):
 
     @view_config(context=UserFactory, request_method="GET")
     def list(self):
-        return UserSchema(many=True).dump(self.request.context.get_users()
-                                          ).data
+        try:
+            result, errors = GETUserSchema().load(
+                self.request.GET)
+        except ValidationError as e:
+            raise HTTPBadRequest(json={'message': str(e)})
+
+        return UserSchema(many=True).dump(
+            self.request.context.get_users(**result)).data
 
     @view_config(context=User, request_method="GET")
     def get(self):
