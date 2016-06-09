@@ -1,7 +1,7 @@
 import uuid
 
 from sqlalchemy import (Column, String, Integer, ForeignKey,
-                        UniqueConstraint, Time, Boolean, func)
+                        UniqueConstraint, Time, Boolean)
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 
@@ -34,16 +34,3 @@ def list_sport_schedules(user):
 
 def get_sport_schedule(id_):
     return DBSession.query(SportSchedule).get(id_)
-
-
-def get_favorite_weekdays_for_user(user):
-    """ Get the user's favorite weekdays to go to the gym.
-
-    Ordered from most favorite to least favorite.
-    """
-
-    return DBSession.query(SportSchedule.weekdays)\
-        .filter(SportSchedule.user == user)\
-        .order_by(
-            func.count(SportSchedule.weekdays).desc())\
-        .group_by(SportSchedule.weekdays)

@@ -13,8 +13,8 @@ from smartgymapi.lib.similarity import get_ordered_list_similarity
 from smartgymapi.lib.validation.auth import SignupSchema
 from smartgymapi.lib.validation.user import BuddySchema, UserSchema
 from smartgymapi.models import commit, persist, rollback, delete
-from smartgymapi.models.sport_schedule import get_favorite_weekdays_for_user
 from smartgymapi.models.user import User, get_user, list_users
+from smartgymapi.models.user_activity import get_favorite_weekdays_for_user
 
 log = logging.getLogger(__name__)
 
@@ -134,7 +134,6 @@ class RESTBuddy(object):
             favorite_weekday_similarity = get_ordered_list_similarity(
                 favorite_weekdays,
                 get_favorite_weekdays_for_user(user).all())
-            log.info(favorite_weekday_similarity)
 
             if len(recommended_buddies) < 5:
                 # List not full, we can continue early
