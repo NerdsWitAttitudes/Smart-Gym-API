@@ -96,10 +96,7 @@ class Spotify(object):
     def get_tracks(self, genres):
         """this function get tracks based on genres"""
         params = {'seed_genres': genres,
-                  'limit': 1
-                  # 'target_energy': 0.7,
-                  # 'target_popularity': 100,
-                  }
+                  'limit': 1}
 
         r = requests.get('{}/recommendations'.format(
             self.settings['spotify.base_url']), headers=self.get_headers,
