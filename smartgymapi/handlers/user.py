@@ -1,7 +1,8 @@
 import logging
 
 from marshmallow import ValidationError
-from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
+from pyramid.httpexceptions import (HTTPBadRequest, HTTPInternalServerError,
+                                    HTTPNoContent, HTTPCreated)
 from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.encrypt import hash_password
@@ -16,7 +17,7 @@ log = logging.getLogger(__name__)
 
 
 @view_defaults(containment=UserFactory,
-               permission='public',
+               permission='user',
                renderer='json')
 class RESTUser(object):
     def __init__(self, request):
@@ -30,7 +31,8 @@ class RESTUser(object):
     def get(self):
         return UserSchema().dump(self.request.context)
 
-    @view_config(context=UserFactory, request_method="POST")
+    @view_config(context=UserFactory, permission='signup',
+                 request_method="POST")
     def post(self):
         try:
             result, errors = SignupSchema(strict=True).load(
@@ -43,6 +45,8 @@ class RESTUser(object):
             result['password'])
 
         self.save(user)
+
+        raise HTTPCreated
 
     @view_config(context=User, request_method="PUT")
     def put(self):
@@ -78,3 +82,5 @@ class RESTUser(object):
             raise HTTPInternalServerError
         finally:
             commit()
+
+        raise HTTPNoContent

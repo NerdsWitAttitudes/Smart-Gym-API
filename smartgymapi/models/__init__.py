@@ -14,5 +14,9 @@ def delete(obj):
     session.delete(obj)
 
 
+def flush():
+    session.flush()
+
+
 def rollback():
     return session.rollback()
