@@ -3,6 +3,7 @@ from pyramid.security import Allow, Everyone
 from smartgymapi.lib.factories.auth import AuthFactory
 from smartgymapi.lib.factories.busyness import BusynessFactory
 from smartgymapi.lib.factories.device import DeviceFactory
+from smartgymapi.lib.factories.oauth import OAuthFactory
 from smartgymapi.lib.factories.sport_schedule import SportScheduleFactory
 from smartgymapi.lib.factories.user import UserFactory
 from smartgymapi.lib.factories.user_activity import UserActivityFactory
@@ -18,6 +19,7 @@ class RootFactory(dict):
         self['auth'] = AuthFactory(self, 'auth')
         self['busyness'] = BusynessFactory(self, 'busyness')
         self['device'] = DeviceFactory(self, 'device')
+        self['oauth'] = OAuthFactory(self, 'oauth')
         self['sport_schedule'] = SportScheduleFactory(self, 'sport_schedule')
         self['user'] = UserFactory(self, 'user')
         self['user_activity'] = UserActivityFactory(self, 'user_activity')
