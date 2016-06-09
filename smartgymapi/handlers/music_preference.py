@@ -2,7 +2,8 @@ import logging
 
 from marshmallow import ValidationError
 
-from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
+from pyramid.httpexceptions import (HTTPBadRequest, HTTPCreated,
+                                    HTTPInternalServerError)
 from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.factories.music_preference import MusicPreferenceFactory
@@ -47,6 +48,8 @@ class RESTUserActivity(object):
         music_preference.user = self.request.user
 
         self.save(music_preference)
+
+        raise HTTPCreated
 
     def save(self, music_preference):
         try:
