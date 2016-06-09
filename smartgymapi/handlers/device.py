@@ -11,7 +11,6 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.handlers.busyness import get_weather
 from smartgymapi.lib.exceptions.validation import NotUniqueException
-from smartgymapi.lib.spotify.spotify import Spotify
 from smartgymapi.lib.validation.device import DeviceSchema
 from smartgymapi.models import commit, persist, rollback, delete
 from smartgymapi.models.device import Device
@@ -76,7 +75,7 @@ class DeviceHandler(object):
                 log.warn('Temparature not found')
 
             activity.weather = weather
-        spotify = Spotify(self.request, activity.gym)
+
         try:
             persist(device)
             persist(activity)

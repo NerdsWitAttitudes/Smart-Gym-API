@@ -96,12 +96,12 @@ class Spotify(object):
     def get_tracks(self, genres):
         """this function get tracks based on genres"""
         params = {'seed_genres': genres,
-                  'limit': 5,
+                  'limit': 1,
                   'target_energy': 0.7,
                   'target_popularity': 100,
                   }
 
-        r = requests.get('{}/recommendatins'.format(
+        r = requests.get('{}/recommendations'.format(
             self.settings['spotify.base_url']), headers=self.get_headers,
             params=params)
         song_uris = []
@@ -111,6 +111,16 @@ class Spotify(object):
                 song_uris.append(track['uri'])
 
         return song_uris
+
+    def remove_track(self, uri):
+        """This function removes a track from the playlist"""
+        requests.delete('{}/users/{}/playlists/{}/tracks'.format(
+            self.settings['spotify.base_url'],
+            self.settings['spotify.user_id'],
+            self.gym.spotify_playlist_id),
+            headers=self.post_headers, data=json.dumps({'tracks':
+                                                        [{'uri': uri}]}))
+        return
 
     def add_tracks_to_playlist(self, tracks):
         requests.post('{}/users/{}/playlists/{}/tracks'.format(
