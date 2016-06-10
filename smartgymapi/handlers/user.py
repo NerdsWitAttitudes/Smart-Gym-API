@@ -198,7 +198,14 @@ class RESTBuddy(object):
 
     @view_config(context=User, request_method="DELETE")
     def delete(self):
-        self.request.user.buddies.remove(self.request.context)
+        try:
+            self.request.user.self_to_buddies.remove(self.request.context)
+            self.request.user.buddies_to_self.remove(self.request.context)
+        except ValueError:
+            # It's possible that the relationship only existed one way
+            # which means one will raise a key error
+            pass
+
         try:
             persist(self.request.user)
         except:
