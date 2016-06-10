@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 @view_defaults(containment=MusicPreferenceFactory,
                permission='public',
                renderer='json')
-class RESTUserActivity(object):
+class RESTMusicPreference(object):
 
     def __init__(self, request):
         self.request = request
