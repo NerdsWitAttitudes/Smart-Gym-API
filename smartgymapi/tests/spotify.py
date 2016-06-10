@@ -1,5 +1,3 @@
-from datetime import date, timedelta
-
 from smartgymapi.tests import FunctionalTestCase
 
 
