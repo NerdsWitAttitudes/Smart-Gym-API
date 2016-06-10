@@ -24,6 +24,7 @@ requires = [
     'pycrypto',
     'bcrypt',
     'requests',
+    'redis',
     'pytz',
 ]
 

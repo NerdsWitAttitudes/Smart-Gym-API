@@ -485,3 +485,32 @@ This endpoint will return a single cardio activity.
             "is_active": true,
             "speed": null
           }
+          
+          
+# Group Spotify
+
+## Manage spotify playlist [/Spotify]
+### Add track [POST]
+
+Add a track to the playlist for a specific gym
+
++ Request (application/json)
+
+        {
+            "cliend_address": "00:00:00:00:00:00"
+        }
+
++ Response 201(application/json)
+
+### Remove track [DELETE]
+
+Add a track to the playlist for a specific gym
+
++ Request (application/json)
+
+        {
+            "cliend_address": "00:00:00:00:00:00",
+            "uri": "spotify:track:0xCmwofyCiXdhoBsMSNj2w",
+        }
+
++ Response 204(application/json)
