@@ -16,5 +16,5 @@ class EncryptTest(TestCase):
         hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
             'Qio8ECMHzXjizx4gqn1Rq'
         self.assertTrue(check_password('test123', hashed_password, salt))
-        self.asssertFalse(check_password('notrightpass', hashed_password,
-                                         salt))
+        self.assertFalse(check_password('notrightpass', hashed_password,
+                                        salt))
