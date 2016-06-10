@@ -1,4 +1,4 @@
-from pyramid.security import Allow, Authenticated, Everyone
+from pyramid.security import Allow, Authenticated
 from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.lib.factories import BaseFactory
@@ -31,5 +31,5 @@ class DeviceFactory(BaseFactory):
     def __acl__(self):
         return (
             (Allow, Authenticated, 'device'),
-            (Allow, Everyone, 'checkin')
+            (Allow, 'client:confidential', 'checkin')
         )
