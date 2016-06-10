@@ -60,6 +60,7 @@ target/
 
 # ini files
 *.ini
+!test.ini # Test ini is allow
 
 # intellij
 /.idea
