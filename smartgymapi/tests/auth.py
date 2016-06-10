@@ -1,7 +1,7 @@
 import datetime
 
 from smartgymapi.lib.encrypt import hash_password, check_password
-from smartgymapi.tests import TestCase, UnitTestCase
+from smartgymapi.tests import TestCase, UnitTestCase, FunctionalTestCase
 
 
 class EncryptTest(TestCase):
@@ -48,3 +48,28 @@ class TestAuthHandlers(UnitTestCase):
 
         login(request)
         self.assertEqual(request.response.status_code, 200)
+
+
+class FunctionalTestAuthHandlers(FunctionalTestCase):
+    def test_login_succesful(self):
+        from smartgymapi.models.user import User
+        salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
+        hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
+            'Qio8ECMHzXjizx4gqn1Rq'
+
+        user = User(first_name='test',
+                    last_name='person',
+                    password_hash=hashed_password,
+                    password_salt=salt,
+                    email='test@test.com',
+                    country='The Netherlands',
+                    date_of_birth=datetime.datetime.now())
+        self.session.add(user)
+        self.session.flush()
+
+        response = self.app.post_json(
+            '/auth/login',
+            {'email': 'test@test.com',
+             'password': 'test123'})
+
+        self.assertEqual(response.status_code, 200)
