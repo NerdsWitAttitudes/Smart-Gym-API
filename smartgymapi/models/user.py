@@ -71,9 +71,12 @@ class Buddy(Base):
     buddies_since = Column(DateTime, default=datetime.datetime.utcnow)
 
 
-def list_users(exclude=None, term='', offset=0, limit=10):
+def list_users(country=None, exclude=None, term='', offset=0, limit=10):
     q = session.query(User).filter(
         term in User.full_name)
+
+    if country:
+        q = q.filter(User.country == country)
 
     if exclude:
         q = q.filter(~User.id.in_(exclude))

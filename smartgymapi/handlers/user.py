@@ -137,7 +137,7 @@ class RESTBuddy(object):
 
         recommended_buddies = {}
         favorite_weekdays = get_favorite_weekdays_for_user(current_user).all()
-        users = list_users(limit=None)
+        users = list_users(country=current_user.country, limit=None)
         for user in users:
             if user is current_user or current_user in user.buddies:
                 # Don't recommend the user to befriend him or herself
