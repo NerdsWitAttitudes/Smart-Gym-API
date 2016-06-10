@@ -52,7 +52,7 @@ setup(name='smartgymapi',
       include_package_data=True,
       zip_safe=False,
       test_suite='smartgymapi',
-      test_require=test_require,
+      tests_require=test_require,
       install_requires=requires,
       entry_points="""\
       [paste.app_factory]
