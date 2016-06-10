@@ -65,7 +65,7 @@ class RESTBusyness(object):
 
         todays_predicted_busyness = filter_on_weather(
             todays_predicted_busyness, create_weather_prediction_list(r),
-            date.today())
+            date.today(), True)
 
         self.fill_hour_count(todays_busyness)
 
@@ -175,7 +175,7 @@ def create_weather_prediction_list(weather_prediction):
     return predictions
 
 
-def filter_on_weather(activities, weather, date):
+def filter_on_weather(activities, weather, date, predict_for_today=False):
     """
     This function removes all activities where the weather does not match the
     weather of the day we predict
@@ -188,10 +188,16 @@ def filter_on_weather(activities, weather, date):
     # calculate offset
     offset = timezone('CET').utcoffset(datetime.now()).total_seconds() / 3600
     for activity in activities:
+        # check if were predicting for today, if this is the case we only have
+        # to predict for the hours to come
+        if (predict_for_today and
+                activity.start_date.hour <= datetime.now().hour):
+            continue
         # get the correct key because the weather is saved in steps of 3 hours.
         # we have to add our gmt offset to that number.
         correct_key = activity.start_date.hour + \
             (3 - (activity.start_date.hour % 3)) + offset
+
         if activity.weather.rain == weather[
             date_list[correct_key]]['rain'] and (
                 activity.weather.temperature >= weather[
