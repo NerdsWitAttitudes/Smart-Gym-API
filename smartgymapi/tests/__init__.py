@@ -1,5 +1,6 @@
 import os
 import unittest
+from unittest.mock import Mock
 
 from paste.deploy.loadwsgi import appconfig
 from pyramid import testing
@@ -19,6 +20,7 @@ class TestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.engine = engine_from_config(settings, prefix='sqlalchemy.')
+        Base.metadata.create_all(cls.engine)
         cls.Session = sessionmaker()
 
     def setUp(self):
@@ -32,6 +34,19 @@ class TestCase(unittest.TestCase):
 
     def tearDown(self):
         testing.tearDown()
+
+
+class UnitTestCase(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.config = testing.setUp(request=testing.DummyRequest())
+
+    def get_post_request(self, post=None):
+        request = testing.DummyRequest(json_body=post)
+
+        request.session = Mock()
+
+        return request
 
 
 class FunctionalTestCase(TestCase):
