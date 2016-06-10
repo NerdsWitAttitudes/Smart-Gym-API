@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 from pyramid import testing
 
@@ -18,8 +19,8 @@ class MusicPreferenceTest(UnitTestCase):
         salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
         hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
             'Qio8ECMHzXjizx4gqn1Rq'
-
-        user = User(id='af425ccf-3eef-4f19-9e8d-8cb86867824e',
+        user_id = uuid.uuid4()
+        user = User(id=user_id,
                     first_name='test',
                     last_name='person',
                     password_hash=hashed_password,
@@ -30,10 +31,9 @@ class MusicPreferenceTest(UnitTestCase):
         self.session.add(user)
 
         music_preference = MusicPreference(
-            user_id=user.id,
-            city='Rotterdam',
-            MAC_address='24:FD:52:E6:0F:FB',
-            spotify_playlist_id='2YO7LggvPHcfFC48Iq29zk')
+            id=uuid.uuid4(),
+            user_id=user_id,
+            genre='dance')
 
         self.session.add(music_preference)
         self.session.flush()
@@ -43,3 +43,32 @@ class MusicPreferenceTest(UnitTestCase):
 
         RESTMusicPreference(request).get()
         self.assertEqual(request.response.status_code, 200)
+
+    def test_post_music_preference_succesful(self):
+        from smartgymapi.models.user import User
+        from smartgymapi.handlers.music_preference import RESTMusicPreference
+
+        salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
+        hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
+            'Qio8ECMHzXjizx4gqn1Rq'
+        user_id = uuid.uuid4()
+        user = User(id=user_id,
+                    first_name='test',
+                    last_name='person',
+                    password_hash=hashed_password,
+                    password_salt=salt,
+                    email='test@test.com',
+                    country='The Netherlands',
+                    date_of_birth=datetime.datetime.now())
+        self.session.add(user)
+        self.session.flush()
+
+        music_preference = {
+            'user_id': user_id,
+            'genre': 'dance',
+        }
+
+        request = testing.get_post_request(post=music_preference)
+
+        RESTMusicPreference(request).post()
+        self.assertEqual(request.response.status_code, 201)
