@@ -28,8 +28,8 @@ def main(global_config, **settings):
         secret=decrypt_secret(settings['auth.secret'],
                               settings['aes.key'],
                               settings['aes.iv']),
-        timeout=settings['auth.timeout'],
-        reissue_time=settings['auth.reissue_time'],
+        timeout=settings.get('auth.timeout', None),
+        reissue_time=settings.get('auth.reissue_time', None),
         http_only=True,
         hashalg='sha512')
     config = Configurator(settings=settings,

@@ -45,7 +45,12 @@ class BuddyFactory(BaseFactory):
         super().__init__(*args, **kwargs)
 
     def __getitem__(self, key):
-        buddy = get_user(key)
+        try:
+            converted_key = uuid.UUID(key)
+        except (TypeError, ValueError):
+            raise KeyError("Invalid UUID")
+
+        buddy = get_user(converted_key)
 
         if buddy:
             buddy.set_lineage(self, 'user')

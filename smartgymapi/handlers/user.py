@@ -1,3 +1,4 @@
+import ast
 import logging
 
 from marshmallow import ValidationError
@@ -111,6 +112,7 @@ class RESTUser(object):
 class RESTBuddy(object):
     def __init__(self, request):
         self.request = request
+        self.redis_key = '{}_recommended_buddies'.format(self.request.user.id)
 
     @view_config(context=BuddyFactory, request_method="GET")
     def list(self):
@@ -130,14 +132,14 @@ class RESTBuddy(object):
             "{}_recommended_buddies".format(current_user.id))
 
         if recommended_buddies:
-            # return recommended_buddies
-            pass
+            # The value is stored as bytes
+            return ast.literal_eval(recommended_buddies.decode('utf-8'))
 
         recommended_buddies = {}
         favorite_weekdays = get_favorite_weekdays_for_user(current_user).all()
-        users = list_users()
+        users = list_users(limit=None)
         for user in users:
-            if user is current_user or user in user.buddies:
+            if user is current_user or current_user in user.buddies:
                 # Don't recommend the user to befriend him or herself
                 # or users that are already buddies.
                 continue
@@ -147,7 +149,7 @@ class RESTBuddy(object):
                 get_favorite_weekdays_for_user(user).all())
 
             if len(recommended_buddies) < 5:
-                # List not full, we can continue early
+                # List not full, we can continue to the next iteration early
                 recommended_buddies[user] = favorite_weekday_similarity
                 continue
 
@@ -165,7 +167,7 @@ class RESTBuddy(object):
         recommended_buddies_data = UserSchema(many=True).dump(
             recommended_buddies).data
         RedisSession().session.set(
-            "{}_recommended_buddies".format(current_user.id),
+            self.redis_key,
             recommended_buddies_data)
 
         return recommended_buddies_data
@@ -180,9 +182,10 @@ class RESTBuddy(object):
             raise HTTPBadRequest(json={'message': str(e)})
 
         new_buddy = get_user(result['user_id'])
+        new_buddy_id = str(new_buddy.id)
 
         # add the new buddy to the user's existing buddies
-        self.request.user.buddies.append(new_buddy)
+        self.request.user.self_to_buddies.append(new_buddy)
 
         try:
             persist(self.request.user)
@@ -194,13 +197,27 @@ class RESTBuddy(object):
         finally:
             commit()
 
+        # If the new buddy was a recommended one we have to search for a new
+        # recommendatation
+        cached_recommendations = RedisSession().session.get(self.redis_key)
+        if (cached_recommendations and
+                new_buddy_id in cached_recommendations.decode('utf-8')):
+            # Invalidate the cached recommended buddies
+            RedisSession().session.delete(self.redis_key)
+
         return response_body
 
     @view_config(context=User, request_method="DELETE")
     def delete(self):
         try:
-            self.request.user.self_to_buddies.remove(self.request.context)
             self.request.user.buddies_to_self.remove(self.request.context)
+        except ValueError:
+            # It's possible that the relationship only existed one way
+            # which means one will raise a key error
+            pass
+
+        try:
+            self.request.user.self_to_buddies.remove(self.request.context)
         except ValueError:
             # It's possible that the relationship only existed one way
             # which means one will raise a key error
@@ -215,4 +232,6 @@ class RESTBuddy(object):
         finally:
             commit()
 
+        # Invalidate the cached recommended buddies
+        RedisSession().session.delete(self.redis_key)
         raise HTTPNoContent
