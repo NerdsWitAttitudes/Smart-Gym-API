@@ -57,7 +57,7 @@ class RESTBusyness(object):
         todays_busyness = self.request.context.get_busyness(
             datetime.now().date())
 
-        r = get_weather(self.settings, get_gym(result['gym_id']))
+        r = get_weather(self.settings, get_gym(result['gym_id']), predict=True)
 
         todays_predicted_busyness = (
             self.request.context.get_predicted_busyness(
@@ -82,7 +82,7 @@ class RESTBusyness(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        r = get_weather(self.settings, get_gym(result['gym_id']))
+        r = get_weather(self.settings, get_gym(result['gym_id']), predict=True)
 
         predicted_busyness = (
             self.request.context.get_predicted_busyness(
@@ -136,14 +136,19 @@ class RESTBusyness(object):
             str(item.start_date.hour), 0) + 1
 
 
-def get_weather(settings, gym):
+def get_weather(settings, gym, predict=False):
     r_params = {"q": gym.city,
                 "appid": settings['open_weather_api_key'],
                 "units": "metric"}
 
-    return requests.get(
-        settings['open_weather_url_forecast'],
-        params=r_params).json()
+    if predict:
+        return requests.get(
+            settings['open_weather_url_forecast'],
+            params=r_params).json()
+    else:
+        return requests.get(
+            settings['open_weather_url_current'],
+            params=r_params).json()
 
 
 def grouper(item):

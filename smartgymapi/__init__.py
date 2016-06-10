@@ -1,6 +1,8 @@
-from uuid import UUID
+import logging
 
+from uuid import UUID
 from pyramid.authorization import ACLAuthorizationPolicy
+from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.config import Configurator
 from pyramid.renderers import JSON
 from pyramid.security import authenticated_userid
@@ -16,6 +18,8 @@ from smartgymapi.lib.redis import RedisSession
 from smartgymapi.lib.renderer import uuid_adapter
 from smartgymapi.lib.security import SmartGymAuthenticationPolicy
 from smartgymapi.models.user import get_user
+
+log = logging.getLogger(__name__)
 
 
 def main(global_config, **settings):

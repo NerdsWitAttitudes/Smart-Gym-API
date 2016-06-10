@@ -71,20 +71,20 @@ class DeviceHandler(object):
             try:
                 weather.temperature = r['main']['temp']
             except KeyError:
-                log.WARN('Temparature not found')
+                log.warn('Temparature not found')
 
             activity.weather = weather
 
         try:
             persist(device)
             persist(activity)
+            spotify.update_playlist()
         except:
             log.critical("Something went wrong checking in",
                          exc_info=True)
             rollback()
         finally:
             commit()
-
         return response
 
     @view_config(request_method='GET', permission='public')

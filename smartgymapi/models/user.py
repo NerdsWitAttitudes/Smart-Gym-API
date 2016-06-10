@@ -2,10 +2,13 @@ import datetime
 import logging
 import uuid
 
+from smartgymapi.models.user_activity import UserActivity
+
 from sqlalchemy import Column, String, DateTime, ForeignKey, func, Boolean
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
+
 
 from smartgymapi.models.meta import Base, LineageBase, DBSession as session
 
@@ -86,6 +89,13 @@ def list_users(country=None, exclude=None, term='', offset=0, limit=10):
 
 def get_user(id_):
     return session.query(User).get(id_)
+
+
+def list_users_in_gym(gym_id):
+    return session.query(User).join(
+        UserActivity, User.id == UserActivity.user_id).filter(
+        UserActivity.end_date == None,
+        UserActivity.gym_id == gym_id)
 
 
 def get_user_by_email(email):
