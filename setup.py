@@ -27,6 +27,12 @@ requires = [
     'pytz',
 ]
 
+test_require = [
+    'WebTest >= 1.3.1',
+    'pytest',
+    'pytest-cov'
+]
+
 setup(name='smartgymapi',
       version='0.0',
       description='smartgymapi',
@@ -45,6 +51,7 @@ setup(name='smartgymapi',
       include_package_data=True,
       zip_safe=False,
       test_suite='smartgymapi',
+      test_require=test_require,
       install_requires=requires,
       entry_points="""\
       [paste.app_factory]

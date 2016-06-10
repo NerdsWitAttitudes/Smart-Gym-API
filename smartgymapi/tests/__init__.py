@@ -1,20 +1,46 @@
+import os
 import unittest
 
+from paste.deploy.loadwsgi import appconfig
 from pyramid import testing
+from sqlalchemy import engine_from_config
+from sqlalchemy.orm import sessionmaker
+from webtest import TestApp
+
+from smartgymapi import main
+from smartgymapi.models.meta import Base, DBSession as session
+
+here = os.path.dirname(__file__)
+settings = appconfig('config:{}'.format(os.path.join(here, '../../',
+                     'test.ini')))
 
 
 class TestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.engine = engine_from_config(settings, prefix='sqlalchemy.')
+        cls.Session = sessionmaker()
+
     def setUp(self):
-        dummy_request = testing.DummyRequest()
-        self.config = testing.setUp(request=dummy_request)
+        connection = self.engine.connect()
+        connection.begin()
+
+        session.configure(bind=connection)
+        self.session = self.Session(bind=connection)
+
+        Base.session = self.session
 
     def tearDown(self):
         testing.tearDown()
 
 
-class FunctionalTestCase(unittest.TestCase):
+class FunctionalTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.app = main({}, **settings)
+
     def setUp(self):
-        from smartgymapi import main
-        app = main({})
-        from webtest import TestApp
-        self.test_app = TestApp(app)
+        super().setUp()
+        self.app = TestApp(self.app)
+        self.config = testing.setUp()

@@ -1,7 +1,7 @@
-from smartgymapi.test import FunctionalTestCase
+from smartgymapi.tests import FunctionalTestCase
 
 
 class IndexTest(FunctionalTestCase):
     def test_get_view(self):
-        response = self.test_app.get('/', status=200)
-        self.assertTrue('version' in response.body)
+        response = self.app.get('/', status=200)
+        self.assertTrue(b'version' in response.body)

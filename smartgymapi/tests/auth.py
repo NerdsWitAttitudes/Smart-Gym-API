@@ -1,11 +1,9 @@
 from smartgymapi.lib.encrypt import hash_password, check_password
-from smartgymapi.test import TestCase
+from smartgymapi.tests import TestCase
 
 
 class EncryptTest(TestCase):
     def setUp(self):
-        super().setUp(self)
-
         self.test_password = 'test123'
 
     def test_hash_password(self):
