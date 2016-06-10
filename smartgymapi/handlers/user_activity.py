@@ -1,6 +1,5 @@
 import logging
 
-import requests
 from marshmallow import ValidationError
 
 from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError

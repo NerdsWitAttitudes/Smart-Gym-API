@@ -8,6 +8,9 @@ __pycache__/
 # Vim bullshit
 *.sw*
 
+# API key
+.key
+
 # Distribution / packaging
 .Python
 env/

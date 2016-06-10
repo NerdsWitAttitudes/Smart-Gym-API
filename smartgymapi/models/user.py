@@ -1,7 +1,9 @@
 import uuid
-from sqlalchemy import Column, String, DateTime, func, Boolean
+from sqlalchemy import (Column, String, DateTime, func, Boolean)
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
+
+from smartgymapi.models.user_activity import UserActivity
 from smartgymapi.models.meta import Base, LineageBase, DBSession as session
 
 
@@ -40,6 +42,13 @@ def list_users():
 
 def get_user(id_):
     return session.query(User).get(id_)
+
+
+def list_users_in_gym(gym_id):
+    return session.query(User).join(
+        UserActivity, User.id == UserActivity.user_id).filter(
+        UserActivity.end_date == None,
+        UserActivity.gym_id == gym_id)
 
 
 def get_user_by_email(email):
