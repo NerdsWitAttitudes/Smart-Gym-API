@@ -44,7 +44,7 @@ setup(name='smartgymapi',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      test_suite='smartgymapi',
+      test_suite='smartgymapi.tests',
       install_requires=requires,
       entry_points="""\
       [paste.app_factory]
