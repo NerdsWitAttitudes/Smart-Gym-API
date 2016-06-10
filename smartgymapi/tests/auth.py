@@ -8,8 +8,8 @@ class EncryptTest(TestCase):
 
     def test_hash_password(self):
         hashed_password, salt = hash_password(self.test_password)
-        self.assertIsNotNone(self.hashed_password)
-        self.assertIsNotNone(self.salt)
+        self.assertIsNotNone(hashed_password)
+        self.assertIsNotNone(salt)
 
     def test_check_password(self):
         salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
