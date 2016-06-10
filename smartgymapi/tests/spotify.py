@@ -11,12 +11,9 @@ class BusynessTest(FunctionalTestCase):
 
     def test_add_track(self):
         yesterday = date.today() - timedelta(1)
-        response = self.test_app.get('/spotify&gym_id={}&date={}'
-                                     .format(self.gym_id,
-                                             yesterday.strftime('%y-%m-%d')),
+        response = self.test_app.get('/spotify',
                                      status=201)
 
     def test_delete_track(self):
-        response = self.test_app.get('/spotify'
-                                     .format(self.gym_id),
+        response = self.test_app.get('/spotify',
                                      status=204)
