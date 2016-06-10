@@ -10,10 +10,15 @@ class BusynessTest(FunctionalTestCase):
         super().setUp()
 
     def test_add_track(self):
-        yesterday = date.today() - timedelta(1)
-        response = self.test_app.get('/spotify',
-                                     status=201)
+        response = self.test_app.post(
+            '/spotify',
+            {'client_address': '24:FD:52:E6:0F:FB'},
+            status=201)
 
     def test_delete_track(self):
-        response = self.test_app.get('/spotify',
-                                     status=204)
+        response = self.test_app.get(
+            '/spotify',
+            {'uri':
+             'spotify:track:06VFJ6o6ywoSdrSWMZMIoN',
+             'client_address': '24:FD:52:E6:0F:FB'},
+            status=204)
