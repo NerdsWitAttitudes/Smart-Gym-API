@@ -18,6 +18,12 @@ pyramid.includes =
 
 sqlalchemy.url = postgresql://username:password@ip/db
 
+redis.host =
+redis.port = 6379
+redis.db = 0
+redis.password = 
+
+
 aes.key =
 aes.iv =
 

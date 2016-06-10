@@ -4,8 +4,7 @@ import uuid
 
 from marshmallow import ValidationError
 from pyramid.httpexceptions import (HTTPNotFound, HTTPBadRequest,
-                                    HTTPInternalServerError, HTTPCreated,
-                                    HTTPNoContent)
+                                    HTTPInternalServerError, HTTPNoContent)
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -123,7 +122,9 @@ class DeviceHandler(object):
         finally:
             commit()
 
-        raise HTTPCreated(json=response_body)
+        self.request.response.code = 201
+
+        return response_body
 
     @view_config(context=Device, request_method='DELETE')
     def delete(self):
