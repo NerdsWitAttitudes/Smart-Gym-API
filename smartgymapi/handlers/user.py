@@ -3,7 +3,7 @@ import logging
 
 from marshmallow import ValidationError
 from pyramid.httpexceptions import (HTTPBadRequest, HTTPInternalServerError,
-                                    HTTPNoContent, HTTPCreated)
+                                    HTTPNoContent)
 from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.encrypt import hash_password
@@ -62,7 +62,7 @@ class RESTUser(object):
 
         self.save(user)
 
-        raise HTTPCreated
+        self.request.response.code = 201
 
     @view_config(context=User, request_method="PUT")
     def put(self):
