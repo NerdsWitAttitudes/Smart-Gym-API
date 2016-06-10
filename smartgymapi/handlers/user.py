@@ -31,7 +31,7 @@ class RESTUser(object):
     def list(self):
         try:
             result, errors = GETUserSchema().load(
-                self.request.GET)
+                self.request.GET.dict_of_lists())
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 

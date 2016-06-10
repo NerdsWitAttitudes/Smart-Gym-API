@@ -1,11 +1,15 @@
 import datetime
+import logging
 import uuid
 
 from sqlalchemy import Column, String, DateTime, ForeignKey, func, Boolean
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 
 from smartgymapi.models.meta import Base, LineageBase, DBSession as session
+
+log = logging.getLogger(__name__)
 
 
 class User(Base, LineageBase):
@@ -40,7 +44,7 @@ class User(Base, LineageBase):
         backref="buddies_to_self")
     sport_schedules = relationship("SportSchedule", uselist=True)
 
-    @property
+    @hybrid_property
     def full_name(self):
         return '{} {}'.format(self.first_name, self.last_name)
 
@@ -69,7 +73,7 @@ class Buddy(Base):
 
 def list_users(exclude=None, term='', offset=0, limit=10):
     q = session.query(User).filter(
-        User.full_name.contains(term))
+        term in User.full_name)
 
     if exclude:
         q = q.filter(~User.id.in_(exclude))
