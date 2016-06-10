@@ -39,7 +39,10 @@ def login(request):
         raise HTTPBadRequest(
             json={"message": "Email address and password don't match"})
 
-    check_password(result['password'], user.password_hash, user.password_salt)
+    if not check_password(result['password'], user.password_hash,
+                          user.password_salt):
+        raise HTTPBadRequest(
+            json={"message": "Username or password incorrect"})
 
     headers = remember(request, str(user.id))
     user.last_login = datetime.datetime.now()

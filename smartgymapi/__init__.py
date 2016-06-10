@@ -30,7 +30,7 @@ def main(global_config, **settings):
     Base.metadata.bind = engine
 
     RedisSession(settings['redis.host'], settings['redis.port'],
-                 settings['redis.db'], settings['redis.password'])
+                 settings['redis.db'], settings.get('redis.password', None))
 
     authentication_policy = SmartGymAuthenticationPolicy(
         secret=decrypt_secret(settings['auth.secret'],

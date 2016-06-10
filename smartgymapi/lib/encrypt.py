@@ -5,7 +5,6 @@ import logging
 import bcrypt
 from Crypto import Random
 from Crypto.Cipher import AES
-from pyramid.exceptions import HTTPBadRequest
 
 log = logging.getLogger(__name__)
 
@@ -23,8 +22,9 @@ def check_password(password, hashed_password, salt):
                                         salt.encode('utf-8'))
 
     if not new_hashed_password == hashed_password.encode('utf-8'):
-        raise HTTPBadRequest(
-            json={"message": "Username or password incorrect"})
+        return False
+
+    return True
 
 
 def decrypt_AES(message, key, iv):
