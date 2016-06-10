@@ -62,7 +62,7 @@ class RESTUser(object):
 
         self.save(user)
 
-        self.request.response.code = 201
+        self.request.response.status_code = 201
 
     @view_config(context=User, request_method="PUT")
     def put(self):

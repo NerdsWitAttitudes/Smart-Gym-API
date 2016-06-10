@@ -93,7 +93,24 @@ class TestUserHanders(UnitTestCase):
         self.assertIs(type(response), list)
 
     def test_post(self):
-        pass
+        from smartgymapi.handlers.user import RESTUser
+
+        request_body = {
+            "first_name": "new",
+            "last_name": "person",
+            "password": "testing123",
+            "password_confirm": "testing123",
+            "email": "new@user.com",
+            "country": "The Netherlands",
+            "date_of_birth": datetime.datetime.now().isoformat()
+        }
+
+        request = self.get_post_request(post=request_body)
+
+        rest_user = RESTUser(request)
+        rest_user.post()
+
+        self.assertEqual(rest_user.request.response.status_code, 201)
 
     def test_put(self):
         pass
