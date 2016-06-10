@@ -11,9 +11,11 @@ def forbidden(request):
         # No user logged in
         request.response.status_code = 401
         return {"message": "Unauthorized"}
+    request.response.status_code = 403
     return {"message": "Forbidden"}
 
 
 @notfound_view_config(renderer='json')
 def notfound(request):
+    request.response.status_code = 404
     return {"message": "Not found"}
