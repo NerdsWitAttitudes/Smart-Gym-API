@@ -1,11 +1,12 @@
 import datetime
 import logging
+import uuid
 
-import requests
 from marshmallow import ValidationError
-
-from pyramid.httpexceptions import HTTPBadRequest, HTTPInternalServerError
+from pyramid.httpexceptions import (HTTPNotFound, HTTPBadRequest,
+                                    HTTPInternalServerError, HTTPNoContent)
 from pyramid.view import view_config, view_defaults
+from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.handlers.busyness import get_weather
 from smartgymapi.lib.exceptions.validation import NotUniqueException
@@ -34,11 +35,14 @@ class DeviceHandler(object):
         schema = DeviceSchema(strict=True)
         try:
             result, errors = schema.load(self.request.json_body)
+            device = self.request.context.get_checkin_device(
+                result['device_address'])
+
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
+        except NoResultFound as e:
+            raise HTTPNotFound(json={'message': str(e)})
 
-        device = self.request.context.get_checkin_device(
-            result['device_address'])
         device.last_used = datetime.datetime.now()
 
         activity = device.user.active_activity
@@ -67,28 +71,28 @@ class DeviceHandler(object):
             try:
                 weather.temperature = r['main']['temp']
             except KeyError:
-                log.WARN('Temparature not found')
+                log.warn('Temparature not found')
 
             activity.weather = weather
 
         try:
             persist(device)
             persist(activity)
+            spotify.update_playlist()
         except:
             log.critical("Something went wrong checking in",
                          exc_info=True)
             rollback()
         finally:
             commit()
-
         return response
 
-    @view_config(request_method='GET')
+    @view_config(request_method='GET', permission='public')
     def list(self):
         return DeviceSchema(
             many=True,
-            only=('name', 'device_address', 'device_class')
-        ).dump(self.request.context.get_devices())
+            only=('id', 'name', 'device_address', 'device_class')
+        ).dump(self.request.context.get_devices()).data
 
     @view_config(request_method='POST')
     def post(self):
@@ -103,7 +107,10 @@ class DeviceHandler(object):
             raise HTTPBadRequest(json={'message': str(e)})
 
         device = Device()
+        device.id = uuid.uuid4()
+        device.user = self.request.user
         device.set_fields(result)
+        response_body = DeviceSchema().dump(device).data
 
         try:
             persist(device)
@@ -114,6 +121,10 @@ class DeviceHandler(object):
             raise HTTPInternalServerError
         finally:
             commit()
+
+        self.request.response.code = 201
+
+        return response_body
 
     @view_config(context=Device, request_method='DELETE')
     def delete(self):
@@ -126,3 +137,5 @@ class DeviceHandler(object):
             raise HTTPInternalServerError
         finally:
             commit()
+
+        raise HTTPNoContent

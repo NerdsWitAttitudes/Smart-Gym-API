@@ -24,8 +24,15 @@ requires = [
     'pycrypto',
     'bcrypt',
     'requests',
+    'redis',
     'pytz',
     'python-dateutil'
+]
+
+test_require = [
+    'WebTest >= 1.3.1',
+    'pytest',
+    'pytest-cov'
 ]
 
 setup(name='smartgymapi',
@@ -46,6 +53,7 @@ setup(name='smartgymapi',
       include_package_data=True,
       zip_safe=False,
       test_suite='smartgymapi',
+      tests_require=test_require,
       install_requires=requires,
       entry_points="""\
       [paste.app_factory]

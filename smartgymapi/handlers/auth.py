@@ -39,7 +39,10 @@ def login(request):
         raise HTTPBadRequest(
             json={"message": "Email address and password don't match"})
 
-    check_password(result['password'], user.password_hash, user.password_salt)
+    if not check_password(result['password'], user.password_hash,
+                          user.password_salt):
+        raise HTTPBadRequest(
+            json={"message": "Username or password incorrect"})
 
     headers = remember(request, str(user.id))
     user.last_login = datetime.datetime.now()
@@ -57,7 +60,7 @@ def login(request):
     request.response.headerlist.extend(headers)
 
 
-@auth_factory_view(request_method='GET', name='logout')
+@auth_factory_view(permission='logout', request_method='GET', name='logout')
 def logout(request):
     _logout(request)
 

@@ -5,9 +5,11 @@ from logging.config import fileConfig
 from smartgymapi.models.device import Device
 from smartgymapi.models.gym import Gym
 from smartgymapi.models.meta import Base
+from smartgymapi.models.music_preference import MusicPreference
 from smartgymapi.models.user import User
 from smartgymapi.models.user_activity import UserActivity
 from smartgymapi.models.sport_schedule import SportSchedule
+
 from smartgymapi.models.weather import Weather
 
 # this is the Alembic Config object, which provides

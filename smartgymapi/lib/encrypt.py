@@ -1,8 +1,10 @@
 import base64
-import bcrypt
+import binascii
 import logging
+
+import bcrypt
+from Crypto import Random
 from Crypto.Cipher import AES
-from pyramid.exceptions import HTTPBadRequest
 
 log = logging.getLogger(__name__)
 
@@ -20,8 +22,9 @@ def check_password(password, hashed_password, salt):
                                         salt.encode('utf-8'))
 
     if not new_hashed_password == hashed_password.encode('utf-8'):
-        raise HTTPBadRequest(
-            json={"message": "Username or password incorrect"})
+        return False
+
+    return True
 
 
 def decrypt_AES(message, key, iv):
@@ -33,3 +36,7 @@ def decrypt_AES(message, key, iv):
 def decrypt_secret(secret, key, iv):
     decoded_secret = base64.b64decode(secret.encode('utf-8'))
     return decrypt_AES(decoded_secret, key, iv).decode('utf-8')
+
+
+def get_secure_token():
+    return binascii.b2a_hex(Random.get_random_bytes(32)).decode('utf-8')

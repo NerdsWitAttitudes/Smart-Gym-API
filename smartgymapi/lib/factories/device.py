@@ -1,7 +1,9 @@
-from pyramid.security import Allow, Authenticated, Everyone
+from pyramid.security import Allow, Authenticated
+from sqlalchemy.orm.exc import NoResultFound
 
 from smartgymapi.lib.factories import BaseFactory
-from smartgymapi.models.device import get_device, get_device_by_device_address
+from smartgymapi.models.device import (get_device, get_devices,
+                                       get_device_by_device_address)
 
 
 class DeviceFactory(BaseFactory):
@@ -12,19 +14,22 @@ class DeviceFactory(BaseFactory):
         if key == 'checkin':
             raise KeyError
 
-        device = get_device(key)
+        try:
+            device = get_device(self.request.user, key)
+        except NoResultFound:
+            raise KeyError
 
-        if device:
-            device.set_lineage(self, 'device')
-            return device
-
-        raise KeyError
+        device.set_lineage(self, 'device')
+        return device
 
     def get_checkin_device(self, device_address):
         return get_device_by_device_address(device_address)
 
+    def get_devices(self):
+        return get_devices(self.request.user)
+
     def __acl__(self):
         return (
             (Allow, Authenticated, 'device'),
-            (Allow, Everyone, 'checkin')
+            (Allow, 'client:confidential', 'checkin')
         )
