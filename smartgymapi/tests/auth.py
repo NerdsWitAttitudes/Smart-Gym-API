@@ -24,53 +24,55 @@ class EncryptTest(TestCase):
                                         salt))
 
 
-# class TestAuthHandlers(UnitTestCase):
-#     def test_login_succesful(self):
-#         from smartgymapi.models.user import User
-#         from smartgymapi.handlers.auth import login
-#         salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
-#         hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
-#             'Qio8ECMHzXjizx4gqn1Rq'
+class TestAuthHandlers(UnitTestCase):
 
-#         user = User(first_name='test',
-#                     last_name='person',
-#                     password_hash=hashed_password,
-#                     password_salt=salt,
-#                     email='test@test.com',
-#                     country='The Netherlands',
-#                     date_of_birth=datetime.datetime.now())
-#         self.session.add(user)
-#         self.session.flush()
+    def test_login_succesful(self):
+        from smartgymapi.models.user import User
+        from smartgymapi.handlers.auth import login
+        salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
+        hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
+            'Qio8ECMHzXjizx4gqn1Rq'
 
-#         request = self.get_post_request(post={
-#             'email': 'test@test.com',
-#             'password': 'test123'
-#         })
+        user = User(first_name='test',
+                    last_name='person',
+                    password_hash=hashed_password,
+                    password_salt=salt,
+                    email='test@test.com',
+                    country='The Netherlands',
+                    date_of_birth=datetime.datetime.now())
+        self.session.add(user)
+        self.session.flush()
 
-#         login(request)
-#         self.assertEqual(request.response.status_code, 200)
+        request = self.get_post_request(post={
+            'email': 'test@test.com',
+            'password': 'test123'
+        })
+
+        login(request)
+        self.assertEqual(request.response.status_code, 200)
 
 
-# class FunctionalTestAuthHandlers(FunctionalTestCase):
-#     def test_login_succesful(self):
-#         from smartgymapi.models.user import User
-#         salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
-#         hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
-#             'Qio8ECMHzXjizx4gqn1Rq'
+class FunctionalTestAuthHandlers(FunctionalTestCase):
 
-#         user = User(first_name='test',
-#                     last_name='person',
-#                     password_hash=hashed_password,
-#                     password_salt=salt,
-#                     email='test@test.com',
-#                     country='The Netherlands',
-#                     date_of_birth=datetime.datetime.now())
-#         self.session.add(user)
-#         self.session.flush()
+    def test_login_succesful(self):
+        from smartgymapi.models.user import User
+        salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
+        hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
+            'Qio8ECMHzXjizx4gqn1Rq'
 
-#         response = self.app.post_json(
-#             '/auth/login',
-#             {'email': 'test@test.com',
-#              'password': 'test123'})
+        user = User(first_name='test',
+                    last_name='person',
+                    password_hash=hashed_password,
+                    password_salt=salt,
+                    email='test@test.com',
+                    country='The Netherlands',
+                    date_of_birth=datetime.datetime.now())
+        self.session.add(user)
+        self.session.flush()
 
-#         self.assertEqual(response.status_code, 200)
+        response = self.app.post_json(
+            '/auth/login',
+            {'email': 'test@test.com',
+             'password': 'test123'})
+
+        self.assertEqual(response.status_code, 200)
