@@ -26,7 +26,7 @@ class RESTMusicPreference(object):
     @view_config(context=MusicPreferenceFactory, request_method="GET")
     def list(self):
         return MusicPreferenceSchema(many=True).dump(
-            self.request.context.get_music_preferences()).data
+            self.request.context.get_music_preferences(self.request.user)).data
 
     @view_config(context=MusicPreference, request_method="GET")
     def get(self):

@@ -20,5 +20,5 @@ class MusicPreferenceFactory(BaseFactory):
 
         raise KeyError()
 
-    def get_music_preferences(self):
-        return list_music_preferences()
+    def get_music_preferences(self, user):
+        return list_music_preferences(user)
