@@ -2,6 +2,9 @@ language: python
 python:
         - "3.5"
 
+services:
+    - redis
+
 install: "pip install -e ."
 
 script: python setup.py -q test

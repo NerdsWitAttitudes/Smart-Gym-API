@@ -55,7 +55,7 @@ class RESTBusyness(object):
             raise HTTPBadRequest(json={'message': str(e)})
 
         todays_busyness = self.request.context.get_busyness(
-            datetime.now().date())
+            date=datetime.now().date())
 
         r = get_weather(self.settings, get_gym(result['gym_id']), predict=True)
 

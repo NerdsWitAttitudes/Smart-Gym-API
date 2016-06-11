@@ -3,10 +3,40 @@ import uuid
 
 from pyramid import testing
 
-from smartgymapi.tests import UnitTestCase
+from smartgymapi.tests import UnitTestCase, FunctionalTestCase
 
 
-class MusicPreferenceTest(UnitTestCase):
+class FunctionalMusicPreferenceTest(FunctionalTestCase):
+
+    def test_post_music_preference_succesful(self):
+        from smartgymapi.models.user import User
+
+        salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
+        hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
+            'Qio8ECMHzXjizx4gqn1Rq'
+        user_id = uuid.uuid4()
+        user = User(id=user_id,
+                    first_name='test',
+                    last_name='person',
+                    password_hash=hashed_password,
+                    password_salt=salt,
+                    email='test@test.com',
+                    country='The Netherlands',
+                    date_of_birth=datetime.datetime.now())
+        self.session.add(user)
+        self.session.flush()
+
+        response = self.app.post_json(
+            '/music_preference',
+            {
+                'user_id': str(user_id),
+                'genre': 'dance',
+            })
+
+        self.assertEqual(response.status_code, 201)
+
+
+class UnitMusicPreferenceTest(UnitTestCase):
 
     def setUp(self):
         super().setUp()
@@ -43,32 +73,3 @@ class MusicPreferenceTest(UnitTestCase):
 
         RESTMusicPreference(request).get()
         self.assertEqual(request.response.status_code, 200)
-
-    def test_post_music_preference_succesful(self):
-        from smartgymapi.models.user import User
-        from smartgymapi.handlers.music_preference import RESTMusicPreference
-
-        salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
-        hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
-            'Qio8ECMHzXjizx4gqn1Rq'
-        user_id = uuid.uuid4()
-        user = User(id=user_id,
-                    first_name='test',
-                    last_name='person',
-                    password_hash=hashed_password,
-                    password_salt=salt,
-                    email='test@test.com',
-                    country='The Netherlands',
-                    date_of_birth=datetime.datetime.now())
-        self.session.add(user)
-        self.session.flush()
-
-        music_preference = {
-            'user_id': user_id,
-            'genre': 'dance',
-        }
-
-        request = testing.get_post_request(post=music_preference)
-
-        RESTMusicPreference(request).post()
-        self.assertEqual(request.response.status_code, 201)

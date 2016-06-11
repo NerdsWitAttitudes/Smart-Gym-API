@@ -46,7 +46,6 @@ class RESTMusicPreference(object):
 
         music_preference = MusicPreference()
         music_preference.user = self.request.user
-
         self.save(music_preference)
 
         raise HTTPCreated
@@ -59,7 +58,6 @@ class RESTMusicPreference(object):
             raise HTTPBadRequest(json={'message': str(e)})
 
         music_preference.set_fields(result)
-        music_preference.user = self.request.user
         try:
             persist(music_preference)
         except:
