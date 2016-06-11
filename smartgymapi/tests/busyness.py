@@ -41,7 +41,7 @@ class UnitBusynessTest(UnitTestCase):
     def setUp(self):
         super().setUp()
 
-    def test_get_todays_busyness_succesful(self):
+    def test_get_past_busyness_succesful(self):
         from smartgymapi.models.user_activity import UserActivity
         from smartgymapi.models.weather import Weather
         from smartgymapi.models.gym import Gym
@@ -52,16 +52,6 @@ class UnitBusynessTest(UnitTestCase):
         salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
         hashed_password = '$2b$12$X2xgb/JItJpDL7RKfZhqwubNVnj4onQS'\
             'Qio8ECMHzXjizx4gqn1Rq'
-        user_id = uuid.uuid4()
-        user = User(id=user_id,
-                    first_name='test',
-                    last_name='person',
-                    password_hash=hashed_password,
-                    password_salt=salt,
-                    email='test@test.com',
-                    country='The Netherlands',
-                    date_of_birth=datetime.datetime.now())
-        self.session.add(user)
 
         gym_id = uuid.uuid4()
         gym = Gym(
@@ -71,6 +61,18 @@ class UnitBusynessTest(UnitTestCase):
             MAC_address='24:FD:52:E6:0F:FB',
             spotify_playlist_id='2YO7LggvPHcfFC48Iq29zk')
         self.session.add(gym)
+
+        user_id = uuid.uuid4()
+        user = User(id=user_id,
+                    first_name='test',
+                    last_name='person',
+                    password_hash=hashed_password,
+                    password_salt=salt,
+                    email='test@test.com',
+                    country='The Netherlands',
+                    date_of_birth=datetime.datetime.now(),
+                    gym_id=gym_id)
+        self.session.add(user)
 
         weather_id = uuid.uuid4()
         weather = Weather(
@@ -87,10 +89,10 @@ class UnitBusynessTest(UnitTestCase):
             user_id=user_id,
             gym_id=gym_id)
         self.session.add(user_activity)
-
         self.session.flush()
 
-        request = testing.DummyRequest(params={'gym_id': str(gym_id)})
-        request.context = BusynessFactory
-        RESTBusyness(request).get_todays_busyness()
+        request = testing.DummyRequest(params={'date': '2016-01-01'})
+        request.context = BusynessFactory(None, 'Busyness')
+        request.user = user
+        RESTBusyness(request).get_past_busyness()
         self.assertEqual(request.response.status_code, 200)

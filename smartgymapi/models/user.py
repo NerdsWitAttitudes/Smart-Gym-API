@@ -33,6 +33,10 @@ class User(Base, LineageBase):
     date_of_birth = Column(DateTime(timezone=True))
     last_login = Column(DateTime(timezone=True))
 
+    gym_id = Column(UUIDType, ForeignKey('gym.id'))
+
+    gym = relationship('Gym')
+
     active_activity = relationship(
         "UserActivity",
         primaryjoin="and_(foreign(UserActivity.user_id)==User.id,"

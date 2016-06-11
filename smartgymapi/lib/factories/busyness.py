@@ -1,5 +1,4 @@
 import logging
-import requests
 
 from pyramid.security import Allow, Everyone
 
@@ -20,8 +19,8 @@ class BusynessFactory(BaseFactory):
     def __acl__(self):
         return ((Allow, Everyone, 'busyness'),)
 
-    def get_busyness(self, date):
-        return list_user_activities(date)
+    def get_busyness(self, date, gym):
+        return list_user_activities(gym, date)
 
-    def get_predicted_busyness(self, date):
-        return list_user_activities_for_prediction(date)
+    def get_predicted_busyness(self, date, gym):
+        return list_user_activities_for_prediction(gym, date)
