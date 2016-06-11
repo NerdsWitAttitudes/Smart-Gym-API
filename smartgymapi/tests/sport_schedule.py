@@ -52,7 +52,5 @@ class UnitSportScheduleTest(UnitTestCase):
             ]
         }
 
-        try:
-            RESTSportScheme(request).post()
-        except HTTPCreated:
-            self.assertEqual(request.response.status_code, 200)
+        RESTSportScheme(request).post()
+        self.assertEqual(request.response.status_code, 200)
