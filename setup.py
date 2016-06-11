@@ -26,6 +26,7 @@ requires = [
     'requests',
     'redis',
     'pytz',
+    'python-dateutil'
 ]
 
 test_require = [
