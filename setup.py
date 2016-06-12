@@ -37,7 +37,7 @@ test_require = [
 ]
 
 setup(name='smartgymapi',
-      version='1.0',
+      version='1.01',
       description='smartgymapi',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
