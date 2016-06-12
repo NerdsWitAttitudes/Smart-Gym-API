@@ -95,7 +95,7 @@ Endpoints related to users.
 ## Manage users [/user]
 ### Get users [GET]
 
-Retrieve all users.
+Retrieve all users. Optional arguments possible such as offset, limit and exclude.
 
 + Response 200(application/json)
 
@@ -185,11 +185,75 @@ Update a user.
 
 + response 200(application/json)
 
+# Group Buddies
+## Recommended buddies [/user/buddies/recommended]
+### List [GET]
+
+Lists the recommended buddies for the currently logged in user.
+
++ Response 200(application/json)
+
+        [{
+            "id": "00000000-0000-0000-0000-000000000000",
+            "email": "example@email.com",
+            "first_name": "example",
+            "last_name": "name",
+            "date_created": "",
+            "date_updated": "",
+            "country": "The Netherlands",
+            "date_of_birth": "",
+            "last_login": ""
+        },
+        {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "email": "example2@email.com",
+            "first_name": "other",
+            "last_name": "name",
+            "date_created": "",
+            "date_updated": "",
+            "country": "The Netherlands",
+            "date_of_birth": "",
+            "last_login": ""
+        },
+        {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "email": "example3@email.com",
+            "first_name": "other",
+            "last_name": "name",
+            "date_created": "",
+            "date_updated": "",
+            "country": "The Netherlands",
+            "date_of_birth": "",
+            "last_login": ""
+        },
+        {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "email": "example4@email.com",
+            "first_name": "other",
+            "last_name": "name",
+            "date_created": "",
+            "date_updated": "",
+            "country": "The Netherlands",
+            "date_of_birth": "",
+            "last_login": ""
+        },
+        {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "email": "example5@email.com",
+            "first_name": "other",
+            "last_name": "name",
+            "date_created": "",
+            "date_updated": "",
+            "country": "The Netherlands",
+            "date_of_birth": "",
+            "last_login": ""
+        }]
+
 # Group Devices
 ## Checkin / Checkout [/device/checkin]
 ### Checkin [POST]
 
-Check a user in or out of their gym using their bluetooth enabled device. Does not require an authentication token.
+Check a user in or out of their gym using their bluetooth enabled device. Requires OAuth 2 authentication.
 
 + Request (application/json)
     + Headers
@@ -253,7 +317,7 @@ Delete a user's device making it impossible to check in using this device.
 + Response 200
 
 # Group Busyness
-## Get past busyness [/busyness/past]
+## Get past busyness [/busyness/past/{date}]
 ### Past [GET]
 Get the busyness for a specific date in the past
 
