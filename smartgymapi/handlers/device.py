@@ -122,7 +122,7 @@ class DeviceHandler(object):
         finally:
             commit()
 
-        self.request.response.code = 201
+        self.request.response.status_code = 201
 
         return response_body
 
