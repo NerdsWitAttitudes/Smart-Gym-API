@@ -2,6 +2,10 @@
 # app configuration
 # http://docs.pylonsproject.org/projects/pyramid/en/1.6-branch/narr/environment.html
 ###
+[pipeline:main]
+pipeline =
+    rollbar
+    smartgymapi
 
 [app:main]
 use = egg:smartgymapi
@@ -13,8 +17,8 @@ pyramid.debug_routematch = false
 pyramid.default_locale_name = en
 pyramid.includes =
     pyramid_redis_sessions
-    pyramid_debugtoolbar
     pyramid_tm
+    rollbar.contrib.pyramid #Not advised for dev environments
 
 sqlalchemy.url = postgresql://username:password@ip/db
 
@@ -23,13 +27,18 @@ redis.port = 6379
 redis.db = 0
 redis.password = 
 
+rollbar.access_token =
+rollbar.environment =
+rollbar.branch =
+rollbar.root = %(here)s
+
 
 aes.key =
 aes.iv =
 
 auth.secret =
-auth.timeout = 1200
-auth.reissue_time = 120
+auth.timeout = 1200 # Optional
+auth.reissue_time = 120 #Optional
 
 
 open_weather_api_key = 
@@ -44,6 +53,12 @@ redis.sessions.port = 6379
 redis.sessions.db = 0
 redis.sessions.password =
 
+[filter:rollbar]
+use = egg:rollbar#pyramid
+access_token =
+environment =
+branch =
+root = %(here)s
 
 # By default, the toolbar only appears for clients from IP addresses
 # '127.0.0.1' and '::1'.
