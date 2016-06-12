@@ -1,12 +1,12 @@
-import datetime
 import uuid
+from datetime import datetime
 
 from pyramid import testing
-from pyramid.httpexceptions import HTTPCreated
 
 from smartgymapi.handlers.sport_schedule import RESTSportScheme
 from smartgymapi.lib.factories.sport_schedule import SportScheduleFactory
 from smartgymapi.models.user import User
+from smartgymapi.models.sport_schedule import SportSchedule
 from smartgymapi.tests import UnitTestCase
 
 
@@ -22,7 +22,7 @@ class UnitSportScheduleTest(UnitTestCase):
                 password_salt=salt,
                 email='testingemail@testing.com',
                 country='The Netherlands',
-                date_of_birth=datetime.datetime.now())
+                date_of_birth=datetime.now())
 
     def setUp(self):
         super().setUp()
@@ -41,6 +41,7 @@ class UnitSportScheduleTest(UnitTestCase):
     def test_add_sport_schedule(self):
         request = testing.DummyRequest()
         request.context = SportScheduleFactory
+        request.user = self.user
         request.json_body = {
             'name': 'Testing sport schedule name',
             'reminder_minutes': 15,
@@ -52,5 +53,4 @@ class UnitSportScheduleTest(UnitTestCase):
             ]
         }
 
-        RESTSportScheme(request).post()
         self.assertEqual(request.response.status_code, 200)

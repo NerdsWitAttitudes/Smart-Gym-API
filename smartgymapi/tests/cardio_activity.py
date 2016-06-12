@@ -46,4 +46,7 @@ class UnitCardioActivityTest(UnitTestCase):
         request.context = CardioActivityFactory
         request.json_body = {'activity_id': activity_id}
 
-        self.assertRaises(HTTPCreated, RESTCardioActivty(request).post())
+        try:
+            self.assertRaises(HTTPCreated, RESTCardioActivty(request).post())
+        except HTTPCreated:
+            self.assertTrue(True)
