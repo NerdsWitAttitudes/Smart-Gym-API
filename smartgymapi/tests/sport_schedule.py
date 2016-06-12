@@ -6,7 +6,6 @@ from pyramid import testing
 from smartgymapi.handlers.sport_schedule import RESTSportScheme
 from smartgymapi.lib.factories.sport_schedule import SportScheduleFactory
 from smartgymapi.models.user import User
-from smartgymapi.models.sport_schedule import SportSchedule
 from smartgymapi.tests import UnitTestCase
 
 
@@ -45,7 +44,7 @@ class UnitSportScheduleTest(UnitTestCase):
         request.json_body = {
             'name': 'Testing sport schedule name',
             'reminder_minutes': 15,
-            'time': datetime.datetime.time(datetime.datetime.now()),
+            'time': datetime.time(datetime.now()),
             'weekdays': [
                 1,
                 3,
