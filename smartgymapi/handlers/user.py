@@ -3,7 +3,7 @@ import logging
 
 from marshmallow import ValidationError
 from pyramid.httpexceptions import (HTTPBadRequest, HTTPInternalServerError,
-                                    HTTPNoContent)
+                                    HTTPNoContent, HTTPNotFound)
 from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.encrypt import hash_password
@@ -175,6 +175,7 @@ class RESTBuddy(object):
     @view_config(context=BuddyFactory, request_method="PUT")
     def put(self):
         schema = BuddySchema(strict=True)
+
         try:
             result, errors = schema.load(self.request.json_body)
             schema.validate_user_id(result, self.request.user.id)
@@ -182,6 +183,12 @@ class RESTBuddy(object):
             raise HTTPBadRequest(json={'message': str(e)})
 
         new_buddy = get_user(result['user_id'])
+
+        if not new_buddy:
+            raise HTTPNotFound(json={
+                'message': 'Could not find the new buddy'
+            })
+
         new_buddy_id = str(new_buddy.id)
 
         # add the new buddy to the user's existing buddies

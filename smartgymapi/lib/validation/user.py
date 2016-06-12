@@ -18,10 +18,12 @@ class UserSchema(Schema):
 class BuddySchema(Schema):
     user_id = fields.UUID(required='user_id is required')
 
-    def validate_user_id(self, data, current_user_id):
+    def validate_user_id(self, data, current_user):
         """ Checks if the user isn't trying to befriend him or herself."""
-        if data['user_id'] == current_user_id:
+        if data['user_id'] == current_user.id:
             raise ValidationError("You can not add yourself as a buddy")
+        elif data['user_id'] in current_user.buddy_ids:
+            raise ValidationError("Buddy already exists!")
 
 
 class GETUserSchema(Schema):
