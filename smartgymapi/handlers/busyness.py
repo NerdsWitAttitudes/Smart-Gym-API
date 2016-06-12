@@ -40,6 +40,11 @@ class RESTBusyness(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
+        gym = self.get_gym(result)
+
+        if not gym:
+            raise HTTPBadRequest(json={'message': 'no gym found'})
+
         past = self.request.context.get_busyness(date=result['date'])
 
         self.fill_hour_count(past)
@@ -54,14 +59,19 @@ class RESTBusyness(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        todays_busyness = self.request.context.get_busyness(
-            datetime.now().date())
+        gym = self.get_gym(result)
 
-        r = get_weather(self.settings, get_gym(result['gym_id']), predict=True)
+        if not gym:
+            raise HTTPBadRequest(json={'message': 'no gym found'})
+
+        todays_busyness = self.request.context.get_busyness(
+            datetime.now().date(), gym)
+
+        r = get_weather(self.settings, gym, predict=True)
 
         todays_predicted_busyness = (
             self.request.context.get_predicted_busyness(
-                date=datetime.now().date()))
+                date=datetime.now().date(), gym=gym))
 
         todays_predicted_busyness = filter_on_weather(
             todays_predicted_busyness, create_weather_prediction_list(r),
@@ -82,7 +92,12 @@ class RESTBusyness(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        r = get_weather(self.settings, get_gym(result['gym_id']), predict=True)
+        gym = self.get_gym(result)
+
+        if not gym:
+            raise HTTPBadRequest(json={'message': 'no gym found'})
+
+        r = get_weather(self.settings, gym, predict=True)
 
         predicted_busyness = (
             self.request.context.get_predicted_busyness(
@@ -96,6 +111,12 @@ class RESTBusyness(object):
         self.fill_hour_count(predicted_busyness, False, True)
         return replace_keys_with_datetimes(result['date'],
                                            self.hour_count)
+
+    def get_gym(self, result):
+        try:
+            return get_gym(result['gym_id'])
+        except KeyError:
+            return self.request.user.gym
 
     def fill_hour_count(self, activities, predict_for_today=False,
                         predict=False):

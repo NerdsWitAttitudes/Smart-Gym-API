@@ -1,7 +1,7 @@
 import uuid
 
-from sqlalchemy import (Column, String, Integer, ForeignKey,
-                        UniqueConstraint, Time, Boolean)
+from sqlalchemy import (Column, String, Integer, ForeignKey, UniqueConstraint,
+                        Time, Boolean)
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 
@@ -10,8 +10,9 @@ from smartgymapi.models.meta import Base, DBSession, LineageBase
 
 class SportSchedule(Base, LineageBase):
     __tablename__ = 'sport_schedule'
-    __table_args__ = (UniqueConstraint('user_id', 'name',
-                                       name='sport_schedule_name_uc'),)
+    __table_args__ = (
+        UniqueConstraint('user_id', 'name', name='sport_schedule_name_uc'),
+    )
 
     id = Column(UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUIDType, ForeignKey('user.id'))
@@ -34,3 +35,8 @@ def list_sport_schedules(user):
 
 def get_sport_schedule(id_):
     return DBSession.query(SportSchedule).get(id_)
+
+
+def get_sport_schedule_by_name(sport_schedule_name):
+    return DBSession.query(SportSchedule).filter(
+        SportSchedule.name == sport_schedule_name).one_or_none()

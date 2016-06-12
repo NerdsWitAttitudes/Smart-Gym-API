@@ -25,7 +25,9 @@ requires = [
     'bcrypt',
     'requests',
     'redis',
+    'rollbar',
     'pytz',
+    'python-dateutil'
 ]
 
 test_require = [

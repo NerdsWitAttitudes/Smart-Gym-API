@@ -58,19 +58,20 @@ def get_user_activity(id_):
     return session.query(UserActivity).get(id_)
 
 
-def list_user_activities(date=None):
-    q = session.query(UserActivity)
+def list_user_activities(gym, date=None):
+    q = session.query(UserActivity).filter(UserActivity.gym_id == gym.id)
     if date:
         q = q.filter(cast(UserActivity.start_date, Date) == date)
     return q
 
 
-def list_user_activities_for_prediction(date):
+def list_user_activities_for_prediction(gym, date):
     return session.query(UserActivity).join(
         Weather, UserActivity.weather_id == Weather.id).filter(
         extract('dow',
-                UserActivity.start_date) == date.isocalendar()[2]).order_by(
-        desc(UserActivity.start_date))
+                UserActivity.start_date) == date.isocalendar()[2]).filter(
+        UserActivity.gym_id == gym.id).order_by(
+            desc(UserActivity.start_date))
 
 
 def get_favorite_weekdays_for_user(user):

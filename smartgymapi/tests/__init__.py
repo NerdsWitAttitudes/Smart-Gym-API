@@ -33,6 +33,7 @@ class TestCase(unittest.TestCase):
         Base.session = self.session
 
     def tearDown(self):
+        session.remove()
         testing.tearDown()
 
 

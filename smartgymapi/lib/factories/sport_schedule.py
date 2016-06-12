@@ -1,6 +1,10 @@
 import logging
+
+from pyramid.security import Authenticated, Allow
+
 from smartgymapi.lib.factories import BaseFactory
-from smartgymapi.models.sport_schedule import list_sport_schedules, get_sport_schedule
+from smartgymapi.models.sport_schedule import (list_sport_schedules,
+                                               get_sport_schedule)
 
 log = logging.getLogger(__name__)
 
@@ -19,4 +23,9 @@ class SportScheduleFactory(BaseFactory):
         raise KeyError()
 
     def get_sport_schedules(self):
-        return list_sport_schedules()
+        return list_sport_schedules(self.request.user)
+
+    def __acl__(self):
+        return (
+            (Allow, Authenticated, 'sport_schedule'),
+        )
