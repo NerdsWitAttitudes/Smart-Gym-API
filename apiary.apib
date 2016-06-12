@@ -255,15 +255,10 @@ Delete a user's device making it impossible to check in using this device.
 # Group Busyness
 ## Get past busyness [/busyness/past]
 ### Past [GET]
-
 Get the busyness for a specific date in the past
 
-+ Request (application/json)
-
-        {
-            "date": "2016-05-10",
-            "gym_id": "00000000-0000-0000-0000-000000000000",
-        }
++ Parameters
+    + date: '2016-05-10' (DATE) - The date you want to know the busyness for
 
 + Response 200
 
@@ -285,14 +280,6 @@ Get the busyness for a specific date in the past
 
 Get the busyness for today
 
-+ Response 200 (application/json)
-
-        + Request (application/json)
-
-        {
-            "gym_id": "00000000-0000-0000-0000-000000000000",
-        }
-
 + Response 200
 
         {
@@ -311,16 +298,11 @@ Get the busyness for today
 
 Get the busyness for a specific date in the future (max 5 days from now) 
 
-+ Response 200 (application/json)
++ Parameters
+    + date: '2016-05-10' (DATE) - The date you want to know the busyness for
+    
 
-        + Request (application/json)
-
-        {
-            "date": "2016-05-10",
-            "gym_id": "00000000-0000-0000-0000-000000000000",
-        }
-
-+ Response 200
++ Response 200 
 
         {
             "2016-05-10T00:00:00": 1,
@@ -512,5 +494,41 @@ Add a track to the playlist for a specific gym
             "cliend_address": "00:00:00:00:00:00",
             "uri": "spotify:track:0xCmwofyCiXdhoBsMSNj2w",
         }
+
++ Response 204(application/json)
+
+# Group Music preference
+
+## Manage music preference [/music_preference]
+### list music preference for user [GET]
+
+get music preference for a user
+
+
++ Response 200(application/json)
+
+        {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "genre": "dance"
+        }
+
+### add music preference for user [POST]
+
+Add a music preference for a user
+
++ Request (application/json)
+
+        {
+            "genre": "dance"
+        }
+
++ Response 201(application/json)
+
+### delete music preference for user [DELETE]
+
+Delete a music preference for a user
+
++ Parameters
+    + id: `00000000-0000-0000-0000-000000000000` (UUID) - The ID of a music preference.
 
 + Response 204(application/json)
