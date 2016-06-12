@@ -178,7 +178,7 @@ class RESTBuddy(object):
 
         try:
             result, errors = schema.load(self.request.json_body)
-            schema.validate_user_id(result, self.request.user.id)
+            schema.validate_user_id(result, self.request.user)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
