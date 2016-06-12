@@ -45,7 +45,7 @@ class RESTBusyness(object):
         if not gym:
             raise HTTPBadRequest(json={'message': 'no gym found'})
 
-        past = self.request.context.get_busyness(date=result['date'])
+        past = self.request.context.get_busyness(gym=gym, date=result['date'])
 
         self.fill_hour_count(past)
         return replace_keys_with_datetimes(result['date'],
@@ -65,7 +65,7 @@ class RESTBusyness(object):
             raise HTTPBadRequest(json={'message': 'no gym found'})
 
         todays_busyness = self.request.context.get_busyness(
-            datetime.now().date(), gym)
+            date=datetime.now().date(), gym=gym)
 
         r = get_weather(self.settings, gym, predict=True)
 

@@ -13,10 +13,11 @@ from smartgymapi.models.meta import Base, DBSession as session
 
 here = os.path.dirname(__file__)
 settings = appconfig('config:{}'.format(os.path.join(here, '../../',
-                     'test.ini')))
+                                                     'test.ini')))
 
 
 class TestCase(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.engine = engine_from_config(settings, prefix='sqlalchemy.')
@@ -38,6 +39,7 @@ class TestCase(unittest.TestCase):
 
 
 class UnitTestCase(TestCase):
+
     def setUp(self):
         super().setUp()
         self.config = testing.setUp(request=testing.DummyRequest())
@@ -51,6 +53,7 @@ class UnitTestCase(TestCase):
 
 
 class FunctionalTestCase(TestCase):
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

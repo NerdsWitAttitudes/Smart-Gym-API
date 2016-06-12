@@ -4,6 +4,7 @@ from smartgymapi.lib.factories.auth import AuthFactory
 from smartgymapi.lib.factories.busyness import BusynessFactory
 from smartgymapi.lib.factories.cardio_activity import CardioActivityFactory
 from smartgymapi.lib.factories.device import DeviceFactory
+from smartgymapi.lib.factories.music_preference import MusicPreferenceFactory
 from smartgymapi.lib.factories.oauth import OAuthFactory
 from smartgymapi.lib.factories.sport_schedule import SportScheduleFactory
 from smartgymapi.lib.factories.spotify import SpotifyFactory
@@ -20,8 +21,11 @@ class RootFactory(dict):
 
         self['auth'] = AuthFactory(self, 'auth')
         self['busyness'] = BusynessFactory(self, 'busyness')
-        self['cardio_activity'] = CardioActivityFactory(self, 'cardio_activity')
+        self['cardio_activity'] = CardioActivityFactory(
+            self, 'cardio_activity')
         self['device'] = DeviceFactory(self, 'device')
+        self['music_preference'] = MusicPreferenceFactory(
+            self, 'music_preference')
         self['oauth'] = OAuthFactory(self, 'oauth')
         self['sport_schedule'] = SportScheduleFactory(self, 'sport_schedule')
         self['spotify'] = SpotifyFactory(self, 'spotify')

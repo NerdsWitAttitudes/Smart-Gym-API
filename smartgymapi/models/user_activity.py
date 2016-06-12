@@ -58,8 +58,10 @@ def get_user_activity(id_):
     return session.query(UserActivity).get(id_)
 
 
-def list_user_activities(gym, date=None):
-    q = session.query(UserActivity).filter(UserActivity.gym_id == gym.id)
+def list_user_activities(gym=None, date=None):
+    q = session.query(UserActivity)
+    if gym:
+        q = q.filter(UserActivity.gym_id == gym.id)
     if date:
         q = q.filter(cast(UserActivity.start_date, Date) == date)
     return q

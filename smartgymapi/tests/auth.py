@@ -5,6 +5,7 @@ from smartgymapi.tests import TestCase, UnitTestCase, FunctionalTestCase
 
 
 class EncryptTest(TestCase):
+
     def setUp(self):
         self.test_password = 'test123'
 
@@ -24,6 +25,7 @@ class EncryptTest(TestCase):
 
 
 class TestAuthHandlers(UnitTestCase):
+
     def test_login_succesful(self):
         from smartgymapi.models.user import User
         from smartgymapi.handlers.auth import login
@@ -51,6 +53,7 @@ class TestAuthHandlers(UnitTestCase):
 
 
 class FunctionalTestAuthHandlers(FunctionalTestCase):
+
     def test_login_succesful(self):
         from smartgymapi.models.user import User
         salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
