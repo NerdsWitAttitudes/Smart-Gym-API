@@ -30,8 +30,9 @@ def get_music_preference(id_):
     return session.query(MusicPreference).get(id_)
 
 
-def list_music_preferences():
-    return session.query(MusicPreference)
+def list_music_preferences(user):
+    return session.query(MusicPreference).filter(
+        MusicPreference.user_id == user.id)
 
 
 def list_music_preferences_for_users_in_gym(user_ids=[]):
