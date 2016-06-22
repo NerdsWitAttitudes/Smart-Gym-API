@@ -1,4 +1,7 @@
 import logging
+
+from pyramid.security import Allow, Authenticated
+
 from smartgymapi.lib.factories import BaseFactory
 from smartgymapi.models.music_preference import (
     list_music_preferences, get_music_preference)
@@ -10,6 +13,9 @@ class MusicPreferenceFactory(BaseFactory):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def __acl__(self):
+        return ((Allow, Authenticated, 'music_preferencec'),)
 
     def __getitem__(self, key):
         music_preference = get_music_preference(key)
