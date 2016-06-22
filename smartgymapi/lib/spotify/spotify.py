@@ -97,11 +97,9 @@ class Spotify(object):
         """this function get tracks based on genres"""
         params = {'seed_genres': genres,
                   'limit': 1}
-        log.info(genres)
         r = requests.get('{}/recommendations'.format(
             self.settings['spotify.base_url']), headers=self.get_headers,
             params=params)
-        log.info(r.text)
         song_uris = []
 
         if r.status_code is requests.codes.ok:
@@ -120,13 +118,7 @@ class Spotify(object):
                              [{'uri': uri}]}))
 
     def add_tracks_to_playlist(self, tracks):
-        # log.info('adding track')
-        # log.info(self.gym.spotify_playlist_id)
-        # log.info(self.settings['spotify.base_url'])
-        # log.info(self.settings['spotify.user_id'])
-        # log.info(self.post_headers)
-        # log.info(json.dumps({'uris': tracks}))
-        r = requests.post('{}/users/{}/playlists/{}/tracks'.format(
+        requests.post('{}/users/{}/playlists/{}/tracks'.format(
             self.settings['spotify.base_url'],
             self.settings['spotify.user_id'],
             self.gym.spotify_playlist_id),
