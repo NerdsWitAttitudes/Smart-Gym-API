@@ -13,9 +13,10 @@ log = logging.getLogger(__name__)
 
 class Spotify(object):
 
-    def __init__(self, request, gym):
+    def __init__(self, request, gym=None):
         self.request = request
-        self.gym = gym
+        if gym:
+            self.gym = gym
         self.settings = request.registry.settings
         self.access_token = self.get_access_token()
         self.post_headers = {"Content-Type": "application/json",
@@ -86,18 +87,16 @@ class Spotify(object):
             for i in range(0, 5):
                 random_genres.append(random.choice(genres))
         except IndexError:
-            # we just return an empty list, the songs that are recommended by
-            # spotify are complete random now. Which does not matter because
+            # we just return dance, Which does not matter because
             # there are no users in the gym or the users in the gym did not
-            # give a music preference.
-            return []
+            # give a music preference. so they have to deal with dance
+            random_genres = ['dance']
         return random_genres
 
     def get_tracks(self, genres):
         """this function get tracks based on genres"""
         params = {'seed_genres': genres,
                   'limit': 1}
-
         r = requests.get('{}/recommendations'.format(
             self.settings['spotify.base_url']), headers=self.get_headers,
             params=params)
@@ -124,3 +123,8 @@ class Spotify(object):
             self.settings['spotify.user_id'],
             self.gym.spotify_playlist_id),
             headers=self.post_headers, data=json.dumps({'uris': tracks}))
+
+    def get_genre_seeds(self):
+        return requests.get('{}/recommendations/available-genre-seeds'.format(
+            self.settings['spotify.base_url']),
+            headers=self.get_headers).json()
