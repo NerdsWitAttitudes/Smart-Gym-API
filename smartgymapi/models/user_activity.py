@@ -32,7 +32,10 @@ class UserActivity(Base, LineageBase):
 
     @property
     def minutes(self):
-        total = self.end_date - self.start_date
+        if self.end_date:
+            total = self.end_date - self.start_date
+        else:
+            total = 0
         return (total.seconds % 3600) // 60
 
     @property
