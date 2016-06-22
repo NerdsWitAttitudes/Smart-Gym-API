@@ -78,7 +78,6 @@ class DeviceHandler(object):
         try:
             persist(device)
             persist(activity)
-            spotify.update_playlist()
         except:
             log.critical("Something went wrong checking in",
                          exc_info=True)
