@@ -3,12 +3,12 @@ import logging
 from marshmallow import ValidationError
 
 from pyramid.httpexceptions import (HTTPBadRequest, HTTPCreated,
-                                    HTTPInternalServerError)
+                                    HTTPInternalServerError, HTTPNoContent)
 from pyramid.view import view_config, view_defaults
 
 from smartgymapi.lib.factories.music_preference import MusicPreferenceFactory
 from smartgymapi.lib.validation.music_preference import MusicPreferenceSchema
-from smartgymapi.models import commit, persist, rollback
+from smartgymapi.models import commit, delete, persist, rollback
 from smartgymapi.models.music_preference import MusicPreference
 
 log = logging.getLogger(__name__)
@@ -49,6 +49,19 @@ class RESTMusicPreference(object):
         self.save(music_preference)
 
         raise HTTPCreated
+
+    @view_config(context=MusicPreference, request_method="DELETE")
+    def delete(self):
+        try:
+            delete(self.request.context)
+        except:
+            log.critical("Something went wrong deleting the music preference",
+                         exc_info=True)
+            rollback()
+            raise HTTPInternalServerError
+        finally:
+            commit()
+        raise HTTPNoContent
 
     def save(self, music_preference):
         try:
