@@ -15,7 +15,7 @@ class MusicPreferenceFactory(BaseFactory):
         super().__init__(*args, **kwargs)
 
     def __acl__(self):
-        return ((Allow, Authenticated, 'music_preferencec'),)
+        return ((Allow, Authenticated, 'music_preference'),)
 
     def __getitem__(self, key):
         music_preference = get_music_preference(key)
