@@ -8,7 +8,7 @@ from smartgymapi.tests import UnitTestCase, FunctionalTestCase
 
 class FunctionalMusicPreferenceTest(FunctionalTestCase):
 
-    def test_post_music_preference_succesful(self):
+    def test_list_music_preference_unsuccesful(self):
         from smartgymapi.models.user import User
 
         salt = '$2b$12$X2xgb/JItJpDL7RKfZhqwu'
@@ -26,12 +26,7 @@ class FunctionalMusicPreferenceTest(FunctionalTestCase):
         self.session.add(user)
         self.session.flush()
 
-        response = self.app.post_json(
-            '/music_preference',
-            {
-                'user_id': str(user_id),
-                'genre': 'dance',
-            })
+        response = self.app.get('/music_preference')
 
         self.assertEqual(response.status_code, 401)
 
