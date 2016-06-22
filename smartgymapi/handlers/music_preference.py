@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 
 @view_defaults(containment=MusicPreferenceFactory,
-               permission='public',
+               permission='music_preference',
                renderer='json')
 class RESTMusicPreference(object):
 

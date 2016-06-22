@@ -1,6 +1,6 @@
 import logging
 
-from pyramid.security import Allow, Everyone
+from pyramid.security import Allow, Authenticated
 
 from smartgymapi.lib.factories import BaseFactory
 
@@ -17,7 +17,7 @@ class BusynessFactory(BaseFactory):
         super().__init__(*args, **kwargs)
 
     def __acl__(self):
-        return ((Allow, Everyone, 'busyness'),)
+        return ((Allow, Authenticated, 'busyness'),)
 
     def get_busyness(self, date, gym):
         return list_user_activities(gym, date)
