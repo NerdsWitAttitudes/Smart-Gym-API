@@ -101,7 +101,7 @@ class RESTBusyness(object):
 
         predicted_busyness = (
             self.request.context.get_predicted_busyness(
-                date=result['date']
+                date=result['date'], gym=gym
             ))
 
         predicted_busyness = filter_on_weather(
@@ -216,8 +216,11 @@ def filter_on_weather(activities, weather, date, predict_for_today=False):
             continue
         # get the correct key because the weather is saved in steps of 3 hours.
         # we have to add our gmt offset to that number.
+
         correct_key = activity.start_date.hour + \
             (3 - (activity.start_date.hour % 3)) + offset
+        if correct_key % 23 > 0:
+            correct_key = 23
 
         if activity.weather.rain == weather[
             date_list[correct_key]]['rain'] and (
