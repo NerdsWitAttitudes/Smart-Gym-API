@@ -13,9 +13,10 @@ log = logging.getLogger(__name__)
 
 class Spotify(object):
 
-    def __init__(self, request, gym):
+    def __init__(self, request, gym=None):
         self.request = request
-        self.gym = gym
+        if gym:
+            self.gym = gym
         self.settings = request.registry.settings
         self.access_token = self.get_access_token()
         self.post_headers = {"Content-Type": "application/json",
@@ -124,3 +125,8 @@ class Spotify(object):
             self.settings['spotify.user_id'],
             self.gym.spotify_playlist_id),
             headers=self.post_headers, data=json.dumps({'uris': tracks}))
+
+    def get_genre_seeds(self):
+        return requests.get('{}/recommendations/available-genre-seeds'.format(
+            self.settings['spotify.base_url']),
+            headers=self.get_headers).json()

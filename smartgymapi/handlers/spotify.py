@@ -23,6 +23,11 @@ class RESTSpotify(object):
         self.request = request
         self.settings = request.registry.settings
 
+    @view_config(request_method='GET', name='genres', permission='public')
+    def get_genres(self):
+        spotify = Spotify(self.request)
+        return spotify.get_genre_seeds()
+
     @view_config(request_method='POST')
     def add_track(self):
         try:
