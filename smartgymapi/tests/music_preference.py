@@ -33,7 +33,7 @@ class FunctionalMusicPreferenceTest(FunctionalTestCase):
                 'genre': 'dance',
             })
 
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 401)
 
 
 class UnitMusicPreferenceTest(UnitTestCase):
