@@ -26,7 +26,8 @@ class RESTMusicPreference(object):
     @view_config(context=MusicPreferenceFactory, request_method="GET")
     def list(self):
         return MusicPreferenceSchema(many=True).dump(
-            self.request.context.get_music_preferences(self.request.user)).data
+            self.request.context.get_music_preferences(user=self.request.user)
+        ).data
 
     @view_config(context=MusicPreference, request_method="GET")
     def get(self):
@@ -34,7 +35,7 @@ class RESTMusicPreference(object):
 
     @view_config(context=MusicPreferenceFactory, request_method="PUT")
     def put(self):
-        self.save(self.request.context)
+        self.save(music_preference=self.request.context)
 
     @view_config(context=MusicPreferenceFactory, request_method="POST")
     def post(self):
@@ -46,7 +47,7 @@ class RESTMusicPreference(object):
 
         music_preference = MusicPreference()
         music_preference.user = self.request.user
-        self.save(music_preference)
+        self.save(music_preference=music_preference)
 
         raise HTTPCreated
 

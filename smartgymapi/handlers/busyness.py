@@ -40,16 +40,16 @@ class RESTBusyness(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        gym = self.get_gym(result)
+        gym = self.get_gym(result=result)
 
         if not gym:
             raise HTTPBadRequest(json={'message': 'no gym found'})
 
         past = self.request.context.get_busyness(gym=gym, date=result['date'])
 
-        self.fill_hour_count(past)
-        return replace_keys_with_datetimes(result['date'],
-                                           self.hour_count)
+        self.fill_hour_count(activities=past)
+        return replace_keys_with_datetimes(date=result['date'],
+                                           hour_count=self.hour_count)
 
     @view_config(name='today')
     def get_todays_busyness(self):
@@ -67,22 +67,25 @@ class RESTBusyness(object):
         todays_busyness = self.request.context.get_busyness(
             date=datetime.now().date(), gym=gym)
 
-        r = get_weather(self.settings, gym, predict=True)
+        r = get_weather(settings=self.settings, gym=gym, predict=True)
 
         todays_predicted_busyness = (
             self.request.context.get_predicted_busyness(
                 date=datetime.now().date(), gym=gym))
 
         todays_predicted_busyness = filter_on_weather(
-            todays_predicted_busyness, create_weather_prediction_list(r),
-            date.today())
+            activities=todays_predicted_busyness,
+            weather=create_weather_prediction_list(
+                weather_prediction=r),
+            date=date.today())
 
-        self.fill_hour_count(todays_busyness)
+        self.fill_hour_count(activities=todays_busyness)
 
-        self.fill_hour_count(todays_predicted_busyness,
-                             True, True)
-        return replace_keys_with_datetimes(datetime.now().date(),
-                                           self.hour_count)
+        self.fill_hour_count(activities=todays_predicted_busyness,
+                             predict_for_today=True,
+                             predict=True)
+        return replace_keys_with_datetimes(date=datetime.now().date(),
+                                           hour_count=self.hour_count)
 
     @view_config(name='predict')
     def get_predicted_busyness(self):
@@ -92,12 +95,12 @@ class RESTBusyness(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        gym = self.get_gym(result)
+        gym = self.get_gym(result=result)
 
         if not gym:
             raise HTTPBadRequest(json={'message': 'no gym found'})
 
-        r = get_weather(self.settings, gym, predict=True)
+        r = get_weather(settings=self.settings, gym=gym, predict=True)
 
         predicted_busyness = (
             self.request.context.get_predicted_busyness(
@@ -105,16 +108,19 @@ class RESTBusyness(object):
             ))
 
         predicted_busyness = filter_on_weather(
-            predicted_busyness, create_weather_prediction_list(r),
-            result['date'])
+            activities=predicted_busyness, weather=create_weather_prediction_list(
+                weather_prediction=r),
+            date=result['date'])
 
-        self.fill_hour_count(predicted_busyness, False, True)
-        return replace_keys_with_datetimes(result['date'],
-                                           self.hour_count)
+        self.fill_hour_count(
+            activities=predicted_busyness, predict_for_today=False,
+            predict=True)
+        return replace_keys_with_datetimes(date=result['date'],
+                                           hour_count=self.hour_count)
 
     def get_gym(self, result):
         try:
-            return get_gym(result['gym_id'])
+            return get_gym(result=result['gym_id'])
         except KeyError:
             return self.request.user.gym
 
@@ -131,7 +137,7 @@ class RESTBusyness(object):
                     if (predict_for_today and
                             item.start_date.hour <= datetime.now().hour):
                         continue
-                    self.add_item_to_hour_count(item)
+                    self.add_item_to_hour_count(item=item)
             for hour in self.hour_count:
                 if (predict_for_today and
                         int(hour) <= datetime.now().hour):
@@ -145,7 +151,7 @@ class RESTBusyness(object):
                         self.hour_count[hour] / amount_of_days)
         else:
             for item in activities:
-                self.add_item_to_hour_count(item)
+                self.add_item_to_hour_count(item=item)
 
     def add_item_to_hour_count(self, item):
         """
