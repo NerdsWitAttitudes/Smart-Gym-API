@@ -33,7 +33,7 @@ class RESTUserActivity(object):
 
     @view_config(context=UserActivityFactory, request_method="PUT")
     def put(self):
-        self.save(self.request.context)
+        self.save(user_activity=self.request.context)
 
     def save(self, user_activity):
         try:
@@ -43,7 +43,7 @@ class RESTUserActivity(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
 
-        user_activity.set_fields(result)
+        user_activity.set_fields(data=result)
 
         try:
             persist(user_activity)

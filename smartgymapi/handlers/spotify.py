@@ -36,9 +36,9 @@ class RESTSpotify(object):
                 self.request.json_body)
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
-        log.info(result)
         spotify = Spotify(
-            self.request, get_gym_by_MAC_address(result['client_address']))
+            request=self.request,
+            gym=get_gym_by_MAC_address(result['client_address']))
         spotify.update_playlist()
         raise HTTPCreated
 
@@ -51,6 +51,7 @@ class RESTSpotify(object):
         except ValidationError as e:
             raise HTTPBadRequest(json={'message': str(e)})
         spotify = Spotify(
-            self.request, get_gym_by_MAC_address(result['client_address']))
-        spotify.remove_track(result['uri'])
+            request=self.request,
+            gym=get_gym_by_MAC_address(result['client_address']))
+        spotify.remove_track(uri=result['uri'])
         raise HTTPNoContent

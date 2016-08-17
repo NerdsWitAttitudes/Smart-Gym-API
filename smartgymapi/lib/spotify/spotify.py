@@ -6,7 +6,8 @@ import requests
 from pyramid.httpexceptions import HTTPBadRequest
 
 from smartgymapi.models.user import list_users_in_gym
-from smartgymapi.models.music_preference import list_music_preferences_for_users_in_gym
+from smartgymapi.models.music_preference import (
+    list_music_preferences_for_users_in_gym)
 
 log = logging.getLogger(__name__)
 
@@ -64,12 +65,12 @@ class Spotify(object):
                                            'something went wrong \
                                             creating the playlist'})
 
-        tracks = self.get_tracks(self.get_genres())
-        self.add_tracks_to_playlist(tracks)
+        tracks = self.get_tracks(genres=self.get_genres())
+        self.add_tracks_to_playlist(tracks=tracks)
 
     def get_genres(self):
         """this function returns 5 genres based on the users in the gym"""
-        users_in_gym = list_users_in_gym(self.gym.id)
+        users_in_gym = list_users_in_gym(gym_id=self.gym.id)
 
         # we have to make a list of id's because we can't use sqlalchemy's
         # in_() function with relationships. (not implemented yet)
