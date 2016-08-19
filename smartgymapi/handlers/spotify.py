@@ -40,7 +40,6 @@ class RESTSpotify(object):
     @handler_wrapper(validation_schema=SpotifySchema)
     @view_config(request_method='DELETE')
     def delete_track(self, result):
-        log.info(result)
         spotify = Spotify(
             request=self.request,
             gym=get_gym_by_MAC_address(result['client_address']))
