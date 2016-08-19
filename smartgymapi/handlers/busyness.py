@@ -7,13 +7,12 @@ from pytz import timezone
 
 import requests
 
-from marshmallow import ValidationError
-
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.view import view_config, view_defaults
 
 from smartgymapi.models.gym import get_gym
 
+from smartgymapi.lib.decorators import handler_wrapper
 from smartgymapi.lib.factories.busyness import BusynessFactory
 from smartgymapi.lib.validation.busyness import BusynessSchema
 
@@ -32,14 +31,9 @@ class RESTBusyness(object):
         self.hour_count = {}
         self.settings = request.registry.settings
 
+    @handler_wrapper(validation_schema=BusynessSchema)
     @view_config(name='past')
-    def get_past_busyness(self):
-        try:
-            result, errors = BusynessSchema(strict=True).load(
-                self.request.GET)
-        except ValidationError as e:
-            raise HTTPBadRequest(json={'message': str(e)})
-
+    def get_past_busyness(self, result):
         gym = self.get_gym(result=result)
 
         if not gym:
@@ -51,15 +45,10 @@ class RESTBusyness(object):
         return replace_keys_with_datetimes(date=result['date'],
                                            hour_count=self.hour_count)
 
+    @handler_wrapper(validation_schema=BusynessSchema)
     @view_config(name='today')
-    def get_todays_busyness(self):
-        try:
-            result, errors = BusynessSchema(strict=True).load(
-                self.request.GET)
-        except ValidationError as e:
-            raise HTTPBadRequest(json={'message': str(e)})
-
-        gym = self.get_gym(result)
+    def get_todays_busyness(self, result):
+        gym = self.get_gym(result=result)
 
         if not gym:
             raise HTTPBadRequest(json={'message': 'no gym found'})
@@ -87,15 +76,10 @@ class RESTBusyness(object):
         return replace_keys_with_datetimes(date=datetime.now().date(),
                                            hour_count=self.hour_count)
 
+    @handler_wrapper(validation_schema=BusynessSchema)
     @view_config(name='predict')
-    def get_predicted_busyness(self):
-        try:
-            result, errors = BusynessSchema(strict=True).load(
-                self.request.GET)
-        except ValidationError as e:
-            raise HTTPBadRequest(json={'message': str(e)})
-
-        gym = self.get_gym(result=result)
+    def get_predicted_busyness(self, result):
+        gym = self.get_gym(result=result['gym_id'])
 
         if not gym:
             raise HTTPBadRequest(json={'message': 'no gym found'})
@@ -108,7 +92,8 @@ class RESTBusyness(object):
             ))
 
         predicted_busyness = filter_on_weather(
-            activities=predicted_busyness, weather=create_weather_prediction_list(
+            activities=predicted_busyness,
+            weather=create_weather_prediction_list(
                 weather_prediction=r),
             date=result['date'])
 
@@ -120,7 +105,7 @@ class RESTBusyness(object):
 
     def get_gym(self, result):
         try:
-            return get_gym(result=result['gym_id'])
+            return get_gym(id_=result['gym_id'])
         except KeyError:
             return self.request.user.gym
 

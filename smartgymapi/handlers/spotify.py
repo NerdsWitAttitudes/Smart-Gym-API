@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 from pyramid.httpexceptions import HTTPBadRequest, HTTPCreated, HTTPNoContent
 from pyramid.view import view_config, view_defaults
 
-
+from smartgymapi.lib.decorators import handler_wrapper
 from smartgymapi.lib.factories.spotify import SpotifyFactory
 from smartgymapi.lib.spotify.spotify import Spotify
 from smartgymapi.lib.validation.spotify import SpotifySchema
@@ -28,28 +28,19 @@ class RESTSpotify(object):
         spotify = Spotify(self.request)
         return spotify.get_genre_seeds()
 
+    @handler_wrapper(validation_schema=SpotifySchema)
     @view_config(request_method='POST')
-    def add_track(self):
-        try:
-            result, errors = SpotifySchema(
-                strict=True).load(
-                self.request.json_body)
-        except ValidationError as e:
-            raise HTTPBadRequest(json={'message': str(e)})
+    def add_track(self, result):
         spotify = Spotify(
             request=self.request,
             gym=get_gym_by_MAC_address(result['client_address']))
         spotify.update_playlist()
         raise HTTPCreated
 
+    @handler_wrapper(validation_schema=SpotifySchema)
     @view_config(request_method='DELETE')
-    def delete_track(self):
-        try:
-            result, errors = SpotifySchema(
-                strict=True).load(
-                self.request.json_body)
-        except ValidationError as e:
-            raise HTTPBadRequest(json={'message': str(e)})
+    def delete_track(self, result):
+        log.info(result)
         spotify = Spotify(
             request=self.request,
             gym=get_gym_by_MAC_address(result['client_address']))

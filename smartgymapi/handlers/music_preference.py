@@ -6,6 +6,7 @@ from pyramid.httpexceptions import (HTTPBadRequest, HTTPCreated,
                                     HTTPInternalServerError, HTTPNoContent)
 from pyramid.view import view_config, view_defaults
 
+from smartgymapi.lib.decorators import handler_wrapper
 from smartgymapi.lib.factories.music_preference import MusicPreferenceFactory
 from smartgymapi.lib.validation.music_preference import MusicPreferenceSchema
 from smartgymapi.models import commit, delete, persist, rollback
@@ -37,14 +38,9 @@ class RESTMusicPreference(object):
     def put(self):
         self.save(music_preference=self.request.context)
 
+    @handler_wrapper(validation_schema=MusicPreferenceSchema)
     @view_config(context=MusicPreferenceFactory, request_method="POST")
-    def post(self):
-        try:
-            result, errors = MusicPreferenceSchema(strict=True).load(
-                self.request.json_body)
-        except ValidationError as e:
-            raise HTTPBadRequest(json={'message': str(e)})
-
+    def post(self, *args, **kwargs):
         music_preference = MusicPreference()
         music_preference.user = self.request.user
         self.save(music_preference=music_preference)
